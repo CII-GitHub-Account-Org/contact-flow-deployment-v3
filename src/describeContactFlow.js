@@ -1,4 +1,5 @@
 import AWS from 'aws-sdk';
+const connect = new AWS.Connect();
 import { config } from 'dotenv';
 config();
 
@@ -28,7 +29,6 @@ async function listContactFlows(instanceId) {
 
 async function describeContactFlow(instanceId, flowId, region) {
     AWS.config.update({ region });
-    const connect = new AWS.Connect();
     const params = {
         InstanceId: instanceId,
         ContactFlowId: flowId
