@@ -7,8 +7,8 @@ const INSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/4bbee21d-72
 const TRAGETINSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e';
 const PRIMARYCFS = await listContactFlows(INSTANCEARN);
 const TARGETCFS = await listContactFlows(TRAGETINSTANCEARN);
-console.log('Primary Contact Flows:', PRIMARYCFS);
-console.log('Target Contact Flows:', TARGETCFS);
+// console.log('Primary Contact Flows:', PRIMARYCFS);
+// console.log('Target Contact Flows:', TARGETCFS);
 let isExist;
 let TARGETJSON ='';
 let TARGETFLOWID = '';
