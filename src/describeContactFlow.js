@@ -6,6 +6,8 @@ const INSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/4bbee21d-72
 const TRAGETINSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e';
 const PRIMARYCFS = await listContactFlows(INSTANCEARN);
 const TARGETCFS = await listContactFlows(TRAGETINSTANCEARN);
+console.log('Primary Contact Flows:', PRIMARYCFS);
+console.log('Target Contact Flows:', TARGETCFS);
 let isExist;
 let TARGETJSON ='';
 let TARGETFLOWID = '';
@@ -25,10 +27,6 @@ async function listContactFlows(instanceId) {
 
 
 async function describeContactFlow(instanceId, flowId, region) {
-
-    console.log('Primary Contact Flows:', primaryContactFlows);
-    console.log('Target Contact Flows:', targetContactFlows);
-
     AWS.config.update({ region });
     const connect = new AWS.Connect();
     const params = {
@@ -36,22 +34,23 @@ async function describeContactFlow(instanceId, flowId, region) {
         ContactFlowId: flowId
     };
     let data = await connect.describeContactFlow(params).promise();
-    console.log(data);
-    const flow = JSON.parse(data)
-    const content = JSON.parse(flow.ContactFlow.Content)
-    TARGETJSON = flow.ContactFlow.Content;
-    let flowId = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
-    if (flowId) {
-        let flowarn = flowId.split('/');
-        TARGETFLOWID = flowarn[3];
-        isExist = true;
-        console.log(`Need to update flowId : ${TARGETFLOWID}`);
-    } else {
-        isExist = false;
-    }
+    return data;
 }
 
-describeContactFlow(INSTANCEARN, 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc', 'us-east-1');
+const data = describeContactFlow(INSTANCEARN, 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc', 'us-east-1');
+console.log('Data:',data);
+const flow = JSON.parse(data)
+const content = JSON.parse(flow.ContactFlow.Content)
+TARGETJSON = flow.ContactFlow.Content;
+let flowId = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
+if (flowId) {
+    let flowarn = flowId.split('/');
+    TARGETFLOWID = flowarn[3];
+    isExist = true;
+    console.log(`Need to update flowId : ${TARGETFLOWID}`);
+} else {
+    isExist = false;
+}
 
 function getFlowId(primary, flowId, target) {
     const pl = JSON.parse(primary);
