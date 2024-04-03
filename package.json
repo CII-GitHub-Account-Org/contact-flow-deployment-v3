@@ -1,0 +1,33 @@
+{
+  "name": "my-project",
+  "version": "1.0.0",
+  "description": "Node project for deploying Amazon Connect contact flow",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "predeploy": "node predeploy.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/my-project.git"
+  },
+  "keywords": [
+    "AWS",
+    "Amazon Connect",
+    "GitHub Actions",
+    "AWS SAM"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yourusername/my-project/issues"
+  },
+  "homepage": "https://github.com/yourusername/my-project#readme",
+  "dependencies": {
+    "@aws-sdk/client-connect": "^3.533.0",
+    "aws-sdk": "^2.1031.0",
+    "dotenv": "^16.4.5",
+    "fs": "^0.0.1-security",
+    "js-yaml": "^4.1.0"
+  }
+}
