@@ -34,8 +34,8 @@ jobs:
           unzip awscliv2.zip
           sudo ./aws/install
 
-      - name: Install dependencies
-        run: npm install
+      # - name: Install dependencies
+      #   run: npm install
 
       - name: Run script
         run: |
