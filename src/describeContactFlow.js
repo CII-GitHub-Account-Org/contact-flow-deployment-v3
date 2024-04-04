@@ -12,6 +12,8 @@ const TARGETCFS = await listContactFlows(TRAGETINSTANCEARN);
 let isExist;
 let TARGETJSON ='';
 let TARGETFLOWID = '';
+let PRIMARYPROMPTS = '';
+let TARGETPROMPTS = '';
 
 async function listContactFlows(instanceId) {
     const params = {
@@ -26,6 +28,30 @@ async function listContactFlows(instanceId) {
     }
 }
 
+
+const listPromptsParams1 = {
+  InstanceId: INSTANCEARN // replace with your instance id
+};
+
+await connect.listPrompts(listPromptsParams1, function(err, data) {
+  if (err) console.log(err, err.stack); // an error occurred
+  else    { 
+          console.log('PRIMARYPROMPTS', data)
+          PRIMARYPROMPTS = data;
+          };            // successful response
+});
+
+const listPromptsParams2 = {
+  InstanceId: TRAGETINSTANCEARN // replace with your target instance id
+};
+
+await connect.listPrompts(listPromptsParams2, function(err, data) {
+  if (err) console.log(err, err.stack); // an error occurred
+  else    { 
+          console.log('TARGETPROMPTS', data)
+          TARGETPROMPTS = data;
+          };            // successful response
+});
 
 async function describeContactFlow(instanceId, flowId, region) {
     AWS.config.update({ region });
