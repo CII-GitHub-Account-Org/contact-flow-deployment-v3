@@ -44,7 +44,7 @@ const content = flow.ContactFlow.Content
 TARGETJSON = flow.ContactFlow.Content;
 let flowArn = getFlowArn(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
 if (flowArn) {
-    let flowArnSplit = flowId.split('/');
+    let flowArnSplit = flowArn.split('/');
     TARGETFLOWID = flowArnSplit[3];
     isExist = true;
     console.log(`Need to update flowId : ${TARGETFLOWID}`);
