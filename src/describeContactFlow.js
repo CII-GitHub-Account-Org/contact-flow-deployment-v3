@@ -39,21 +39,22 @@ async function describeContactFlow(instanceId, flowId, region) {
 
 const data = await describeContactFlow(INSTANCEARN, 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc', 'us-east-1');
 console.log('Data:',data);
-const flow = data
-const content = flow.ContactFlow.Content
-TARGETJSON = flow.ContactFlow.Content;
-let flowArn = getFlowArn(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
+const flow = data;
+const content = flow.ContactFlow.Content;
+TARGETJSON = content;
+checkFlowArn(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
+const flowArn = flow.ContactFlow.Arn;
 console.log('flowArn: ', flowArn)
-// if (flowArn) {
-//     let flowArnSplit = flowArn.split('/');
-//     TARGETFLOWID = flowArnSplit[3];
-//     isExist = true;
-//     console.log(`Need to update flowId : ${TARGETFLOWID}`);
-// } else {
-//     isExist = false;
-// }
+if (flowArn) {
+    let flowArnSplit = flowArn.split('/');
+    TARGETFLOWID = flowArnSplit[3];
+    isExist = true;
+    console.log(`Need to update flowId : ${TARGETFLOWID}`);
+} else {
+    isExist = false;
+}
 
-async function getFlowArn(primary, flowArn, target) {
+async function checkFlowArn(primary, flowArn, target) {
     // const pl = JSON.parse(primary);
     // const tl = JSON.parse(target);
     // let fName = "";
