@@ -53,31 +53,31 @@ if (flowArn) {
 }
 
 async function getFlowArn(primary, flowArn, target) {
-    const pl = JSON.parse(primary);
-//     const tl = JSON.parse(target);
-    let fName = "";
-    let rId = "";
+    // const pl = JSON.parse(primary);
+    // const tl = JSON.parse(target);
+    // let fName = "";
+    // let rId = "";
 
-    console.log(`Searching for flowArn : ${flowArn}`);
-    for(let i = 0; i < pl.ContactFlowSummaryList.length; i++){
-        const obj = pl.ContactFlowSummaryList[i];
-        if (obj.Arn === flowArn) {
-            fName = obj.Name;
-            console.log(`Found flow name : ${fName}`);
-            break;
-        }
-    }
+    // console.log(`Searching for flowArn : ${flowArn}`);
+    // for(let i = 0; i < pl.ContactFlowSummaryList.length; i++){
+    //     const obj = pl.ContactFlowSummaryList[i];
+    //     if (obj.Arn === flowArn) {
+    //         fName = obj.Name;
+    //         console.log(`Found flow name : ${fName}`);
+    //         break;
+    //     }
+    // }
 
-    console.log(`Searching for flow name : ${fName}`);
-    for(let i = 0; i < tl.ContactFlowSummaryList.length; i++){
-        const obj = tl.ContactFlowSummaryList[i];
-        if (obj.Name === fName) {
-            rId = obj.Arn;
-            console.log(`Found flow id : ${rId}`);
-            return rId;
-        } else if(i === tl.ContactFlowSummaryList.length - 1){
-            console.log("create contact flow");
-        }
-    }
+    // console.log(`Searching for flow name : ${fName}`);
+    // for(let i = 0; i < tl.ContactFlowSummaryList.length; i++){
+    //     const obj = tl.ContactFlowSummaryList[i];
+    //     if (obj.Name === fName) {
+    //         rId = obj.Arn;
+    //         console.log(`Found flow id : ${rId}`);
+    //         return rId;
+    //     } else if(i === tl.ContactFlowSummaryList.length - 1){
+    //         console.log("create contact flow");
+    //     }
+    // }
     return flowArn;
 }
