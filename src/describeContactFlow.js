@@ -52,7 +52,7 @@ if (flowArn) {
     isExist = false;
 }
 
-function getFlowArn(primary, flowArn, target) {
+async function getFlowArn(primary, flowArn, target) {
     const pl = JSON.parse(primary);
 //     const tl = JSON.parse(target);
     let fName = "";
