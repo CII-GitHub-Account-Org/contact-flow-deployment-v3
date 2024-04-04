@@ -39,8 +39,8 @@ async function describeContactFlow(instanceId, flowId, region) {
 
 const data = await describeContactFlow(INSTANCEARN, 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc', 'us-east-1');
 console.log('Data:',data);
-const flow = JSON.parse(data)
-const content = JSON.parse(flow.ContactFlow.Content)
+// const flow = JSON.parse(data)
+// const content = JSON.parse(flow.ContactFlow.Content)
 TARGETJSON = flow.ContactFlow.Content;
 let flowArn = getFlowArn(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
 if (flowArn) {
