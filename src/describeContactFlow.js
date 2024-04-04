@@ -43,14 +43,15 @@ const flow = data
 const content = flow.ContactFlow.Content
 TARGETJSON = flow.ContactFlow.Content;
 let flowArn = getFlowArn(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
-if (flowArn) {
-    let flowArnSplit = flowArn.split('/');
-    TARGETFLOWID = flowArnSplit[3];
-    isExist = true;
-    console.log(`Need to update flowId : ${TARGETFLOWID}`);
-} else {
-    isExist = false;
-}
+console.log('flowArn: ', flowArn)
+// if (flowArn) {
+//     let flowArnSplit = flowArn.split('/');
+//     TARGETFLOWID = flowArnSplit[3];
+//     isExist = true;
+//     console.log(`Need to update flowId : ${TARGETFLOWID}`);
+// } else {
+//     isExist = false;
+// }
 
 async function getFlowArn(primary, flowArn, target) {
     // const pl = JSON.parse(primary);
