@@ -110,13 +110,14 @@ for (let i = 0; i < contentActions.length; i++) {
     if (obj.Parameters.PromptId !== null) {
       console.log('inside prompt');
       let arn = getPromptId(PRIMARYPROMPTS, obj.Parameters.PromptId, TARGETPROMPTS);
-      TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.PromptId, 'g'), arn);
+      if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.PromptId, 'g'), arn)};
     }
   } 
-//   else if (obj.Type === 'ConnectParticipantWithLexBot') {
-//     console.log('lexbot');
-//     let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
-//   } 
+  else if (obj.Type === 'ConnectParticipantWithLexBot') {
+    console.log('lexbot');
+    let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
+    // handle lex bot
+  } 
   // else if (obj.Type === 'UpdateContactTargetQueue') {
   //   let arn = getQueueId(PRIMARYQUEUES, obj.Parameters.QueueId, TARGETQUEUES);
   //   TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.QueueId, 'g'), arn);
@@ -144,7 +145,7 @@ for (let i = 0; i < contentActions.length; i++) {
   // }
 }
 
-async function checkFlowArn(primary, flowArn, target) {
+function checkFlowArn(primary, flowArn, target) {
     // const pl = JSON.parse(primary);
     // const tl = JSON.parse(target);
     // let fName = "";
@@ -174,7 +175,7 @@ async function checkFlowArn(primary, flowArn, target) {
     return flowArn;
 }
 
-async function getPromptId(primary, searchId, target) {
+function getPromptId(primary, searchId, target) {
     const pl = primary;
     const tl = target;
     let fName = '';
@@ -196,7 +197,36 @@ async function getPromptId(primary, searchId, target) {
       console.log(`Found id : ${rId}`);
       return rId;
     } else {
-      console.log('prompt cant created');
-      throw new Error('Prompt Not Found Please Create prompt');
+    //   console.log('prompt cant created');
+      console.log('Prompt Not Found Please Create prompt');
+      return undefined;
+    }
+  }
+
+  function getLexBotId(primary, botId, target) {
+    const pl = primary;
+    const tl = target;
+    let fName = '';
+    let rId = '';
+  
+    console.log(`Searching for botId : ${botId}`);
+  
+    const primaryObj = pl && pl.LexBots ? pl.LexBots.find(obj => obj.Name === botId) : undefined;
+    if (primaryObj) {
+      fName = primaryObj.Name;
+      console.log(`Found bot name : ${fName}`);
+    }
+  
+    console.log(`Searching for bot name : ${fName}`);
+  
+    const targetObj = tl && tl.LexBots ? tl.LexBots.find(obj => obj.Name === fName) : undefined;
+    if (targetObj) {
+      rId = targetObj.Name;
+      console.log(`Found bot : ${rId}`);
+      return rId;
+    } else {
+      console.log('create bot in targetInstance');
+      console.log('Bot Not Found Please Create Bot');
+      return undefined;
     }
   }
