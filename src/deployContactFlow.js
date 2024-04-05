@@ -217,25 +217,146 @@ function getFlowId(primary, flowId, target) {
 
   console.log(`Searching for flowId : ${flowId}`);
 
-  for (let i = 0; i < pl.ContactFlowSummaryList.length; i++) {
-      const obj = pl.ContactFlowSummaryList[i];
-      if (obj.Arn === flowId) {
-          fName = obj.Name;
-          console.log(`Found flow name : ${fName}`);
-          break;
-      }
+  const primaryObj = pl && pl.ContactFlowSummaryList ? pl.ContactFlowSummaryList.find(obj => obj.Arn === flowId) : undefined;
+  if (primaryObj) {
+    fName = primaryObj.Name;
+    console.log(`Found flow name : ${fName}`);
   }
 
   console.log(`Searching for flow name : ${fName}`);
 
-  for (let i = 0; i < tl.ContactFlowSummaryList.length; i++) {
-      const obj = tl.ContactFlowSummaryList[i];
-      if (obj.Name === fName) {
+  const targetObj = tl && tl.ContactFlowSummaryList ? tl.ContactFlowSummaryList.find(obj => obj.Name === fName) : undefined;
+  if (targetObj) {
+    rId = targetObj.Arn;
+    console.log(`Found flow id : ${rId}`);
+    return rId;
+  } else {
+    console.log('create contact flow');
+    return undefined;
+  }
+}
+
+function getLambdaId(primary, lambdaId, target) {
+  const pl = primary;
+  const tl = target;
+  const lambda = lambdaId.split(':');
+  let fName = '';
+  let rId = '';
+
+  console.log(`Searching for LambdaId : ${lambdaId}`);
+
+  const primaryObj = pl && pl.LambdaFunctions ? pl.LambdaFunctions.find(obj => {
+    const plName = obj.split(':');
+    return plName[6] === lambda[6];
+  }) : undefined;
+
+  if (primaryObj) {
+    fName = primaryObj.split(':')[6];
+    console.log(`Found lambda name : ${fName}`);
+  }
+
+  console.log(`Searching for LambdaId name : ${fName}`);
+
+  const targetObj = tl && tl.LambdaFunctions ? tl.LambdaFunctions.find(obj => {
+    const tlName = obj.split(':');
+    return tlName[6] === fName;
+  }): undefined;
+
+  if (targetObj) {
+    rId = targetObj.split(':')[6];
+    console.log(`Found lambda id : ${rId}`);
+    return rId;
+  } else {
+    // console.log('create Lambda in targetInstance');
+    console.log('Lambda Not Found Please Create Lambda');
+    return undefined;
+  }
+}
+
+function getQueueId(primary, queueId, target) {
+  const pl = primary;
+  const tl = target;
+  let fName = '';
+  let rId = '';
+
+  console.log(`Searching for queueId : ${queueId}`);
+
+  const primaryObj = pl && pl.QueueSummaryList ? pl.QueueSummaryList.find(obj => obj.Arn === queueId) : undefined;
+  if (primaryObj) {
+    fName = primaryObj.Name;
+    console.log(`Found queue name : ${fName}`);
+  }
+
+  const targetObj = tl && tl.QueueSummaryList ? tl.QueueSummaryList.find(obj => obj.Name === fName) : undefined;
+  if (targetObj) {
+    rId = targetObj.Arn;
+    console.log(`Found flow id : ${rId}`);
+    return rId;
+  } else {
+    console.log('create queue');
+    return undefined;
+  }
+}
+
+function getUserId(primary, userId, target) {
+  const pl = primary;
+  const tl = target;
+  let fName = '';
+  let rId = '';
+
+  console.log(`Searching for userId : ${userId}`);
+
+  for (let i = 0; i < pl.UserSummaryList.length; i++) {
+      const obj = pl.UserSummaryList[i];
+      if (obj.Arn === userId) {
+          fName = obj.Username;
+          console.log(`Found user name : ${fName}`);
+          break;
+      }
+  }
+
+  console.log(`Searching for userId for : ${fName}`);
+
+  for (let i = 0; i < tl.UserSummaryList.length; i++) {
+      const obj = tl.UserSummaryList[i];
+      if (obj.Username === fName) {
           rId = obj.Arn;
           console.log(`Found flow id : ${rId}`);
           return rId;
-      } else if (i === tl.ContactFlowSummaryList.length - 1) {
-          console.log('create contact flow');
+      } else if (i === tl.UserSummaryList.length - 1) {
+          console.log('create user');
+          return undefined;
+      }
+  }
+}
+
+function getHOPId(primary, hopId, target) {
+  const pl = primary;
+  const tl = target;
+  let fName = '';
+  let rId = '';
+
+  console.log(`Searching for hopId : ${hopId}`);
+
+  for (let i = 0; i < pl.HoursOfOperationSummaryList.length; i++) {
+      const obj = pl.HoursOfOperationSummaryList[i];
+      if (obj.Arn === hopId) {
+          fName = obj.Name;
+          console.log(`Found name : ${fName}`);
+          break;
+      }
+  }
+
+  console.log(`Searching for hopId for : ${fName}`);
+
+  for (let i = 0; i < tl.HoursOfOperationSummaryList.length; i++) {
+      const obj = tl.HoursOfOperationSummaryList[i];
+      if (obj.Username === fName) {
+          rId = obj.Arn;
+          console.log(`Found id : ${rId}`);
+          return rId;
+      } else if (i === tl.HoursOfOperationSummaryList.length - 1) {
+          console.log('create hop');
           return undefined;
       }
   }
@@ -297,123 +418,9 @@ function getLexBotId(primary, botId, target) {
     }
 }
 
-function getQueueId(primary, queueId, target) {
-    const pl = primary;
-    const tl = target;
-    let fName = '';
-    let rId = '';
-  
-    console.log(`Searching for queueId : ${queueId}`);
-  
-    const primaryObj = pl && pl.QueueSummaryList ? pl.QueueSummaryList.find(obj => obj.Arn === queueId) : undefined;
-    if (primaryObj) {
-      fName = primaryObj.Name;
-      console.log(`Found queue name : ${fName}`);
-    }
-  
-    const targetObj = tl && tl.QueueSummaryList ? tl.QueueSummaryList.find(obj => obj.Name === fName) : undefined;
-    if (targetObj) {
-      rId = targetObj.Arn;
-      console.log(`Found flow id : ${rId}`);
-      return rId;
-    } else {
-      console.log('create queue');
-      return undefined;
-    }
-}
 
-function getFlowId(primary, flowId, target) {
-    const pl = primary;
-    const tl = target;
-    let fName = '';
-    let rId = '';
-  
-    console.log(`Searching for flowId : ${flowId}`);
-  
-    const primaryObj = pl && pl.ContactFlowSummaryList ? pl.ContactFlowSummaryList.find(obj => obj.Arn === flowId) : undefined;
-    if (primaryObj) {
-      fName = primaryObj.Name;
-      console.log(`Found flow name : ${fName}`);
-    }
-  
-    console.log(`Searching for flow name : ${fName}`);
-  
-    const targetObj = tl && tl.ContactFlowSummaryList ? tl.ContactFlowSummaryList.find(obj => obj.Name === fName) : undefined;
-    if (targetObj) {
-      rId = targetObj.Arn;
-      console.log(`Found flow id : ${rId}`);
-      return rId;
-    } else {
-      console.log('create contact flow');
-      return undefined;
-    }
-}
 
-function getLambdaId(primary, lambdaId, target) {
-  const pl = primary;
-  const tl = target;
-  const lambda = lambdaId.split(':');
-  let fName = '';
-  let rId = '';
 
-  console.log(`Searching for LambdaId : ${lambdaId}`);
 
-  const primaryObj = pl && pl.LambdaFunctions ? pl.LambdaFunctions.find(obj => {
-    const plName = obj.split(':');
-    return plName[6] === lambda[6];
-  }) : undefined;
 
-  if (primaryObj) {
-    fName = primaryObj.split(':')[6];
-    console.log(`Found lambda name : ${fName}`);
-  }
 
-  console.log(`Searching for LambdaId name : ${fName}`);
-
-  const targetObj = tl && tl.LambdaFunctions ? tl.LambdaFunctions.find(obj => {
-    const tlName = obj.split(':');
-    return tlName[6] === fName;
-  }): undefined;
-
-  if (targetObj) {
-    rId = targetObj.split(':')[6];
-    console.log(`Found lambda id : ${rId}`);
-    return rId;
-  } else {
-    // console.log('create Lambda in targetInstance');
-    console.log('Lambda Not Found Please Create Lambda');
-    return undefined;
-  }
-}
-
-function getHOPId(primary, hopId, target) {
-  const pl = primary;
-  const tl = target;
-  let fName = '';
-  let rId = '';
-
-  console.log(`Searching for hopId : ${hopId}`);
-
-  for (let i = 0; i < pl.HoursOfOperationSummaryList.length; i++) {
-      const obj = pl.HoursOfOperationSummaryList[i];
-      if (obj.Arn === hopId) {
-          fName = obj.Name;
-          console.log(`Found name : ${fName}`);
-          break;
-      }
-  }
-
-  console.log(`Searching for hopId for : ${fName}`);
-
-  for (let i = 0; i < tl.HoursOfOperationSummaryList.length; i++) {
-      const obj = tl.HoursOfOperationSummaryList[i];
-      if (obj.Username === fName) {
-          rId = obj.Arn;
-          console.log(`Found id : ${rId}`);
-          return rId;
-      } else if (i === tl.HoursOfOperationSummaryList.length - 1) {
-          console.log('create hop');
-          return undefined;
-      }
-  }
-}
