@@ -190,7 +190,7 @@ async function getPromptId(primary, searchId, target) {
   
     console.log(`Searching for prompt for : ${fName}`);
   
-    const targetObj = tl.PromptSummaryList.find(obj => obj.Name === fName);
+    const targetObj = tl && tl.PromptSummaryList ? tl.PromptSummaryList.find(obj => obj.Name === fName) : undefined;
     if (targetObj) {
       rId = targetObj.Arn;
       console.log(`Found id : ${rId}`);
