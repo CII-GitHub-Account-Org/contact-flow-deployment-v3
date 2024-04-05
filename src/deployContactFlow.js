@@ -46,70 +46,70 @@ async function handleConnectAPI(){
       await connect.listLexBots(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('PRIMARYBOT', data)
+                // console.log('PRIMARYBOT', data)
                 PRIMARYBOT = data;
                 };            // successful response
       }).promise();
       await connect.listLexBots(targetInstanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('TARGETBOT', data)
+                // console.log('TARGETBOT', data)
                 TARGETBOT = data;
                 };            // successful response
       }).promise();
       await connect.listContactFlows(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('PRIMARYCFS', data)
+                // console.log('PRIMARYCFS', data)
                 PRIMARYCFS = data;
                 };            // successful response
       }).promise();
       await connect.listContactFlows(targetInstanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('TARGETCFS', data)
+                // console.log('TARGETCFS', data)
                 TARGETCFS = data;
                 };            // successful response
       }).promise();
       await connect.listUsers(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('PRIMARYUSERS', data)
+                // console.log('PRIMARYUSERS', data)
                 PRIMARYUSERS = data;
                 };            // successful response
       }).promise();
       await connect.listUsers(targetInstanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('TARGETUSERS', data)
+                // console.log('TARGETUSERS', data)
                 TARGETUSERS = data;
                 };            // successful response
       }).promise();
       await connect.listQueues(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('PRIMARYQUEUES', data)
+                // console.log('PRIMARYQUEUES', data)
                 PRIMARYQUEUES = data;
                 };            // successful response
       }).promise();
       await connect.listQueues(targetInstanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('TARGETQUEUES', data)
+                // console.log('TARGETQUEUES', data)
                 TARGETQUEUES = data;
                 };            // successful response
       }).promise();
       await connect.listQuickConnects(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('PRIMARYQC', data)
+                // console.log('PRIMARYQC', data)
                 PRIMARYQC = data;
                 };            // successful response
       }).promise();
       await connect.listQuickConnects(targetInstanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('TARGETQC', data)
+                // console.log('TARGETQC', data)
                 TARGETQC = data;
                 };            // successful response
       }).promise();
@@ -156,16 +156,15 @@ for (let i = 0; i < contentActions.length; i++) {
       let arn = getPromptId(PRIMARYPROMPTS, obj.Parameters.PromptId, TARGETPROMPTS);
       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.PromptId, 'g'), arn)};
     }
-  } 
-  else if (obj.Type === 'ConnectParticipantWithLexBot') {
+  } else if (obj.Type === 'ConnectParticipantWithLexBot') {
     console.log('lexbot');
     let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
     // handle lex bot
+  } else if (obj.Type === 'UpdateContactTargetQueue') {
+    let arn = getQueueId(PRIMARYQUEUES, obj.Parameters.QueueId, TARGETQUEUES);
+    if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.QueueId, 'g'), arn)};
   } 
-  // else if (obj.Type === 'UpdateContactTargetQueue') {
-  //   let arn = getQueueId(PRIMARYQUEUES, obj.Parameters.QueueId, TARGETQUEUES);
-  //   TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.QueueId, 'g'), arn);
-  // } else if (obj.Type === 'UpdateContactEventHooks') {
+  // else if (obj.Type === 'UpdateContactEventHooks') {
   //   if (obj.Parameters.EventHooks.AgentWhisper) {
   //     let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.AgentWhisper, TARGETCFS);
   //     TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.AgentWhisper, 'g'), arn);
@@ -271,6 +270,31 @@ function getPromptId(primary, searchId, target) {
     } else {
       console.log('create bot in targetInstance');
       console.log('Bot Not Found Please Create Bot');
+      return undefined;
+    }
+  }
+
+  function getQueueId(primary, queueId, target) {
+    const pl = primary;
+    const tl = target;
+    let fName = '';
+    let rId = '';
+  
+    console.log(`Searching for queueId : ${queueId}`);
+  
+    const primaryObj = pl && pl.QueueSummaryList ? pl.QueueSummaryList.find(obj => obj.Arn === queueId) : undefined;
+    if (primaryObj) {
+      fName = primaryObj.Name;
+      console.log(`Found queue name : ${fName}`);
+    }
+  
+    const targetObj = tl && tl.QueueSummaryList ? tl.QueueSummaryList.find(obj => obj.Name === fName) : undefined;
+    if (targetObj) {
+      rId = targetObj.Arn;
+      console.log(`Found flow id : ${rId}`);
+      return rId;
+    } else {
+      console.log('create queue');
       return undefined;
     }
   }
