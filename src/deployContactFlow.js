@@ -14,29 +14,45 @@ let TARGETJSON ='';
 let TARGETFLOWID = '';
 let PRIMARYPROMPTS = '';
 let TARGETPROMPTS = '';
+let PRIMARYBOT = '';
+let TARGETBOT = '';
 
 
 
 async function handleConnectAPI(){
-    const listPromptsParams1 = {
+    const instanceIdParam = {
         InstanceId: INSTANCEARN // replace with your instance id
       };
-    await connect.listPrompts(listPromptsParams1, function(err, data) {
+    await connect.listPrompts(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('PRIMARYPROMPTS', data)
+                // console.log('PRIMARYPROMPTS', data)
                 PRIMARYPROMPTS = data;
                 };            // successful response
       }).promise();
 
-      const listPromptsParams2 = {
+      const targetInstanceIdParam = {
         InstanceId: TRAGETINSTANCEARN // replace with your target instance id
       };
-      await connect.listPrompts(listPromptsParams2, function(err, data) {
+      await connect.listPrompts(targetInstanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('TARGETPROMPTS', data)
+                // console.log('TARGETPROMPTS', data)
                 TARGETPROMPTS = data;
+                };            // successful response
+      }).promise();
+      await connect.listLexBots(instanceIdParam, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else    { 
+                console.log('PRIMARYBOT', data)
+                PRIMARYBOT = data;
+                };            // successful response
+      }).promise();
+      await connect.listLexBots(targetInstanceIdParam, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else    { 
+                console.log('TARGETBOT', data)
+                TARGETBOT = data;
                 };            // successful response
       }).promise();
 
@@ -68,13 +84,13 @@ async function describeContactFlow(instanceId, flowId, region) {
 }
 
 const data = await describeContactFlow(INSTANCEARN, 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc', 'us-east-1');
-console.log('Data:',data);
+// console.log('Data:',data);
 const flow = data;
 const content = flow.ContactFlow.Content;
 TARGETJSON = content;
-checkFlowArn(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
+// checkFlowArn(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
 const flowArn = flow.ContactFlow.Arn;
-console.log('flowArn: ', flowArn)
+// console.log('flowArn: ', flowArn)
 if (flowArn) {
     let flowArnSplit = flowArn.split('/');
     TARGETFLOWID = flowArnSplit[3];
@@ -85,7 +101,7 @@ if (flowArn) {
 }
 
 const contentActions = JSON.parse(content).Actions;
-console.log("contentActions", contentActions);
+// console.log("contentActions", contentActions);
 for (let i = 0; i < contentActions.length; i++) {
   let obj = contentActions[i];
   console.log(`Type value: ${obj.Type}`);
@@ -96,11 +112,12 @@ for (let i = 0; i < contentActions.length; i++) {
       let arn = getPromptId(PRIMARYPROMPTS, obj.Parameters.PromptId, TARGETPROMPTS);
       TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.PromptId, 'g'), arn);
     }
-  }
-  // else if (obj.Type === 'ConnectParticipantWithLexBot') {
-  //   console.log('lexbot');
-  //   let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
-  // } else if (obj.Type === 'UpdateContactTargetQueue') {
+  } 
+//   else if (obj.Type === 'ConnectParticipantWithLexBot') {
+//     console.log('lexbot');
+//     let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
+//   } 
+  // else if (obj.Type === 'UpdateContactTargetQueue') {
   //   let arn = getQueueId(PRIMARYQUEUES, obj.Parameters.QueueId, TARGETQUEUES);
   //   TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.QueueId, 'g'), arn);
   // } else if (obj.Type === 'UpdateContactEventHooks') {
