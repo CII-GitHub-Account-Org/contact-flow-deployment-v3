@@ -37,6 +37,6 @@ jobs:
       - name: Run script
         run: |
           cd src
-          node describeContactFlow.js
+          node deployContactFlow.js
 
 
