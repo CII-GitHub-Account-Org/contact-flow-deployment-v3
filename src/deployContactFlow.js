@@ -5,10 +5,6 @@ config();
 
 const INSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/4bbee21d-72b8-442b-af39-dce4128ca77e';
 const TRAGETINSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e';
-const PRIMARYCFS = await listContactFlows(INSTANCEARN);
-const TARGETCFS = await listContactFlows(TRAGETINSTANCEARN);
-// console.log('Primary Contact Flows:', PRIMARYCFS);
-// console.log('Target Contact Flows:', TARGETCFS);
 let isExist;
 let TARGETJSON ='';
 let TARGETFLOWID = '';
@@ -16,8 +12,14 @@ let PRIMARYPROMPTS = '';
 let TARGETPROMPTS = '';
 let PRIMARYBOT = '';
 let TARGETBOT = '';
-
-
+let PRIMARYCFS = '';
+let TARGETCFS = '';
+let PRIMARYQUEUES = '';
+let TARGETQUEUES = '';
+let PRIMARYUSERS = '';
+let TARGETUSERS = '';
+let PRIMARYQC = '';
+let TARGETQC = '';
 
 async function handleConnectAPI(){
     const instanceIdParam = {
@@ -55,23 +57,65 @@ async function handleConnectAPI(){
                 TARGETBOT = data;
                 };            // successful response
       }).promise();
-
+      await connect.listContactFlows(instanceIdParam, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else    { 
+                console.log('PRIMARYCFS', data)
+                PRIMARYCFS = data;
+                };            // successful response
+      }).promise();
+      await connect.listContactFlows(targetInstanceIdParam, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else    { 
+                console.log('TARGETCFS', data)
+                TARGETCFS = data;
+                };            // successful response
+      }).promise();
+      await connect.listUsers(instanceIdParam, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else    { 
+                console.log('PRIMARYUSERS', data)
+                PRIMARYUSERS = data;
+                };            // successful response
+      }).promise();
+      await connect.listUsers(targetInstanceIdParam, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else    { 
+                console.log('TARGETUSERS', data)
+                TARGETUSERS = data;
+                };            // successful response
+      }).promise();
+      await connect.listQueues(instanceIdParam, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else    { 
+                console.log('PRIMARYQUEUES', data)
+                PRIMARYQUEUES = data;
+                };            // successful response
+      }).promise();
+      await connect.listQueues(targetInstanceIdParam, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else    { 
+                console.log('TARGETQUEUES', data)
+                TARGETQUEUES = data;
+                };            // successful response
+      }).promise();
+      await connect.listQuickConnects(instanceIdParam, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else    { 
+                console.log('PRIMARYQC', data)
+                PRIMARYQC = data;
+                };            // successful response
+      }).promise();
+      await connect.listQuickConnects(targetInstanceIdParam, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else    { 
+                console.log('TARGETQC', data)
+                TARGETQC = data;
+                };            // successful response
+      }).promise();
 }
 
 handleConnectAPI();
-
-async function listContactFlows(instanceId) {
-    const params = {
-        InstanceId: instanceId
-    };
-
-    try {
-        const response = await connect.listContactFlows(params).promise();
-        return response;
-    } catch (error) {
-        console.error(error);
-    }
-}
 
 async function describeContactFlow(instanceId, flowId, region) {
     AWS.config.update({ region });
