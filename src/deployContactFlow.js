@@ -164,18 +164,21 @@ for (let i = 0; i < contentActions.length; i++) {
     let arn = getQueueId(PRIMARYQUEUES, obj.Parameters.QueueId, TARGETQUEUES);
     if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.QueueId, 'g'), arn)};
   } 
-  // else if (obj.Type === 'UpdateContactEventHooks') {
-  //   if (obj.Parameters.EventHooks.AgentWhisper) {
-  //     let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.AgentWhisper, TARGETCFS);
-  //     TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.AgentWhisper, 'g'), arn);
-  //   } else if (obj.Parameters.EventHooks.CustomerQueue) {
-  //     let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerQueue, TARGETCFS);
-  //     TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerQueue, 'g'), arn);
-  //   } else if (obj.Parameters.EventHooks.CustomerRemaining) {
-  //     let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerRemaining, TARGETCFS);
-  //     TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerRemaining, 'g'), arn);
-  //   }
-  // } else if (obj.Type === 'InvokeLambdaFunction') {
+  else if (obj.Type === 'UpdateContactEventHooks') {
+    if (obj.Parameters.EventHooks.AgentWhisper) {
+      let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.AgentWhisper, TARGETCFS);
+      if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.AgentWhisper, 'g'), arn)};
+    } 
+  else if (obj.Parameters.EventHooks.CustomerQueue) {
+      let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerQueue, TARGETCFS);
+      if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerQueue, 'g'), arn)};
+    } 
+  else if (obj.Parameters.EventHooks.CustomerRemaining) {
+      let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerRemaining, TARGETCFS);
+      if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerRemaining, 'g'), arn)};
+    }
+  } 
+  // else if (obj.Type === 'InvokeLambdaFunction') {
   //   let lambdaId = getLambdaId(PRIMARYLAMBDA, obj.Parameters.LambdaFunctionARN, TARGETLAMBDA);
   // } else if (obj.Type === 'TransferToFlow') {
   //   let arn = getFlowId(PRIMARYCFS, obj.Parameters.ContactFlowId, TARGETCFS);
@@ -244,9 +247,9 @@ function getPromptId(primary, searchId, target) {
       console.log('Prompt Not Found Please Create prompt');
       return undefined;
     }
-  }
+}
 
-  function getLexBotId(primary, botId, target) {
+function getLexBotId(primary, botId, target) {
     const pl = primary;
     const tl = target;
     let fName = '';
@@ -272,9 +275,9 @@ function getPromptId(primary, searchId, target) {
       console.log('Bot Not Found Please Create Bot');
       return undefined;
     }
-  }
+}
 
-  function getQueueId(primary, queueId, target) {
+function getQueueId(primary, queueId, target) {
     const pl = primary;
     const tl = target;
     let fName = '';
@@ -296,5 +299,31 @@ function getPromptId(primary, searchId, target) {
     } else {
       console.log('create queue');
       return undefined;
+    }
+}
+
+function getFlowId(primary, flowId, target) {
+    const pl = primary;
+    const tl = target;
+    let fName = '';
+    let rId = '';
+  
+    console.log(`Searching for flowId : ${flowId}`);
+  
+    const primaryObj = pl && pl.ContactFlowSummaryList ? pl.ContactFlowSummaryList.find(obj => obj.Arn === flowId) : undefined;
+    if (primaryObj) {
+      fName = primaryObj.Name;
+      console.log(`Found flow name : ${fName}`);
+    }
+  
+    console.log(`Searching for flow name : ${fName}`);
+  
+    const targetObj = tl && tl.ContactFlowSummaryList ? tl.ContactFlowSummaryList.find(obj => obj.Name === fName) : undefined;
+    if (targetObj) {
+      rId = targetObj.Arn;
+      console.log(`Found flow id : ${rId}`);
+      return rId;
+    } else {
+      console.log('create contact flow');
     }
   }
