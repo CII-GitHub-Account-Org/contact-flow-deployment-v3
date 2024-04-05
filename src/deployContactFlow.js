@@ -162,6 +162,7 @@ if (flowArn) {
 
 const contentActions = JSON.parse(content).Actions;
 // console.log("contentActions", contentActions);
+
 for (let i = 0; i < contentActions.length; i++) {
   let obj = contentActions[i];
   console.log(`Type value: ${obj.Type}`);
@@ -199,14 +200,14 @@ for (let i = 0; i < contentActions.length; i++) {
   } 
   else if (obj.Type === 'TransferToFlow') {
     let arn = getFlowId(PRIMARYCFS, obj.Parameters.ContactFlowId, TARGETCFS);
-    TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.ContactFlowId, 'g'), arn);
+    if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.ContactFlowId, 'g'), arn)};
   } 
-  // else if (obj.Type === 'CheckHoursOfOperation') {
-  //   let arn = getHOPId(PRIMARYHOP, obj.Parameters.HoursOfOperationId, TARGETHOP);
-  //   TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.HoursOfOperationId, 'g'), arn);
-  // } else {
-  //   console.log(`No handling for ${JSON.stringify(obj.Parameters)} of type : ${obj.Type}`);
-  // }
+  else if (obj.Type === 'CheckHoursOfOperation') {
+    let arn = getHOPId(PRIMARYHOP, obj.Parameters.HoursOfOperationId, TARGETHOP);
+    if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.HoursOfOperationId, 'g'), arn)};
+  } else {
+    console.log(`No handling for ${JSON.stringify(obj.Parameters)} of type : ${obj.Type}`);
+  }
 }
 
 function getFlowId(primary, flowId, target) {
