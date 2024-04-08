@@ -543,7 +543,7 @@ async function listContactFlowFunc (params, retryAttempts) {
       doRetry = false;
       try {
         let listContactFlows = ''; 
-        listContactFlows = await connect.listContactFlows(instanceIdParamList, function(err, data) {
+        listContactFlows = await connect.listContactFlows(params, function(err, data) {
           if (err) console.log(err, err.stack); // an error occurred
           else    { 
                   // console.log('PRIMARYCFS', data)
