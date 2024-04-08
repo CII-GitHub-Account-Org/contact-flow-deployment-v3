@@ -8,6 +8,7 @@ const TRAGETINSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/561af
 // let contactFlow = ContactFlowName
 // let contactFlowId = contactFlow.split(':')
 let FLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
+let FLOWNAME = 'copilot-test-contact-flow';
 let isExist;
 let TARGETJSON ='';
 let TARGETFLOWID = '';
@@ -214,13 +215,13 @@ for (let i = 0; i < contentActions.length; i++) {
   }
 }
 
-async function createOrUpdateFlow(isExist, FLOWID, type, TARGETJSON, TARGETFLOWID) {
+async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID) {
     isExist = false;
-    TARGETJSON = JSON.stringify(TARGETJSON);
+    TARGETJSON = TARGETJSON;
     if (!isExist) {
         const params = {
             InstanceId: TRAGETINSTANCEARN,
-            Name: FLOWID,
+            Name: FLOWNAME,
             Type: type,
             Content: TARGETJSON
         };
@@ -250,7 +251,7 @@ async function createOrUpdateFlow(isExist, FLOWID, type, TARGETJSON, TARGETFLOWI
     }
 }
 
-await createOrUpdateFlow(isExist, FLOWID, type, TARGETJSON, TARGETFLOWID);
+await createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID);
 
 function getFlowId(primary, flowId, target) {
   const pl = primary;
