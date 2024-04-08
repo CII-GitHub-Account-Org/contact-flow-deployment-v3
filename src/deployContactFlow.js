@@ -214,14 +214,15 @@ for (let i = 0; i < contentActions.length; i++) {
   }
 }
 
-async function createOrUpdateFlow(isExist, contactFlowId, type, targetJson, TARGETFLOWID) {
+async function createOrUpdateFlow(isExist, FLOWID, type, TARGETJSON, TARGETFLOWID) {
     isExist = false;
+    TARGETJSON = JSON.stringify(TARGETJSON);
     if (!isExist) {
         const params = {
             InstanceId: TRAGETINSTANCEARN,
-            Name: contactFlowId[0],
+            Name: FLOWID,
             Type: type,
-            Content: targetJson
+            Content: TARGETJSON
         };
 
         try {
@@ -237,7 +238,7 @@ async function createOrUpdateFlow(isExist, contactFlowId, type, targetJson, TARG
         const params = {
             InstanceId: process.env.TRAGETINSTANCEARN,
             ContactFlowId: TARGETFLOWID,
-            Content: targetJson
+            Content: TARGETJSON
         };
 
         try {
