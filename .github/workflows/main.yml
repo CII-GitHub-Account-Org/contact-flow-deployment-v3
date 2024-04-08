@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  deploy_dev_to_qa:
     runs-on: ubuntu-latest
     permissions:
       id-token: write # Needed to authenticate with GitHub Packages
@@ -38,5 +38,8 @@ jobs:
         run: |
           cd src
           node deployContactFlow.js
+        env:
+          SOURCE_INSTANCEARN: ${{ secrets.DEV_INSTANCEARN }}
+          TRAGET_INSTANCEARN: ${{ secrets.QA_INSTANCEARN }}
 
 

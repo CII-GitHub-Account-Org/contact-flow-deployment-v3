@@ -1,8 +1,12 @@
 import AWS from 'aws-sdk';
 const connect = new AWS.Connect();
 
-const INSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/4bbee21d-72b8-442b-af39-dce4128ca77e';
-const TRAGETINSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e';
+// const INSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/4bbee21d-72b8-442b-af39-dce4128ca77e';
+// const TRAGETINSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e';
+const INSTANCEARN = process.env.SOURCE_INSTANCEARN;
+const TRAGETINSTANCEARN = process.env.TRAGET_INSTANCEARN;
+console.log('INSTANCEARN', INSTANCEARN);
+console.log('TRAGETINSTANCEARN', TRAGETINSTANCEARN);
 let FLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
 let FLOWNAME = 'copilot-test-contact-flow';
 let type = 'CONTACT_FLOW';
