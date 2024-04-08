@@ -7,8 +7,7 @@ const INSTANCEARN = process.env.SOURCE_INSTANCEARN;
 const TRAGETINSTANCEARN = process.env.TRAGET_INSTANCEARN;
 console.log('INSTANCEARN', INSTANCEARN);
 console.log('TRAGETINSTANCEARN', TRAGETINSTANCEARN);
-// let FLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
-// let FLOWID = '0b2985cd-e5e9-4a64-8190-b73e294cec59';
+let PRIMARYFLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
 let FLOWNAME = 'copilot-test-contact-flow';
 let type = 'CONTACT_FLOW';
 let isExist;
@@ -80,7 +79,7 @@ async function handleConnectAPI(){
       await connect.listContactFlows(instanceIdParamList, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('PRIMARYCFS', data)
+                // console.log('PRIMARYCFS', data)
                 PRIMARYCFS = data;
                 };            // successful response
       }).promise();
@@ -91,7 +90,7 @@ async function handleConnectAPI(){
       await connect.listContactFlows(instanceIdTargetParamList, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('TARGETCFS', data)
+                // console.log('TARGETCFS', data)
                 TARGETCFS = data;
                 };            // successful response
       }).promise();
@@ -155,10 +154,28 @@ async function handleConnectAPI(){
 
 await handleConnectAPI();
 // flowArn = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e/contact-flow/30a04cc3-44c6-4f30-aeb2-13155235c6d3';
-let PRIMARYFLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
-// let primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
-// PRIMARYFLOWID = primaryFlowArn.split('/')[3];
-// console.log('PRIMARYFLOWID', PRIMARYFLOWID);
+
+async function describeContactFlow(instanceId, PRIMARYFLOWID, region) {
+  AWS.config.update({ region });
+  const params = {
+      InstanceId: instanceId,
+      ContactFlowId: PRIMARYFLOWID
+  };
+  let data = await connect.describeContactFlow(params).promise();
+  return data;
+}
+
+const data = await describeContactFlow(INSTANCEARN, PRIMARYFLOWID, 'us-east-1');
+console.log('Data:',data);
+const flow = data;
+const content = flow.ContactFlow.Content;
+TARGETJSON = content;
+
+
+
+let primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
+PRIMARYFLOWID = primaryFlowArn.split('/')[3];
+console.log('PRIMARYFLOWID', PRIMARYFLOWID);
 
 let flowArn = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
 if (flowArn) {
@@ -171,23 +188,9 @@ if (flowArn) {
 }
 
 
-async function describeContactFlow(instanceId, PRIMARYFLOWID, region) {
-    AWS.config.update({ region });
-    const params = {
-        InstanceId: instanceId,
-        ContactFlowId: PRIMARYFLOWID
-    };
-    let data = await connect.describeContactFlow(params).promise();
-    return data;
-}
 
-const data = await describeContactFlow(INSTANCEARN, PRIMARYFLOWID, 'us-east-1');
-console.log('Data:',data);
-const flow = data;
-const content = flow.ContactFlow.Content;
-TARGETJSON = content;
-// const contentActions = JSON.parse(content).Actions;
-// console.log("contentActions", contentActions);
+const contentActions = JSON.parse(content).Actions;
+console.log("contentActions", contentActions);
 
 // for (let i = 0; i < contentActions.length; i++) {
 //   let obj = contentActions[i];
