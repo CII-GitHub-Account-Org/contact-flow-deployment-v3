@@ -150,8 +150,8 @@ const data = await describeContactFlow(INSTANCEARN, 'a222d77e-f37a-42f6-b00e-9a3
 const flow = data;
 const content = flow.ContactFlow.Content;
 TARGETJSON = content;
-// checkFlowArn(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
-const flowArn = flow.ContactFlow.Arn;
+const flowArn = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
+// const flowArn = flow.ContactFlow.Arn;
 // console.log('flowArn: ', flowArn)
 if (flowArn) {
     let flowArnSplit = flowArn.split('/');
@@ -163,7 +163,7 @@ if (flowArn) {
 }
 
 const contentActions = JSON.parse(content).Actions;
-// console.log("contentActions", contentActions);
+console.log("contentActions", contentActions);
 
 for (let i = 0; i < contentActions.length; i++) {
   let obj = contentActions[i];
@@ -239,10 +239,11 @@ async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLO
             ContactFlowId: TARGETFLOWID,
             Content: TARGETJSON
         };
-
+        console.log("params: ", params);
         try {
             const data = await connect.updateContactFlowContent(params).promise();
             console.log(data);
+            console.log('FLOW HAS BEEN UPDATED');
         } catch (error) {
             console.error(error);
         }
@@ -273,7 +274,7 @@ function getFlowId(primary, flowId, target) {
     console.log(`Found flow id : ${rId}`);
     return rId;
   } else {
-    console.log('create contact flow');
+    console.log('Not Found Contact Flow, Please create contact flow');
     return undefined;
   }
 }
