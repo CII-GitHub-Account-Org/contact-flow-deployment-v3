@@ -92,14 +92,14 @@ async function handleConnectAPI(){
       await connect.listQueues(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('PRIMARYQUEUES', data)
+                // console.log('PRIMARYQUEUES', data)
                 PRIMARYQUEUES = data;
                 };            // successful response
       }).promise();
       await connect.listQueues(targetInstanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('TARGETQUEUES', data)
+                // console.log('TARGETQUEUES', data)
                 TARGETQUEUES = data;
                 };            // successful response
       }).promise();
@@ -176,10 +176,12 @@ for (let i = 0; i < contentActions.length; i++) {
       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.PromptId, 'g'), arn)};
     }
   } else if (obj.Type === 'ConnectParticipantWithLexBot') {
+    console.log('inside lexbot');
     console.log('LEXBOT HANLDING YET TO DO');
     // let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
     // handle lex bot
   } else if (obj.Type === 'UpdateContactTargetQueue') {
+    console.log('inside queue');
     let arn = getQueueId(PRIMARYQUEUES, obj.Parameters.QueueId, TARGETQUEUES);
     if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.QueueId, 'g'), arn)};
   } 
@@ -213,6 +215,7 @@ for (let i = 0; i < contentActions.length; i++) {
 }
 
 async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID) {
+    isExist = false;
     console.log('isExist: ',isExist);
     TARGETJSON = TARGETJSON;
     if (!isExist) {
@@ -334,7 +337,7 @@ function getQueueId(primary, queueId, target) {
     console.log(`Found flow id : ${rId}`);
     return rId;
   } else {
-    console.log('create queue');
+    console.log('Queue Not Found Please Create queue');
     return undefined;
   }
 }
@@ -397,7 +400,7 @@ function getHOPId(primary, hopId, target) {
           console.log(`Found id : ${rId}`);
           return rId;
       } else if (i === tl.HoursOfOperationSummaryList.length - 1) {
-          console.log('create hop');
+          console.log('HOP Not Found Please Create HOP');
           return undefined;
       }
   }
