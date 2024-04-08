@@ -150,9 +150,10 @@ const data = await describeContactFlow(INSTANCEARN, 'a222d77e-f37a-42f6-b00e-9a3
 const flow = data;
 const content = flow.ContactFlow.Content;
 TARGETJSON = content;
-const flowArn = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
+let flowArn = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
 // const flowArn = flow.ContactFlow.Arn;
 // console.log('flowArn: ', flowArn)
+flowArn = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e/contact-flow/30a04cc3-44c6-4f30-aeb2-13155235c6d3';
 if (flowArn) {
     let flowArnSplit = flowArn.split('/');
     TARGETFLOWID = flowArnSplit[3];
