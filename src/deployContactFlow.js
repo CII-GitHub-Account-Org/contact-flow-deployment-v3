@@ -192,6 +192,7 @@ if (!primaryFlowArn){
     primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
      // If primaryFlowArn exists, break the loop
      if (primaryFlowArn) {
+      console.log('primaryFlowArn', primaryFlowArn);
       break;
     }
   }
