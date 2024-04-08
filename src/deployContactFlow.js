@@ -176,8 +176,8 @@ for (let i = 0; i < contentActions.length; i++) {
       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.PromptId, 'g'), arn)};
     }
   } else if (obj.Type === 'ConnectParticipantWithLexBot') {
-    console.log('lexbot');
-    let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
+    console.log('LEXBOT HANLDING YET TO DO');
+    // let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
     // handle lex bot
   } else if (obj.Type === 'UpdateContactTargetQueue') {
     let arn = getQueueId(PRIMARYQUEUES, obj.Parameters.QueueId, TARGETQUEUES);
