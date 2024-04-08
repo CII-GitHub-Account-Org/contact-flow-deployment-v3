@@ -182,118 +182,61 @@ async function describeContactFlow(instanceId, PRIMARYFLOWID, region) {
 }
 
 const data = await describeContactFlow(INSTANCEARN, PRIMARYFLOWID, 'us-east-1');
-// console.log('Data:',data);
+console.log('Data:',data);
 const flow = data;
 const content = flow.ContactFlow.Content;
 TARGETJSON = content;
-// let flowName = getFlowName(PRIMARYCFS, flow.ContactFlow.Arn);
-// if (!flowName){
-//   const instanceIdParamList = {
-//     InstanceId: INSTANCEARN // replace with your instance id
-//   };
-//   while (!(PRIMARYCFS.nextToken === '')) {
-//     const token = PRIMARYCFS.nextToken;
-//     instanceIdParamList['nextToken'] = token;
-//     PRIMARYCFS='';
-//     PRIMARYCFS =  await connect.listContactFlows(instanceIdParamList, function(err, data) {
-//       if (err) console.log(err, err.stack); // an error occurred
-//       else    { 
-//               // console.log('PRIMARYCFS', data)
-//               PRIMARYCFS = data;
-//               };            // successful response
-//     }).promise();
-//     flowName = getFlowName(PRIMARYCFS, flow.ContactFlow.Arn);
-//     console.log('flowName: ', flowName);
-//        // If flowName is found, break the loop
-//        if (flowName) {
-//         break;
-//       }
-//   }
-// }
-// console.log('flowName: ', flowName)
-
-// let flowArn = getFlowId(flowName, flow.ContactFlow.Arn, TARGETCFS);
-// if (!flowArn){
-//   const instanceIdParamList = {
-//     InstanceId: INSTANCEARN // replace with your instance id
-//   };
-//   while (!(TARGETCFS.nextToken === '')) {
-//     const token = PRIMARYCFS.nextToken;
-//     instanceIdParamList['nextToken'] = token;
-//     TARGETCFS='';
-//     TARGETCFS =  await connect.listContactFlows(instanceIdParamList, function(err, data) {
-//       if (err) console.log(err, err.stack); // an error occurred
-//       else    { 
-//               // console.log('PRIMARYCFS', data)
-//               TARGETCFS = data;
-//               };            // successful response
-//     }).promise();
-//     flowArn = getFlowId(flowName, flow.ContactFlow.Arn, TARGETCFS);
-//     console.log('flowArn: ', flowArn);
-//        // If flowArn is found, break the loop
-//        if (flowArn) {
-//         break;
-//       }
-//   }
- 
-// }
-
-// const flowArn = flow.ContactFlow.Arn;
-// console.log('flowArn: ', flowArn)
-
-
-
-const contentActions = JSON.parse(content).Actions;
+// const contentActions = JSON.parse(content).Actions;
 // console.log("contentActions", contentActions);
 
-for (let i = 0; i < contentActions.length; i++) {
-  let obj = contentActions[i];
-  console.log(`Type value: ${obj.Type}`);
+// for (let i = 0; i < contentActions.length; i++) {
+//   let obj = contentActions[i];
+//   console.log(`Type value: ${obj.Type}`);
 
-  if (obj.Type === 'MessageParticipant') {
-    if (obj.Parameters.PromptId !== null) {
-      console.log('inside prompt');
-      let arn = getPromptId(PRIMARYPROMPTS, obj.Parameters.PromptId, TARGETPROMPTS);
-      if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.PromptId, 'g'), arn)};
-    }
-  } else if (obj.Type === 'ConnectParticipantWithLexBot') {
-    console.log('inside lexbot');
-    console.log('LEXBOT HANLDING YET TO DO');
-    // let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
-    // handle lex bot
-  } else if (obj.Type === 'UpdateContactTargetQueue') {
-    console.log('inside queue');
-    let arn = getQueueId(PRIMARYQUEUES, obj.Parameters.QueueId, TARGETQUEUES);
-    if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.QueueId, 'g'), arn)};
-  } 
-  else if (obj.Type === 'UpdateContactEventHooks') {
-    if (obj.Parameters.EventHooks.AgentWhisper) {
-      let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.AgentWhisper, TARGETCFS);
-      if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.AgentWhisper, 'g'), arn)};
-    } 
-  else if (obj.Parameters.EventHooks.CustomerQueue) {
-      let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerQueue, TARGETCFS);
-      if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerQueue, 'g'), arn)};
-    } 
-  else if (obj.Parameters.EventHooks.CustomerRemaining) {
-      let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerRemaining, TARGETCFS);
-      if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerRemaining, 'g'), arn)};
-    }
-  } 
-  else if (obj.Type === 'InvokeLambdaFunction') {
-    let lambdaId = getLambdaId(PRIMARYLAMBDA, obj.Parameters.LambdaFunctionARN, TARGETLAMBDA);
-  } 
-  else if (obj.Type === 'TransferToFlow') {
-    let arn = getFlowId(PRIMARYCFS, obj.Parameters.ContactFlowId, TARGETCFS);
-    if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.ContactFlowId, 'g'), arn)};
-  } 
-  else if (obj.Type === 'CheckHoursOfOperation') {
-    let arn = getHOPId(PRIMARYHOP, obj.Parameters.HoursOfOperationId, TARGETHOP);
-    if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.HoursOfOperationId, 'g'), arn)};
-  } else {
-    console.log(`No handling for ${JSON.stringify(obj.Parameters)} of type : ${obj.Type}`);
-  }
-}
+//   if (obj.Type === 'MessageParticipant') {
+//     if (obj.Parameters.PromptId !== null) {
+//       console.log('inside prompt');
+//       let arn = getPromptId(PRIMARYPROMPTS, obj.Parameters.PromptId, TARGETPROMPTS);
+//       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.PromptId, 'g'), arn)};
+//     }
+//   } else if (obj.Type === 'ConnectParticipantWithLexBot') {
+//     console.log('inside lexbot');
+//     console.log('LEXBOT HANLDING YET TO DO');
+//     // let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
+//     // handle lex bot
+//   } else if (obj.Type === 'UpdateContactTargetQueue') {
+//     console.log('inside queue');
+//     let arn = getQueueId(PRIMARYQUEUES, obj.Parameters.QueueId, TARGETQUEUES);
+//     if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.QueueId, 'g'), arn)};
+//   } 
+//   else if (obj.Type === 'UpdateContactEventHooks') {
+//     if (obj.Parameters.EventHooks.AgentWhisper) {
+//       let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.AgentWhisper, TARGETCFS);
+//       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.AgentWhisper, 'g'), arn)};
+//     } 
+//   else if (obj.Parameters.EventHooks.CustomerQueue) {
+//       let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerQueue, TARGETCFS);
+//       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerQueue, 'g'), arn)};
+//     } 
+//   else if (obj.Parameters.EventHooks.CustomerRemaining) {
+//       let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerRemaining, TARGETCFS);
+//       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerRemaining, 'g'), arn)};
+//     }
+//   } 
+//   else if (obj.Type === 'InvokeLambdaFunction') {
+//     let lambdaId = getLambdaId(PRIMARYLAMBDA, obj.Parameters.LambdaFunctionARN, TARGETLAMBDA);
+//   } 
+//   else if (obj.Type === 'TransferToFlow') {
+//     let arn = getFlowId(PRIMARYCFS, obj.Parameters.ContactFlowId, TARGETCFS);
+//     if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.ContactFlowId, 'g'), arn)};
+//   } 
+//   else if (obj.Type === 'CheckHoursOfOperation') {
+//     let arn = getHOPId(PRIMARYHOP, obj.Parameters.HoursOfOperationId, TARGETHOP);
+//     if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.HoursOfOperationId, 'g'), arn)};
+//   } else {
+//     console.log(`No handling for ${JSON.stringify(obj.Parameters)} of type : ${obj.Type}`);
+//   }
+// }
 
 async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID) {
     // isExist = false;
@@ -332,26 +275,7 @@ async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLO
     }
 }
 
-await createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID);
-
-// function getFlowName(primary, flowId) {
-//   const pl = primary;
-//   let fName = '';
-
-
-//   console.log(`Searching for flowId : ${flowId}`);
-
-//   const primaryObj = pl && pl.ContactFlowSummaryList ? pl.ContactFlowSummaryList.find(obj => obj.Arn === flowId) : undefined;
-//   if (primaryObj) {
-//     fName = primaryObj.Name;
-//     console.log(`Found flow name : ${fName}`);
-//     return fName;
-//   } else {
-//     return undefined
-//   }
-
-// }
-
+// await createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID);
 
 
 function getPrimaryFlowId(primary, flowName) {
@@ -402,10 +326,6 @@ function getFlowId(primary, flowId, target) {
     return undefined;
   }
 }
-
-
-
-
 
 function getLambdaId(primary, lambdaId, target) {
   const pl = primary;
@@ -588,70 +508,4 @@ function getLexBotId(primary, botId, target) {
       return undefined;
     }
 }
-
-
-// const instanceIdParamList = {
-//   InstanceId: INSTANCEARN // replace with your instance id
-// };
-// while (!(TARGETCFS.nextToken === '')) {
-//   const token = PRIMARYCFS.nextToken;
-//   instanceIdParamList['nextToken'] = token;
-//   TARGETCFS='';
-//   TARGETCFS =  await connect.listContactFlows(instanceIdParamList, function(err, data) {
-//     if (err) console.log(err, err.stack); // an error occurred
-//     else    { 
-//             // console.log('PRIMARYCFS', data)
-//             TARGETCFS = data;
-//             };            // successful response
-//   }).promise();
-
-// const listcontactFlowFunc = async function(instanceIdParamList, context, retryAttempts) {
-//   try {
-//     let doRetry = false;
-//     do {
-//       doRetry = false;
-//       try {
-//         let listCFs = '';
-//         await connect.listContactFlows(instanceIdParamList, function(err, data) {
-//           if (err) console.log(err, err.stack); // an error occurred
-//           else    { 
-//                   // console.log('PRIMARYCFS', data)
-//                   listCFs = data;
-//                   };            // successful response
-//         }).promise();
-//         if (listCFs) {
-//           return listCFs;
-//         } else {
-//           return null;
-//         }
-//       } catch (error) {
-//         LOGGER.error(
-//           'LambdaHandler::agentDetailsFunc::error::',
-//           convertToSingleLine(error)
-//         );
-//         if (error.code === 'TooManyRequestsException' && retryAttempts > 0) {
-//           await sleep(parseInt(process.env.API_RETRY_WAIT_TIME, 10) || 1000);
-//           // return contactLensApi(event, --retryAttempts);
-//           --retryAttempts;
-//           LOGGER.info(
-//             'LambdaHandler::agentDetailsFunc::retryAttempts::',
-//             retryAttempts
-//           );
-//           doRetry = true;
-//           LOGGER.info('LambdaHandler::agentDetailsFunc::doRetry::', doRetry);
-//           LOGGER.info(
-//             'LambdaHandler::agentDetailsFunc::Lambda remaining time in ms::',
-//             context.getRemainingTimeInMillis()
-//           );
-//         } else {
-//           return error;
-//         }
-//       }
-//     } while (doRetry);
-//   } catch (error) {
-//     LOGGER.error('LambdaHandler::agentDetailsFunc::error::', error);
-//     return error;
-//   }
-// };
-
 
