@@ -250,7 +250,7 @@ async function createOrUpdateFlow(isExist, FLOWID, type, TARGETJSON, TARGETFLOWI
     }
 }
 
-// createOrUpdateFlow(isExist, FLOWID, type, TARGETJSON, TARGETFLOWID);
+await createOrUpdateFlow(isExist, FLOWID, type, TARGETJSON, TARGETFLOWID);
 
 function getFlowId(primary, flowId, target) {
   const pl = primary;
