@@ -536,9 +536,7 @@ function getLexBotId(primary, botId, target) {
     }
 }
 
-
-
-const listContactFlowFunc = async function(params, retryAttempts) {
+async function listContactFlowFunc (params, retryAttempts) {
   try {
     let doRetry = false;
     do {
