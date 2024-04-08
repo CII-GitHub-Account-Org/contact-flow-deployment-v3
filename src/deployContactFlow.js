@@ -69,12 +69,12 @@ async function handleConnectAPI(){
         const instanceIdParamList = {
             InstanceId: INSTANCEARN,
             ContactFlowTypes: [
-            CONTACT_FLOW
+              CONTACTFLOWTYPE
           ]};
        const instanceIdTargetParamList = {
          InstanceId: TRAGETINSTANCEARN,
          ContactFlowTypes: [
-          CONTACT_FLOW
+          CONTACTFLOWTYPE
         ]};
 
     
