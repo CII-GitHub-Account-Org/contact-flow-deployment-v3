@@ -69,12 +69,14 @@ async function handleConnectAPI(){
       
       const instanceIdParamList = {
         InstanceId: INSTANCEARN, // replace with your instance id
-        maxResults: 1000
+        MaxResults: 1000
       };
       const instanceIdTargetParamList = {
         InstanceId: TRAGETINSTANCEARN, // replace with your instance id
-        maxResults: 1000
+        MaxResults: 1000
       };
+
+    
       await connect.listContactFlows(instanceIdParamList, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
