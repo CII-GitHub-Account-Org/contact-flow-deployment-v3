@@ -81,7 +81,7 @@ async function handleConnectAPI(){
       await connect.listContactFlows(instanceIdParamList, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                // console.log('PRIMARYCFS', data)
+                console.log('PRIMARYCFS', data)
                 PRIMARYCFS = data;
                 };            // successful response
       }).promise();
@@ -173,6 +173,31 @@ TARGETJSON = content;
 
 
 let primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
+let instanceIdTargetParamListP = {
+  InstanceId: TRAGETINSTANCEARN,
+  ContactFlowTypes: [
+   CONTACTFLOWTYPE
+ ],
+ MaxResults: 1000,
+};
+
+
+if (!primaryFlowArn){
+  while (!(PRIMARYCFS.nextToken === '')) {
+
+    const token = PRIMARYCFS.nextToken;
+    instanceIdTargetParamListP['NextToken'] = token;
+    console.log('instanceIdTargetParamListP',instanceIdTargetParamListP);
+    PRIMARYCFS = await listContactFlowFunc(instanceIdTargetParamListP, 3);
+    primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
+     // If primaryFlowArn exists, break the loop
+     if (primaryFlowArn) {
+      break;
+    }
+  }
+}
+
+
 PRIMARYFLOWID = primaryFlowArn.split('/')[3];
 console.log('PRIMARYFLOWID', PRIMARYFLOWID);
 
@@ -511,3 +536,44 @@ function getLexBotId(primary, botId, target) {
     }
 }
 
+
+
+const listContactFlowFunc = async function(params, retryAttempts) {
+  try {
+    let doRetry = false;
+    do {
+      doRetry = false;
+      try {
+        let listContactFlows = ''; 
+        await connect.listContactFlows(instanceIdParamList, function(err, data) {
+          if (err) console.log(err, err.stack); // an error occurred
+          else    { 
+                  // console.log('PRIMARYCFS', data)
+                  listContactFlows = data;
+                  };            // successful response
+         }).promise();
+        if (listContactFlows) {
+          return listContactFlows;
+        } else {
+          return null;
+        }
+      } catch (error) {
+        LOGGER.error(
+          'error::',
+          convertToSingleLine(error)
+        );
+        if (error.code === 'TooManyRequestsException' && retryAttempts > 0) {
+          await sleep(parseInt(2500, 10) || 1000);
+          --retryAttempts;
+          doRetry = true;
+          LOGGER.info('doRetry::', doRetry);
+        } else {
+          return error;
+        }
+      }
+    } while (doRetry);
+  } catch (error) {
+    LOGGER.error('error::', error);
+    return error;
+  }
+};
