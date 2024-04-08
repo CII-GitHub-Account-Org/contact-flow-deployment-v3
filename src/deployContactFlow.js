@@ -9,7 +9,7 @@ console.log('INSTANCEARN', INSTANCEARN);
 console.log('TRAGETINSTANCEARN', TRAGETINSTANCEARN);
 let PRIMARYFLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
 let FLOWNAME = 'copilot-test-contact-flow';
-let type = 'CONTACT_FLOW';
+let CONTACTFLOWTYPE = 'CONTACT_FLOW';
 let isExist;
 let TARGETJSON ='';
 let TARGETFLOWID = '';
@@ -66,34 +66,33 @@ async function handleConnectAPI(){
                 };            // successful response
       }).promise();
       
-      // const instanceIdParamList = {
-      //   InstanceId: INSTANCEARN, // replace with your instance id
-      //   MaxResults: 1000
-      // };
-      // const instanceIdTargetParamList = {
-      //   InstanceId: TRAGETINSTANCEARN, // replace with your instance id
-      //   MaxResults: 1000
-      // };
+        const instanceIdParamList = {
+            InstanceId: INSTANCEARN,
+            ContactFlowTypes: [
+            CONTACT_FLOW
+          ]};
+       const instanceIdTargetParamList = {
+         InstanceId: TRAGETINSTANCEARN,
+         ContactFlowTypes: [
+          CONTACT_FLOW
+        ]};
 
     
-      // await connect.listContactFlows(instanceIdParamList, function(err, data) {
-      //   if (err) console.log(err, err.stack); // an error occurred
-      //   else    { 
-      //           // console.log('PRIMARYCFS', data)
-      //           PRIMARYCFS = data;
-      //           };            // successful response
-      // }).promise();
+      await connect.listContactFlows(instanceIdParamList, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else    { 
+                // console.log('PRIMARYCFS', data)
+                PRIMARYCFS = data;
+                };            // successful response
+      }).promise();
 
-     
-
-
-      // await connect.listContactFlows(instanceIdTargetParamList, function(err, data) {
-      //   if (err) console.log(err, err.stack); // an error occurred
-      //   else    { 
-      //           // console.log('TARGETCFS', data)
-      //           TARGETCFS = data;
-      //           };            // successful response
-      // }).promise();
+      await connect.listContactFlows(instanceIdTargetParamList, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else    { 
+                // console.log('TARGETCFS', data)
+                TARGETCFS = data;
+                };            // successful response
+      }).promise();
       await connect.listUsers(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
@@ -241,14 +240,14 @@ for (let i = 0; i < contentActions.length; i++) {
   }
 }
 
-async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID) {
+async function createOrUpdateFlow(isExist, FLOWNAME, CONTACTFLOWTYPE, TARGETJSON, TARGETFLOWID) {
     isExist = false;
     console.log('isExist: ',isExist);
     if (!isExist) {
         const params = {
             InstanceId: TRAGETINSTANCEARN,
             Name: FLOWNAME,
-            Type: type,
+            Type: CONTACTFLOWTYPE,
             Content: TARGETJSON
         };
         console.log("params: ", params);
@@ -278,7 +277,7 @@ async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLO
     }
 }
 
-await createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID);
+await createOrUpdateFlow(isExist, FLOWNAME, CONTACTFLOWTYPE, TARGETJSON, TARGETFLOWID);
 
 
 function getPrimaryFlowId(primary, flowName) {
