@@ -178,6 +178,7 @@ if (!flowName){
               };            // successful response
     }).promise();
     flowName = getFlowName(PRIMARYCFS, flow.ContactFlow.Arn);
+    console.log('flowName: ', flowName);
        // If flowName is found, break the loop
        if (flowName) {
         break;
@@ -203,6 +204,7 @@ if (!flowArn){
               };            // successful response
     }).promise();
     flowArn = getFlowId(flowName, flow.ContactFlow.Arn, TARGETCFS);
+    console.log('flowArn: ', flowArn);
        // If flowArn is found, break the loop
        if (flowArn) {
         break;
