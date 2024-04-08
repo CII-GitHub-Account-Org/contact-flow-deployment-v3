@@ -172,9 +172,9 @@ TARGETJSON = content;
 
 
 
-// let primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
-// PRIMARYFLOWID = primaryFlowArn.split('/')[3];
-// console.log('PRIMARYFLOWID', PRIMARYFLOWID);
+let primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
+PRIMARYFLOWID = primaryFlowArn.split('/')[3];
+console.log('PRIMARYFLOWID', PRIMARYFLOWID);
 
 // let flowArn = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
 // if (flowArn) {
