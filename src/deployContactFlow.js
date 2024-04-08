@@ -164,8 +164,8 @@ async function describeContactFlow(instanceId, PRIMARYFLOWID, region) {
   let data = await connect.describeContactFlow(params).promise();
   return data;
 }
-
 const data = await describeContactFlow(INSTANCEARN, PRIMARYFLOWID, 'us-east-1');
+
 console.log('Data:',data);
 const flow = data;
 const content = flow.ContactFlow.Content;
@@ -173,24 +173,24 @@ TARGETJSON = content;
 
 
 
-let primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
-PRIMARYFLOWID = primaryFlowArn.split('/')[3];
-console.log('PRIMARYFLOWID', PRIMARYFLOWID);
+// let primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
+// PRIMARYFLOWID = primaryFlowArn.split('/')[3];
+// console.log('PRIMARYFLOWID', PRIMARYFLOWID);
 
-let flowArn = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
-if (flowArn) {
-    let flowArnSplit = flowArn.split('/');
-    TARGETFLOWID = flowArnSplit[3];
-    isExist = true;
-    console.log(`Need to update flowId : ${TARGETFLOWID}`);
-} else {
-    isExist = false;
-}
+// let flowArn = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
+// if (flowArn) {
+//     let flowArnSplit = flowArn.split('/');
+//     TARGETFLOWID = flowArnSplit[3];
+//     isExist = true;
+//     console.log(`Need to update flowId : ${TARGETFLOWID}`);
+// } else {
+//     isExist = false;
+// }
 
 
 
-const contentActions = JSON.parse(content).Actions;
-console.log("contentActions", contentActions);
+// const contentActions = JSON.parse(content).Actions;
+// console.log("contentActions", contentActions);
 
 // for (let i = 0; i < contentActions.length; i++) {
 //   let obj = contentActions[i];
