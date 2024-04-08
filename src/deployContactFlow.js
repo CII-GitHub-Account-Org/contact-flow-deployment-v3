@@ -556,7 +556,7 @@ async function listContactFlowFunc (params, retryAttempts) {
           return null;
         }
       } catch (error) {
-        LOGGER.error(
+        console.log(
           'error::',
           convertToSingleLine(error)
         );
@@ -564,14 +564,14 @@ async function listContactFlowFunc (params, retryAttempts) {
           await sleep(parseInt(2500, 10) || 1000);
           --retryAttempts;
           doRetry = true;
-          LOGGER.info('doRetry::', doRetry);
+          console.log('doRetry::', doRetry);
         } else {
           return error;
         }
       }
     } while (doRetry);
   } catch (error) {
-    LOGGER.error('error::', error);
+    console.log('error::', error);
     return error;
   }
 };
