@@ -5,6 +5,9 @@ config();
 
 const INSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/4bbee21d-72b8-442b-af39-dce4128ca77e';
 const TRAGETINSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e';
+// let contactFlow = ContactFlowName
+// let contactFlowId = contactFlow.split(':')
+let FLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
 let isExist;
 let TARGETJSON ='';
 let TARGETFLOWID = '';
@@ -22,6 +25,7 @@ let PRIMARYQC = '';
 let TARGETQC = '';
 let PRIMARYHOP = '';
 let TARGETHOP = '';
+let type = 'CONTACT_FLOW';
 
 async function handleConnectAPI(){
     const instanceIdParam = {
@@ -118,14 +122,14 @@ async function handleConnectAPI(){
       await connect.listHoursOfOperations(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('PRIMARYHOP', data)
+                // console.log('PRIMARYHOP', data)
                 PRIMARYHOP = data;
                 };            // successful response
       }).promise();
       await connect.listHoursOfOperations(targetInstanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('TARGETHOP', data)
+                // console.log('TARGETHOP', data)
                 TARGETHOP = data;
                 };            // successful response
       }).promise();
@@ -209,6 +213,43 @@ for (let i = 0; i < contentActions.length; i++) {
     console.log(`No handling for ${JSON.stringify(obj.Parameters)} of type : ${obj.Type}`);
   }
 }
+
+async function createOrUpdateFlow(isExist, contactFlowId, type, targetJson, TARGETFLOWID) {
+    isExist = false;
+    if (!isExist) {
+        const params = {
+            InstanceId: TRAGETINSTANCEARN,
+            Name: contactFlowId[0],
+            Type: type,
+            Content: targetJson
+        };
+
+        try {
+            const data = await connect.createContactFlow(params).promise();
+            console.log(data);
+            console.log('NEW FLOW HAS BEEN CREATED');
+        } catch (error) {
+            console.error(error);
+        }
+    } else {
+        console.log("Updating Flow");
+
+        const params = {
+            InstanceId: process.env.TRAGETINSTANCEARN,
+            ContactFlowId: TARGETFLOWID,
+            Content: targetJson
+        };
+
+        try {
+            const data = await connect.updateContactFlowContent(params).promise();
+            console.log(data);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+}
+
+createOrUpdateFlow(isExist, FLOWID, type, TARGETJSON, TARGETFLOWID);
 
 function getFlowId(primary, flowId, target) {
   const pl = primary;
