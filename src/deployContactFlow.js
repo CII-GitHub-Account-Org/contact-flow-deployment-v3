@@ -189,60 +189,60 @@ TARGETJSON = content;
 
 
 
-// const contentActions = JSON.parse(content).Actions;
-// console.log("contentActions", contentActions);
+const contentActions = JSON.parse(content).Actions;
+console.log("contentActions", contentActions);
 
-// for (let i = 0; i < contentActions.length; i++) {
-//   let obj = contentActions[i];
-//   console.log(`Type value: ${obj.Type}`);
+for (let i = 0; i < contentActions.length; i++) {
+  let obj = contentActions[i];
+  console.log(`Type value: ${obj.Type}`);
 
-//   if (obj.Type === 'MessageParticipant') {
-//     if (obj.Parameters.PromptId !== null) {
-//       console.log('inside prompt');
-//       let arn = getPromptId(PRIMARYPROMPTS, obj.Parameters.PromptId, TARGETPROMPTS);
-//       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.PromptId, 'g'), arn)};
-//     }
-//   } else if (obj.Type === 'ConnectParticipantWithLexBot') {
-//     console.log('inside lexbot');
-//     console.log('LEXBOT HANLDING YET TO DO');
-//     // let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
-//     // handle lex bot
-//   } else if (obj.Type === 'UpdateContactTargetQueue') {
-//     console.log('inside queue');
-//     let arn = getQueueId(PRIMARYQUEUES, obj.Parameters.QueueId, TARGETQUEUES);
-//     if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.QueueId, 'g'), arn)};
-//   } 
-//   else if (obj.Type === 'UpdateContactEventHooks') {
-//     if (obj.Parameters.EventHooks.AgentWhisper) {
-//       let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.AgentWhisper, TARGETCFS);
-//       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.AgentWhisper, 'g'), arn)};
-//     } 
-//   else if (obj.Parameters.EventHooks.CustomerQueue) {
-//       let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerQueue, TARGETCFS);
-//       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerQueue, 'g'), arn)};
-//     } 
-//   else if (obj.Parameters.EventHooks.CustomerRemaining) {
-//       let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerRemaining, TARGETCFS);
-//       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerRemaining, 'g'), arn)};
-//     }
-//   } 
-//   else if (obj.Type === 'InvokeLambdaFunction') {
-//     let lambdaId = getLambdaId(PRIMARYLAMBDA, obj.Parameters.LambdaFunctionARN, TARGETLAMBDA);
-//   } 
-//   else if (obj.Type === 'TransferToFlow') {
-//     let arn = getFlowId(PRIMARYCFS, obj.Parameters.ContactFlowId, TARGETCFS);
-//     if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.ContactFlowId, 'g'), arn)};
-//   } 
-//   else if (obj.Type === 'CheckHoursOfOperation') {
-//     let arn = getHOPId(PRIMARYHOP, obj.Parameters.HoursOfOperationId, TARGETHOP);
-//     if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.HoursOfOperationId, 'g'), arn)};
-//   } else {
-//     console.log(`No handling for ${JSON.stringify(obj.Parameters)} of type : ${obj.Type}`);
-//   }
-// }
+  if (obj.Type === 'MessageParticipant') {
+    if (obj.Parameters.PromptId !== null) {
+      console.log('inside prompt');
+      let arn = getPromptId(PRIMARYPROMPTS, obj.Parameters.PromptId, TARGETPROMPTS);
+      if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.PromptId, 'g'), arn)};
+    }
+  } else if (obj.Type === 'ConnectParticipantWithLexBot') {
+    console.log('inside lexbot');
+    console.log('LEXBOT HANLDING YET TO DO');
+    // let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
+    // handle lex bot
+  } else if (obj.Type === 'UpdateContactTargetQueue') {
+    console.log('inside queue');
+    let arn = getQueueId(PRIMARYQUEUES, obj.Parameters.QueueId, TARGETQUEUES);
+    if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.QueueId, 'g'), arn)};
+  } 
+  else if (obj.Type === 'UpdateContactEventHooks') {
+    if (obj.Parameters.EventHooks.AgentWhisper) {
+      let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.AgentWhisper, TARGETCFS);
+      if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.AgentWhisper, 'g'), arn)};
+    } 
+  else if (obj.Parameters.EventHooks.CustomerQueue) {
+      let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerQueue, TARGETCFS);
+      if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerQueue, 'g'), arn)};
+    } 
+  else if (obj.Parameters.EventHooks.CustomerRemaining) {
+      let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerRemaining, TARGETCFS);
+      if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerRemaining, 'g'), arn)};
+    }
+  } 
+  else if (obj.Type === 'InvokeLambdaFunction') {
+    let lambdaId = getLambdaId(PRIMARYLAMBDA, obj.Parameters.LambdaFunctionARN, TARGETLAMBDA);
+  } 
+  else if (obj.Type === 'TransferToFlow') {
+    let arn = getFlowId(PRIMARYCFS, obj.Parameters.ContactFlowId, TARGETCFS);
+    if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.ContactFlowId, 'g'), arn)};
+  } 
+  else if (obj.Type === 'CheckHoursOfOperation') {
+    let arn = getHOPId(PRIMARYHOP, obj.Parameters.HoursOfOperationId, TARGETHOP);
+    if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.HoursOfOperationId, 'g'), arn)};
+  } else {
+    console.log(`No handling for ${JSON.stringify(obj.Parameters)} of type : ${obj.Type}`);
+  }
+}
 
 async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID) {
-    // isExist = false;
+    isExist = false;
     console.log('isExist: ',isExist);
     if (!isExist) {
         const params = {
@@ -278,7 +278,7 @@ async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLO
     }
 }
 
-// await createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID);
+await createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID);
 
 
 function getPrimaryFlowId(primary, flowName) {
