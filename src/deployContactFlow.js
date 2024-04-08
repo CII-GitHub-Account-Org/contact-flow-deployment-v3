@@ -66,6 +66,8 @@ async function handleConnectAPI(){
                 TARGETBOT = data;
                 };            // successful response
       }).promise();
+      
+     
       await connect.listContactFlows(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
@@ -73,6 +75,10 @@ async function handleConnectAPI(){
                 PRIMARYCFS = data;
                 };            // successful response
       }).promise();
+
+     
+
+
       await connect.listContactFlows(targetInstanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
@@ -155,10 +161,59 @@ const data = await describeContactFlow(INSTANCEARN, 'a222d77e-f37a-42f6-b00e-9a3
 const flow = data;
 const content = flow.ContactFlow.Content;
 TARGETJSON = content;
-let flowArn = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
+let flowName = getFlowName(PRIMARYCFS, flow.ContactFlow.Arn);
+if (!flowName){
+  const instanceIdParamList = {
+    InstanceId: INSTANCEARN // replace with your instance id
+  };
+  while (!(PRIMARYCFS.nextToken === '')) {
+    const token = PRIMARYCFS.nextToken;
+    instanceIdParamList['nextToken'] = token;
+    PRIMARYCFS='';
+    PRIMARYCFS =  await connect.listContactFlows(instanceIdParamList, function(err, data) {
+      if (err) console.log(err, err.stack); // an error occurred
+      else    { 
+              // console.log('PRIMARYCFS', data)
+              PRIMARYCFS = data;
+              };            // successful response
+    }).promise();
+    flowName = getFlowName(PRIMARYCFS, flow.ContactFlow.Arn);
+       // If flowName is found, break the loop
+       if (flowName) {
+        break;
+      }
+  }
+}
+console.log('flowName: ', flowName)
+
+let flowArn = getFlowId(flowName, flow.ContactFlow.Arn, TARGETCFS);
+if (!flowArn){
+  const instanceIdParamList = {
+    InstanceId: INSTANCEARN // replace with your instance id
+  };
+  while (!(TARGETCFS.nextToken === '')) {
+    const token = PRIMARYCFS.nextToken;
+    instanceIdParamList['nextToken'] = token;
+    TARGETCFS='';
+    TARGETCFS =  await connect.listContactFlows(instanceIdParamList, function(err, data) {
+      if (err) console.log(err, err.stack); // an error occurred
+      else    { 
+              // console.log('PRIMARYCFS', data)
+              TARGETCFS = data;
+              };            // successful response
+    }).promise();
+    flowArn = getFlowId(flowName, flow.ContactFlow.Arn, TARGETCFS);
+       // If flowArn is found, break the loop
+       if (flowArn) {
+        break;
+      }
+  }
+ 
+}
+
 // const flowArn = flow.ContactFlow.Arn;
 // console.log('flowArn: ', flowArn)
-flowArn = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e/contact-flow/30a04cc3-44c6-4f30-aeb2-13155235c6d3';
+// flowArn = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e/contact-flow/30a04cc3-44c6-4f30-aeb2-13155235c6d3';
 if (flowArn) {
     let flowArnSplit = flowArn.split('/');
     TARGETFLOWID = flowArnSplit[3];
@@ -221,7 +276,7 @@ for (let i = 0; i < contentActions.length; i++) {
 }
 
 async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID) {
-    isExist = false;
+    // isExist = false;
     console.log('isExist: ',isExist);
     if (!isExist) {
         const params = {
@@ -259,11 +314,10 @@ async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLO
 
 await createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID);
 
-function getFlowId(primary, flowId, target) {
+function getFlowName(primary, flowId) {
   const pl = primary;
-  const tl = target;
   let fName = '';
-  let rId = '';
+
 
   console.log(`Searching for flowId : ${flowId}`);
 
@@ -271,7 +325,18 @@ function getFlowId(primary, flowId, target) {
   if (primaryObj) {
     fName = primaryObj.Name;
     console.log(`Found flow name : ${fName}`);
+    return fName;
+  } else {
+    return undefined
   }
+
+}
+
+function getFlowId(fName, flowId, target) {
+  const tl = target;
+  let rId = '';
+
+  console.log(`Searching for flowId : ${flowId}`);
 
   console.log(`Searching for flow name : ${fName}`);
 
@@ -281,10 +346,18 @@ function getFlowId(primary, flowId, target) {
     console.log(`Found flow id : ${rId}`);
     return rId;
   } else {
+
+
+
+
     console.log('Not Found Contact Flow, Please create contact flow');
     return undefined;
   }
 }
+
+
+
+
 
 function getLambdaId(primary, lambdaId, target) {
   const pl = primary;
