@@ -224,7 +224,7 @@ async function createOrUpdateFlow(isExist, FLOWID, type, TARGETJSON, TARGETFLOWI
             Type: type,
             Content: TARGETJSON
         };
-
+        console.log("params: ", params);
         try {
             const data = await connect.createContactFlow(params).promise();
             console.log(data);
