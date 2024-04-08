@@ -215,9 +215,7 @@ for (let i = 0; i < contentActions.length; i++) {
 }
 
 async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID) {
-    isExist = false;
     console.log('isExist: ',isExist);
-    TARGETJSON = TARGETJSON;
     if (!isExist) {
         const params = {
             InstanceId: TRAGETINSTANCEARN,
