@@ -66,34 +66,34 @@ async function handleConnectAPI(){
                 };            // successful response
       }).promise();
       
-      const instanceIdParamList = {
-        InstanceId: INSTANCEARN, // replace with your instance id
-        MaxResults: 1000
-      };
-      const instanceIdTargetParamList = {
-        InstanceId: TRAGETINSTANCEARN, // replace with your instance id
-        MaxResults: 1000
-      };
+      // const instanceIdParamList = {
+      //   InstanceId: INSTANCEARN, // replace with your instance id
+      //   MaxResults: 1000
+      // };
+      // const instanceIdTargetParamList = {
+      //   InstanceId: TRAGETINSTANCEARN, // replace with your instance id
+      //   MaxResults: 1000
+      // };
 
     
-      await connect.listContactFlows(instanceIdParamList, function(err, data) {
-        if (err) console.log(err, err.stack); // an error occurred
-        else    { 
-                // console.log('PRIMARYCFS', data)
-                PRIMARYCFS = data;
-                };            // successful response
-      }).promise();
+      // await connect.listContactFlows(instanceIdParamList, function(err, data) {
+      //   if (err) console.log(err, err.stack); // an error occurred
+      //   else    { 
+      //           // console.log('PRIMARYCFS', data)
+      //           PRIMARYCFS = data;
+      //           };            // successful response
+      // }).promise();
 
      
 
 
-      await connect.listContactFlows(instanceIdTargetParamList, function(err, data) {
-        if (err) console.log(err, err.stack); // an error occurred
-        else    { 
-                // console.log('TARGETCFS', data)
-                TARGETCFS = data;
-                };            // successful response
-      }).promise();
+      // await connect.listContactFlows(instanceIdTargetParamList, function(err, data) {
+      //   if (err) console.log(err, err.stack); // an error occurred
+      //   else    { 
+      //           // console.log('TARGETCFS', data)
+      //           TARGETCFS = data;
+      //           };            // successful response
+      // }).promise();
       await connect.listUsers(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
