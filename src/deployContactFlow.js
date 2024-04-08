@@ -81,7 +81,7 @@ async function handleConnectAPI(){
       await connect.listContactFlows(instanceIdParamList, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                console.log('PRIMARYCFS', data)
+                // console.log('PRIMARYCFS', data)
                 PRIMARYCFS = data;
                 };            // successful response
       }).promise();
@@ -183,9 +183,9 @@ let instanceIdTargetParamListP = {
 
 
 if (!primaryFlowArn){
-  while (!(PRIMARYCFS.nextToken === '')) {
+  while (!(PRIMARYCFS.NextToken === '')) {
 
-    const token = PRIMARYCFS.nextToken;
+    const token = PRIMARYCFS.NextToken;
     instanceIdTargetParamListP['NextToken'] = token;
     console.log('instanceIdTargetParamListP',instanceIdTargetParamListP);
     PRIMARYCFS = await listContactFlowFunc(instanceIdTargetParamListP, 3);
