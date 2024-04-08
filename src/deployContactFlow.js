@@ -7,7 +7,7 @@ const INSTANCEARN = process.env.SOURCE_INSTANCEARN;
 const TRAGETINSTANCEARN = process.env.TRAGET_INSTANCEARN;
 console.log('INSTANCEARN', INSTANCEARN);
 console.log('TRAGETINSTANCEARN', TRAGETINSTANCEARN);
-let FLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
+// let FLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
 // let FLOWID = '0b2985cd-e5e9-4a64-8190-b73e294cec59';
 let FLOWNAME = 'copilot-test-contact-flow';
 let type = 'CONTACT_FLOW';
@@ -67,8 +67,15 @@ async function handleConnectAPI(){
                 };            // successful response
       }).promise();
       
-     
-      await connect.listContactFlows(instanceIdParam, function(err, data) {
+      const instanceIdParamList = {
+        InstanceId: INSTANCEARN, // replace with your instance id
+        maxResults: 1000
+      };
+      const instanceIdTargetParamList = {
+        InstanceId: TRAGETINSTANCEARN, // replace with your instance id
+        maxResults: 1000
+      };
+      await connect.listContactFlows(instanceIdParamList, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
                 // console.log('PRIMARYCFS', data)
@@ -79,7 +86,7 @@ async function handleConnectAPI(){
      
 
 
-      await connect.listContactFlows(targetInstanceIdParam, function(err, data) {
+      await connect.listContactFlows(instanceIdTargetParamList, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
                 // console.log('TARGETCFS', data)
@@ -145,77 +152,13 @@ async function handleConnectAPI(){
 }
 
 await handleConnectAPI();
-
-async function describeContactFlow(instanceId, flowId, region) {
-    AWS.config.update({ region });
-    const params = {
-        InstanceId: instanceId,
-        ContactFlowId: flowId
-    };
-    let data = await connect.describeContactFlow(params).promise();
-    return data;
-}
-
-const data = await describeContactFlow(INSTANCEARN, 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc', 'us-east-1');
-// console.log('Data:',data);
-const flow = data;
-const content = flow.ContactFlow.Content;
-TARGETJSON = content;
-let flowName = getFlowName(PRIMARYCFS, flow.ContactFlow.Arn);
-if (!flowName){
-  const instanceIdParamList = {
-    InstanceId: INSTANCEARN // replace with your instance id
-  };
-  while (!(PRIMARYCFS.nextToken === '')) {
-    const token = PRIMARYCFS.nextToken;
-    instanceIdParamList['nextToken'] = token;
-    PRIMARYCFS='';
-    PRIMARYCFS =  await connect.listContactFlows(instanceIdParamList, function(err, data) {
-      if (err) console.log(err, err.stack); // an error occurred
-      else    { 
-              // console.log('PRIMARYCFS', data)
-              PRIMARYCFS = data;
-              };            // successful response
-    }).promise();
-    flowName = getFlowName(PRIMARYCFS, flow.ContactFlow.Arn);
-    console.log('flowName: ', flowName);
-       // If flowName is found, break the loop
-       if (flowName) {
-        break;
-      }
-  }
-}
-console.log('flowName: ', flowName)
-
-let flowArn = getFlowId(flowName, flow.ContactFlow.Arn, TARGETCFS);
-if (!flowArn){
-  const instanceIdParamList = {
-    InstanceId: INSTANCEARN // replace with your instance id
-  };
-  while (!(TARGETCFS.nextToken === '')) {
-    const token = PRIMARYCFS.nextToken;
-    instanceIdParamList['nextToken'] = token;
-    TARGETCFS='';
-    TARGETCFS =  await connect.listContactFlows(instanceIdParamList, function(err, data) {
-      if (err) console.log(err, err.stack); // an error occurred
-      else    { 
-              // console.log('PRIMARYCFS', data)
-              TARGETCFS = data;
-              };            // successful response
-    }).promise();
-    flowArn = getFlowId(flowName, flow.ContactFlow.Arn, TARGETCFS);
-    console.log('flowArn: ', flowArn);
-       // If flowArn is found, break the loop
-       if (flowArn) {
-        break;
-      }
-  }
- 
-}
-
-// const flowArn = flow.ContactFlow.Arn;
-// console.log('flowArn: ', flowArn)
 // flowArn = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e/contact-flow/30a04cc3-44c6-4f30-aeb2-13155235c6d3';
+let PRIMARYFLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
+let primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
+PRIMARYFLOWID = primaryFlowArn.split('/')[3];
+console.log('PRIMARYFLOWID', PRIMARYFLOWID);
+
+let flowArn = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
 if (flowArn) {
     let flowArnSplit = flowArn.split('/');
     TARGETFLOWID = flowArnSplit[3];
@@ -224,6 +167,79 @@ if (flowArn) {
 } else {
     isExist = false;
 }
+
+
+async function describeContactFlow(instanceId, FLOWID, region) {
+    AWS.config.update({ region });
+    const params = {
+        InstanceId: instanceId,
+        ContactFlowId: FLOWID
+    };
+    let data = await connect.describeContactFlow(params).promise();
+    return data;
+}
+
+const data = await describeContactFlow(INSTANCEARN, FLOWID, 'us-east-1');
+// console.log('Data:',data);
+const flow = data;
+const content = flow.ContactFlow.Content;
+TARGETJSON = content;
+// let flowName = getFlowName(PRIMARYCFS, flow.ContactFlow.Arn);
+// if (!flowName){
+//   const instanceIdParamList = {
+//     InstanceId: INSTANCEARN // replace with your instance id
+//   };
+//   while (!(PRIMARYCFS.nextToken === '')) {
+//     const token = PRIMARYCFS.nextToken;
+//     instanceIdParamList['nextToken'] = token;
+//     PRIMARYCFS='';
+//     PRIMARYCFS =  await connect.listContactFlows(instanceIdParamList, function(err, data) {
+//       if (err) console.log(err, err.stack); // an error occurred
+//       else    { 
+//               // console.log('PRIMARYCFS', data)
+//               PRIMARYCFS = data;
+//               };            // successful response
+//     }).promise();
+//     flowName = getFlowName(PRIMARYCFS, flow.ContactFlow.Arn);
+//     console.log('flowName: ', flowName);
+//        // If flowName is found, break the loop
+//        if (flowName) {
+//         break;
+//       }
+//   }
+// }
+// console.log('flowName: ', flowName)
+
+// let flowArn = getFlowId(flowName, flow.ContactFlow.Arn, TARGETCFS);
+// if (!flowArn){
+//   const instanceIdParamList = {
+//     InstanceId: INSTANCEARN // replace with your instance id
+//   };
+//   while (!(TARGETCFS.nextToken === '')) {
+//     const token = PRIMARYCFS.nextToken;
+//     instanceIdParamList['nextToken'] = token;
+//     TARGETCFS='';
+//     TARGETCFS =  await connect.listContactFlows(instanceIdParamList, function(err, data) {
+//       if (err) console.log(err, err.stack); // an error occurred
+//       else    { 
+//               // console.log('PRIMARYCFS', data)
+//               TARGETCFS = data;
+//               };            // successful response
+//     }).promise();
+//     flowArn = getFlowId(flowName, flow.ContactFlow.Arn, TARGETCFS);
+//     console.log('flowArn: ', flowArn);
+//        // If flowArn is found, break the loop
+//        if (flowArn) {
+//         break;
+//       }
+//   }
+ 
+// }
+
+// const flowArn = flow.ContactFlow.Arn;
+// console.log('flowArn: ', flowArn)
+
+
 
 const contentActions = JSON.parse(content).Actions;
 // console.log("contentActions", contentActions);
@@ -316,32 +332,60 @@ async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLO
 
 await createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID);
 
-function getFlowName(primary, flowId) {
+// function getFlowName(primary, flowId) {
+//   const pl = primary;
+//   let fName = '';
+
+
+//   console.log(`Searching for flowId : ${flowId}`);
+
+//   const primaryObj = pl && pl.ContactFlowSummaryList ? pl.ContactFlowSummaryList.find(obj => obj.Arn === flowId) : undefined;
+//   if (primaryObj) {
+//     fName = primaryObj.Name;
+//     console.log(`Found flow name : ${fName}`);
+//     return fName;
+//   } else {
+//     return undefined
+//   }
+
+// }
+
+
+
+function getPrimaryFlowId(primary, flowName) {
+  let rId = '';
+  const pl = primary;
+  
+  console.log(`Searching for flowName : ${flowName}`);
+
+
+  const primaryObj = pl && pl.ContactFlowSummaryList ? pl.ContactFlowSummaryList.find(obj => obj.Name === flowName) : undefined;
+  if (primaryObj) {
+    rId = primaryObj.Arn;
+    console.log(`Found flow Arn : ${rId}`);
+    return rId;
+  } else {
+    console.log('Not Found Primary Contact Flow');
+    return undefined;
+  }
+}
+
+function getFlowId(primary, flowId, target) {
+  const tl = target;
+  let rId = '';
   const pl = primary;
   let fName = '';
 
-
   console.log(`Searching for flowId : ${flowId}`);
+
 
   const primaryObj = pl && pl.ContactFlowSummaryList ? pl.ContactFlowSummaryList.find(obj => obj.Arn === flowId) : undefined;
   if (primaryObj) {
     fName = primaryObj.Name;
     console.log(`Found flow name : ${fName}`);
-    return fName;
-  } else {
-    return undefined
   }
 
-}
-
-function getFlowId(fName, flowId, target) {
-  const tl = target;
-  let rId = '';
-
-  console.log(`Searching for flowId : ${flowId}`);
-
   console.log(`Searching for flow name : ${fName}`);
-
   const targetObj = tl && tl.ContactFlowSummaryList ? tl.ContactFlowSummaryList.find(obj => obj.Name === fName) : undefined;
   if (targetObj) {
     rId = targetObj.Arn;
@@ -544,8 +588,68 @@ function getLexBotId(primary, botId, target) {
 }
 
 
+// const instanceIdParamList = {
+//   InstanceId: INSTANCEARN // replace with your instance id
+// };
+// while (!(TARGETCFS.nextToken === '')) {
+//   const token = PRIMARYCFS.nextToken;
+//   instanceIdParamList['nextToken'] = token;
+//   TARGETCFS='';
+//   TARGETCFS =  await connect.listContactFlows(instanceIdParamList, function(err, data) {
+//     if (err) console.log(err, err.stack); // an error occurred
+//     else    { 
+//             // console.log('PRIMARYCFS', data)
+//             TARGETCFS = data;
+//             };            // successful response
+//   }).promise();
 
-
-
+// const listcontactFlowFunc = async function(instanceIdParamList, context, retryAttempts) {
+//   try {
+//     let doRetry = false;
+//     do {
+//       doRetry = false;
+//       try {
+//         let listCFs = '';
+//         await connect.listContactFlows(instanceIdParamList, function(err, data) {
+//           if (err) console.log(err, err.stack); // an error occurred
+//           else    { 
+//                   // console.log('PRIMARYCFS', data)
+//                   listCFs = data;
+//                   };            // successful response
+//         }).promise();
+//         if (listCFs) {
+//           return listCFs;
+//         } else {
+//           return null;
+//         }
+//       } catch (error) {
+//         LOGGER.error(
+//           'LambdaHandler::agentDetailsFunc::error::',
+//           convertToSingleLine(error)
+//         );
+//         if (error.code === 'TooManyRequestsException' && retryAttempts > 0) {
+//           await sleep(parseInt(process.env.API_RETRY_WAIT_TIME, 10) || 1000);
+//           // return contactLensApi(event, --retryAttempts);
+//           --retryAttempts;
+//           LOGGER.info(
+//             'LambdaHandler::agentDetailsFunc::retryAttempts::',
+//             retryAttempts
+//           );
+//           doRetry = true;
+//           LOGGER.info('LambdaHandler::agentDetailsFunc::doRetry::', doRetry);
+//           LOGGER.info(
+//             'LambdaHandler::agentDetailsFunc::Lambda remaining time in ms::',
+//             context.getRemainingTimeInMillis()
+//           );
+//         } else {
+//           return error;
+//         }
+//       }
+//     } while (doRetry);
+//   } catch (error) {
+//     LOGGER.error('LambdaHandler::agentDetailsFunc::error::', error);
+//     return error;
+//   }
+// };
 
 
