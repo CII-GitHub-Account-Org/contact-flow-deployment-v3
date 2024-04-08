@@ -8,6 +8,7 @@ const TRAGETINSTANCEARN = process.env.TRAGET_INSTANCEARN;
 console.log('INSTANCEARN', INSTANCEARN);
 console.log('TRAGETINSTANCEARN', TRAGETINSTANCEARN);
 let FLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
+
 let FLOWNAME = 'copilot-test-contact-flow';
 let type = 'CONTACT_FLOW';
 let isExist;
