@@ -64,14 +64,14 @@ async function handleConnectAPI(){
       await connect.listContactFlows(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                // console.log('PRIMARYCFS', data)
+                console.log('PRIMARYCFS', data)
                 PRIMARYCFS = data;
                 };            // successful response
       }).promise();
       await connect.listContactFlows(targetInstanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                // console.log('TARGETCFS', data)
+                console.log('TARGETCFS', data)
                 TARGETCFS = data;
                 };            // successful response
       }).promise();
@@ -163,7 +163,7 @@ if (flowArn) {
 }
 
 const contentActions = JSON.parse(content).Actions;
-console.log("contentActions", contentActions);
+// console.log("contentActions", contentActions);
 
 for (let i = 0; i < contentActions.length; i++) {
   let obj = contentActions[i];
