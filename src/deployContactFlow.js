@@ -1,14 +1,11 @@
 import AWS from 'aws-sdk';
 const connect = new AWS.Connect();
-import { config } from 'dotenv';
-config();
 
 const INSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/4bbee21d-72b8-442b-af39-dce4128ca77e';
 const TRAGETINSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e';
-// let contactFlow = ContactFlowName
-// let contactFlowId = contactFlow.split(':')
 let FLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
 let FLOWNAME = 'copilot-test-contact-flow';
+let type = 'CONTACT_FLOW';
 let isExist;
 let TARGETJSON ='';
 let TARGETFLOWID = '';
@@ -26,7 +23,7 @@ let PRIMARYQC = '';
 let TARGETQC = '';
 let PRIMARYHOP = '';
 let TARGETHOP = '';
-let type = 'CONTACT_FLOW';
+
 
 async function handleConnectAPI(){
     const instanceIdParam = {
@@ -95,14 +92,14 @@ async function handleConnectAPI(){
       await connect.listQueues(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                // console.log('PRIMARYQUEUES', data)
+                console.log('PRIMARYQUEUES', data)
                 PRIMARYQUEUES = data;
                 };            // successful response
       }).promise();
       await connect.listQueues(targetInstanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                // console.log('TARGETQUEUES', data)
+                console.log('TARGETQUEUES', data)
                 TARGETQUEUES = data;
                 };            // successful response
       }).promise();
@@ -136,7 +133,7 @@ async function handleConnectAPI(){
       }).promise();
 }
 
-handleConnectAPI();
+await handleConnectAPI();
 
 async function describeContactFlow(instanceId, flowId, region) {
     AWS.config.update({ region });
@@ -216,7 +213,7 @@ for (let i = 0; i < contentActions.length; i++) {
 }
 
 async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLOWID) {
-    isExist = false;
+    console.log('isExist: ',isExist);
     TARGETJSON = TARGETJSON;
     if (!isExist) {
         const params = {
@@ -237,7 +234,7 @@ async function createOrUpdateFlow(isExist, FLOWNAME, type, TARGETJSON, TARGETFLO
         console.log("Updating Flow");
 
         const params = {
-            InstanceId: process.env.TRAGETINSTANCEARN,
+            InstanceId: TRAGETINSTANCEARN,
             ContactFlowId: TARGETFLOWID,
             Content: TARGETJSON
         };
