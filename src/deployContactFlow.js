@@ -543,7 +543,7 @@ async function listContactFlowFunc (params, retryAttempts) {
       doRetry = false;
       try {
         let listContactFlows = ''; 
-        await connect.listContactFlows(instanceIdParamList, function(err, data) {
+        listContactFlows = await connect.listContactFlows(instanceIdParamList, function(err, data) {
           if (err) console.log(err, err.stack); // an error occurred
           else    { 
                   // console.log('PRIMARYCFS', data)
@@ -558,7 +558,7 @@ async function listContactFlowFunc (params, retryAttempts) {
       } catch (error) {
         console.log(
           'error::',
-          convertToSingleLine(error)
+          (error)
         );
         if (error.code === 'TooManyRequestsException' && retryAttempts > 0) {
           await sleep(parseInt(2500, 10) || 1000);
