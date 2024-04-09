@@ -239,8 +239,8 @@ if (targetFlowArn) {
 
 
 
-const contentActions = JSON.parse(content).Actions;
-// console.log("contentActions", contentActions);
+let contentActions = JSON.parse(content).Actions;
+console.log("contentActions Before Replacing", contentActions);
 
 for (let i = 0; i < contentActions.length; i++) {
   let obj = contentActions[i];
@@ -290,6 +290,9 @@ for (let i = 0; i < contentActions.length; i++) {
     console.log(`No handling for ${JSON.stringify(obj.Parameters)} of type : ${obj.Type}`);
   }
 }
+
+contentActions = JSON.parse(content).Actions;
+console.log("contentActions After Replacing", contentActions);
 
 async function createOrUpdateFlow(isExist, FLOWNAME, CONTACTFLOWTYPE, TARGETJSON, TARGETFLOWID) {
     console.log('isExist: ',isExist);
