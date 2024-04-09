@@ -7,7 +7,8 @@ const INSTANCEARN = process.env.SOURCE_INSTANCEARN;
 const TRAGETINSTANCEARN = process.env.TRAGET_INSTANCEARN;
 console.log('INSTANCEARN', INSTANCEARN);
 console.log('TRAGETINSTANCEARN', TRAGETINSTANCEARN);
-let PRIMARYFLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
+// let PRIMARYFLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
+let PRIMARYFLOWID = '';
 let FLOWNAME = 'copilot-test-contact-flow';
 let CONTACTFLOWTYPE = 'CONTACT_FLOW';
 let isExist;
@@ -152,27 +153,8 @@ async function handleConnectAPI(){
 }
 
 await handleConnectAPI();
+
 // flowArn = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e/contact-flow/30a04cc3-44c6-4f30-aeb2-13155235c6d3';
-
-async function describeContactFlow(instanceId, PRIMARYFLOWID, region) {
-  AWS.config.update({ region });
-  const params = {
-      InstanceId: instanceId,
-      ContactFlowId: PRIMARYFLOWID
-  };
-  let data = await connect.describeContactFlow(params).promise();
-  return data;
-}
-const data = await describeContactFlow(INSTANCEARN, PRIMARYFLOWID, 'us-east-1');
-
-console.log('Data:',data);
-const flow = data;
-const content = flow.ContactFlow.Content;
-TARGETJSON = content;
-
-
-
-let primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
 let instanceIdTargetParamListP = {
   InstanceId: INSTANCEARN,
   ContactFlowTypes: [
@@ -180,7 +162,7 @@ let instanceIdTargetParamListP = {
  ],
   MaxResults: 1000
 };
-
+let primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
 
 if (!primaryFlowArn){
   while (PRIMARYCFS.NextToken) {
@@ -202,6 +184,22 @@ if (!primaryFlowArn){
 PRIMARYFLOWID = primaryFlowArn.split('/')[3];
 console.log('PRIMARYFLOWID', PRIMARYFLOWID);
 
+async function describeContactFlow(instanceId, PRIMARYFLOWID, region) {
+  AWS.config.update({ region });
+  const params = {
+      InstanceId: instanceId,
+      ContactFlowId: PRIMARYFLOWID
+  };
+  let data = await connect.describeContactFlow(params).promise();
+  return data;
+}
+const data = await describeContactFlow(INSTANCEARN, PRIMARYFLOWID, 'us-east-1');
+
+console.log('Data:',data);
+const flow = data;
+const content = flow.ContactFlow.Content;
+TARGETJSON = content;
+
 // let flowArn = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
 // if (flowArn) {
 //     let flowArnSplit = flowArn.split('/');
@@ -215,7 +213,7 @@ console.log('PRIMARYFLOWID', PRIMARYFLOWID);
 
 
 const contentActions = JSON.parse(content).Actions;
-console.log("contentActions", contentActions);
+// console.log("contentActions", contentActions);
 
 for (let i = 0; i < contentActions.length; i++) {
   let obj = contentActions[i];
