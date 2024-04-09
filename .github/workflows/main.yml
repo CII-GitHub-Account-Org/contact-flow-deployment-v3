@@ -56,7 +56,8 @@ jobs:
       - name: Run script
         run: |
           cd src
-          node deployContactFlow.js
+  # node deployContactFlow.js
+          node createQueue.js
         env:
           SOURCE_INSTANCEARN: ${{ env.DEV_INSTANCEARN }}
           TRAGET_INSTANCEARN: ${{ env.QA_INSTANCEARN }}

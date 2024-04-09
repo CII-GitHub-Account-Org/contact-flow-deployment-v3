@@ -112,15 +112,15 @@ async function handleConnectAPI(){
       await connect.listQueues(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                // console.log('PRIMARYQUEUES', data)
                 PRIMARYQUEUES = data;
+                console.log('PRIMARYQUEUES', data)
                 };            // successful response
       }).promise();
       await connect.listQueues(targetInstanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                // console.log('TARGETQUEUES', data)
                 TARGETQUEUES = data;
+                console.log('TARGETQUEUES', data)
                 };            // successful response
       }).promise();
       await connect.listQuickConnects(instanceIdParam, function(err, data) {
