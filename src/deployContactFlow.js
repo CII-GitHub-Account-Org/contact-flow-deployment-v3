@@ -348,8 +348,6 @@ function getPrimaryFlowId(primary, flowName) {
   }
 }
 
-
-
 async function getFlowId(flowArn, target, FLOWNAME) {
   const tl = target;
   let rId = '';
