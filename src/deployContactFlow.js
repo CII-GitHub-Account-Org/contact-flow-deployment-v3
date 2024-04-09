@@ -177,8 +177,7 @@ let instanceIdTargetParamListP = {
   InstanceId: TRAGETINSTANCEARN,
   ContactFlowTypes: [
    CONTACTFLOWTYPE
- ],
- MaxResults: 500,
+ ]
 };
 
 
@@ -186,7 +185,7 @@ if (!primaryFlowArn){
   while (PRIMARYCFS.NextToken) {
 
     const token = PRIMARYCFS.NextToken;
-    instanceIdTargetParamListP['NextToken'] = token;
+    instanceIdTargetParamListP.NextToken = token;
     console.log('instanceIdTargetParamListP',instanceIdTargetParamListP);
     PRIMARYCFS = await listContactFlowFunc(instanceIdTargetParamListP, 3);
     primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);

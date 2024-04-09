@@ -26,6 +26,6 @@
   "homepage": "https://github.com/yourusername/my-project#readme",
   "dependencies": {
     "@aws-sdk/client-connect": "^3.533.0",
-    "aws-sdk": "^2.1031.0"
+    "aws-sdk": "^2.1595.0"
   }
 }
