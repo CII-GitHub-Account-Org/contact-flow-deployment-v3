@@ -174,10 +174,11 @@ TARGETJSON = content;
 
 let primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
 let instanceIdTargetParamListP = {
-  InstanceId: TRAGETINSTANCEARN,
+  InstanceId: INSTANCEARN,
   ContactFlowTypes: [
    CONTACTFLOWTYPE
- ]
+ ],
+  MaxResults: 1000
 };
 
 
@@ -187,7 +188,7 @@ if (!primaryFlowArn){
     const token = PRIMARYCFS.NextToken;
     instanceIdTargetParamListP.NextToken = token;
     console.log('instanceIdTargetParamListP',instanceIdTargetParamListP);
-    PRIMARYCFS = await listContactFlowFunc2(instanceIdTargetParamListP, 3);
+    PRIMARYCFS = await listContactFlowFunc(instanceIdTargetParamListP, 3);
     primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
      // If primaryFlowArn exists, break the loop
      if (primaryFlowArn) {
