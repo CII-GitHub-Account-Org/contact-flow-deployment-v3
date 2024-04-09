@@ -187,7 +187,7 @@ if (!primaryFlowArn){
     const token = PRIMARYCFS.NextToken;
     instanceIdTargetParamListP.NextToken = token;
     console.log('instanceIdTargetParamListP',instanceIdTargetParamListP);
-    PRIMARYCFS = await listContactFlowFunc(instanceIdTargetParamListP, 3);
+    PRIMARYCFS = await listContactFlowFunc2(instanceIdTargetParamListP, 3);
     primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
      // If primaryFlowArn exists, break the loop
      if (primaryFlowArn) {
@@ -574,4 +574,25 @@ async function listContactFlowFunc (params, retryAttempts) {
     console.log('error::', error);
     return error;
   }
+};
+
+
+async function listContactFlowFunc2 (params, retryAttempts) {
+ 
+        let listContactFlows = ''; 
+        listContactFlows = await connect.listContactFlows(params, function(err, data) {
+          if (err) console.log(err, err.stack); // an error occurred
+          else    { 
+                  // console.log('PRIMARYCFS', data)
+                  listContactFlows = data;
+                  };            // successful response
+         }).promise();
+        if (listContactFlows) {
+          return listContactFlows;
+        } else {
+          return null;
+        }
+     
+  
+  
 };
