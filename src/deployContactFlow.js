@@ -178,12 +178,12 @@ let instanceIdTargetParamListP = {
   ContactFlowTypes: [
    CONTACTFLOWTYPE
  ],
- MaxResults: 1000,
+ MaxResults: 500,
 };
 
 
 if (!primaryFlowArn){
-  while (!(PRIMARYCFS.NextToken === '')) {
+  while (PRIMARYCFS.NextToken) {
 
     const token = PRIMARYCFS.NextToken;
     instanceIdTargetParamListP['NextToken'] = token;
