@@ -48,8 +48,8 @@ jobs:
         run: |
           echo "DEV_INSTANCEARN: ${{ env.DEV_INSTANCEARN }}"
           echo "QA_INSTANCEARN: ${{ env.QA_INSTANCEARN }}"
-          echo "DEV_INSTANCEARN: ${{ env.FLOWNAME }}"
-          echo "QA_INSTANCEARN: ${{ env.CONTACTFLOWTYPE }}"
+          echo "FLOWNAME: ${{ env.FLOWNAME }}"
+          echo "CONTACTFLOWTYPE: ${{ env.CONTACTFLOWTYPE }}"
 
       - name: Run script
         run: |
@@ -58,6 +58,9 @@ jobs:
         env:
           SOURCE_INSTANCEARN: ${{ env.DEV_INSTANCEARN }}
           TRAGET_INSTANCEARN: ${{ env.QA_INSTANCEARN }}
+          FLOWNAME: ${{ env.FLOWNAME }}
+          CONTACTFLOWTYPE: ${{ env.CONTACTFLOWTYPE }}
+
   deploy_qa_to_uat:
     needs: deploy_dev_to_qa
     runs-on: ubuntu-latest
@@ -101,8 +104,8 @@ jobs:
         run: |
           echo "DEV_INSTANCEARN: ${{ env.QA_INSTANCEARN }}"
           echo "QA_INSTANCEARN: ${{ env.UAT_INSTANCEARN }}"
-          echo "DEV_INSTANCEARN: ${{ env.FLOWNAME }}"
-          echo "QA_INSTANCEARN: ${{ env.CONTACTFLOWTYPE }}"
+          echo "FLOWNAME: ${{ env.FLOWNAME }}"
+          echo "CONTACTFLOWTYPE: ${{ env.CONTACTFLOWTYPE }}"
 
       - name: Run script
         run: |
@@ -111,5 +114,7 @@ jobs:
         env:
           SOURCE_INSTANCEARN: ${{ env.QA_INSTANCEARN }}
           TRAGET_INSTANCEARN: ${{ env.UAT_INSTANCEARN }}
+          FLOWNAME: ${{ env.FLOWNAME }}
+          CONTACTFLOWTYPE: ${{ env.CONTACTFLOWTYPE }}
 
 
