@@ -9,6 +9,9 @@ const RETRY_ATTEMPTS = process.env.RETRY_ATTEMPTS;
 
 import { ConnectClient, DescribeQueueCommand } from "@aws-sdk/client-connect"; // ES Modules import
 // const { ConnectClient, DescribeQueueCommand } = require("@aws-sdk/client-connect"); // CommonJS import
+const config = {
+    region: 'us-east-1', // replace with your AWS region
+  };
 const client = new ConnectClient(config);
 const input = { // DescribeQueueRequest
   InstanceId: INSTANCEARN, // required
