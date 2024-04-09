@@ -209,7 +209,7 @@ let instanceIdTargetParamListT = {
  ],
   MaxResults: 1000
 };
-let targetFlowArn = getFlowId(primaryFlowArn, TARGETCFS, FLOWNAME);
+let targetFlowArn = await getFlowId(primaryFlowArn, TARGETCFS, FLOWNAME);
 
 if (!targetFlowArn){
   while (TARGETCFS.NextToken) {
@@ -218,7 +218,7 @@ if (!targetFlowArn){
     instanceIdTargetParamListT.NextToken = token;
     console.log('instanceIdTargetParamListT',instanceIdTargetParamListT);
     TARGETCFS = await listContactFlowFunc(instanceIdTargetParamListT, RETRY_ATTEMPTS);
-    targetFlowArn = getFlowId(primaryFlowArn, TARGETCFS, FLOWNAME);
+    targetFlowArn = await getFlowId(primaryFlowArn, TARGETCFS, FLOWNAME);
      // If targetFlowArn exists, break the loop
      if (targetFlowArn) {
       console.log('targetFlowArn', targetFlowArn);
@@ -229,8 +229,8 @@ if (!targetFlowArn){
 
 // let flowArn = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
 if (targetFlowArn) {
-    let flowArnSplit = targetFlowArn.split('/');
-    TARGETFLOWID = flowArnSplit[3];
+    console.log('taking TARGETFLOWID from targetFlowArn', targetFlowArn);
+    TARGETFLOWID = targetFlowArn.split('/')[3];
     isExist = true;
     console.log(`Need to update flowId : ${TARGETFLOWID}`);
 } else {
