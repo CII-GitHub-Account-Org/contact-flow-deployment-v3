@@ -44,6 +44,11 @@ jobs:
             fi
           done
 
+      - name: Print environment variables
+        run: |
+          echo "DEV_INSTANCEARN: ${{ env.DEV_INSTANCEARN }}"
+          echo "QA_INSTANCEARN: ${{ env.QA_INSTANCEARN }}"
+
       - name: Run script
         run: |
           cd src
