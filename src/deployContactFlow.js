@@ -201,15 +201,41 @@ const flow = data;
 const content = flow.ContactFlow.Content;
 TARGETJSON = content;
 
+
+let instanceIdTargetParamListT = {
+  InstanceId: TRAGETINSTANCEARN,
+  ContactFlowTypes: [
+   CONTACTFLOWTYPE
+ ],
+  MaxResults: 1000
+};
+let targetFlowArn = getFlowId(primaryFlowArn, TARGETCFS, FLOWNAME);
+
+if (!targetFlowArn){
+  while (TARGETCFS.NextToken) {
+
+    const token = TARGETCFS.NextToken;
+    instanceIdTargetParamListT.NextToken = token;
+    console.log('instanceIdTargetParamListT',instanceIdTargetParamListT);
+    TARGETCFS = await listContactFlowFunc(instanceIdTargetParamListT, RETRY_ATTEMPTS);
+    targetFlowArn = getFlowId(primaryFlowArn, TARGETCFS, FLOWNAME);
+     // If targetFlowArn exists, break the loop
+     if (targetFlowArn) {
+      console.log('targetFlowArn', targetFlowArn);
+      break;
+    }
+  }
+}
+
 // let flowArn = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
-// if (flowArn) {
-//     let flowArnSplit = flowArn.split('/');
-//     TARGETFLOWID = flowArnSplit[3];
-//     isExist = true;
-//     console.log(`Need to update flowId : ${TARGETFLOWID}`);
-// } else {
-//     isExist = false;
-// }
+if (targetFlowArn) {
+    let flowArnSplit = targetFlowArn.split('/');
+    TARGETFLOWID = flowArnSplit[3];
+    isExist = true;
+    console.log(`Need to update flowId : ${TARGETFLOWID}`);
+} else {
+    isExist = false;
+}
 
 
 
@@ -266,7 +292,6 @@ for (let i = 0; i < contentActions.length; i++) {
 }
 
 async function createOrUpdateFlow(isExist, FLOWNAME, CONTACTFLOWTYPE, TARGETJSON, TARGETFLOWID) {
-    isExist = false;
     console.log('isExist: ',isExist);
     if (!isExist) {
         const params = {
@@ -323,32 +348,29 @@ function getPrimaryFlowId(primary, flowName) {
   }
 }
 
-function getFlowId(primary, flowId, target) {
+
+
+async function getFlowId(flowArn, target, FLOWNAME) {
   const tl = target;
   let rId = '';
-  const pl = primary;
-  let fName = '';
+  // const pl = primary;
 
-  console.log(`Searching for flowId : ${flowId}`);
+  console.log(`Searching for flowArn in target: ${flowArn}`);
 
+  // const primaryObj = pl && pl.ContactFlowSummaryList ? pl.ContactFlowSummaryList.find(obj => obj.Arn === flowId) : undefined;
+  // if (primaryObj) {
+  //   fName = primaryObj.Name;
+  //   console.log(`Found flow name : ${fName}`);
+  // }
 
-  const primaryObj = pl && pl.ContactFlowSummaryList ? pl.ContactFlowSummaryList.find(obj => obj.Arn === flowId) : undefined;
-  if (primaryObj) {
-    fName = primaryObj.Name;
-    console.log(`Found flow name : ${fName}`);
-  }
-
-  console.log(`Searching for flow name : ${fName}`);
-  const targetObj = tl && tl.ContactFlowSummaryList ? tl.ContactFlowSummaryList.find(obj => obj.Name === fName) : undefined;
+  console.log(`Searching for flow name in target: ${FLOWNAME}`);
+  const targetObj = tl && tl.ContactFlowSummaryList ? tl.ContactFlowSummaryList.find(obj => obj.Name === FLOWNAME) : undefined;
+    
   if (targetObj) {
     rId = targetObj.Arn;
     console.log(`Found flow id : ${rId}`);
     return rId;
   } else {
-
-
-
-
     console.log('Not Found Contact Flow, Please create contact flow');
     return undefined;
   }
