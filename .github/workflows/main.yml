@@ -35,13 +35,22 @@ jobs:
           unzip awscliv2.zip
           sudo ./aws/install --update
 
+      - name: Load .env file
+        run: |
+          echo "Loading .env file"
+          cat .env | while read line; do
+            if [[ ! -z "$line" ]]; then
+              echo "$line" >> $GITHUB_ENV
+            fi
+          done
+
       - name: Run script
         run: |
           cd src
           node deployContactFlow.js
         env:
-          SOURCE_INSTANCEARN: ${{ secrets.DEV_INSTANCEARN }}
-          TRAGET_INSTANCEARN: ${{ secrets.QA_INSTANCEARN }}
+          SOURCE_INSTANCEARN: ${{ env.DEV_INSTANCEARN }}
+          TRAGET_INSTANCEARN: ${{ env.QA_INSTANCEARN }}
   deploy_qa_to_uat:
     needs: deploy_dev_to_qa
     runs-on: ubuntu-latest
@@ -72,12 +81,21 @@ jobs:
           unzip awscliv2.zip
           sudo ./aws/install --update
 
+      - name: Load .env file
+        run: |
+          echo "Loading .env file"
+          cat .env | while read line; do
+            if [[ ! -z "$line" ]]; then
+              echo "$line" >> $GITHUB_ENV
+            fi
+          done
+
       - name: Run script
         run: |
           cd src
           node deployContactFlow.js
         env:
-          SOURCE_INSTANCEARN: ${{ secrets.QA_INSTANCEARN }}
-          TRAGET_INSTANCEARN: ${{ secrets.UAT_INSTANCEARN }}
+          SOURCE_INSTANCEARN: ${{ env.QA_INSTANCEARN }}
+          TRAGET_INSTANCEARN: ${{ env.UAT_INSTANCEARN }}
 
 
