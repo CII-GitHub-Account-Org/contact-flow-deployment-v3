@@ -4,10 +4,14 @@ const INSTANCEARN = process.env.SOURCE_INSTANCEARN;
 const TRAGETINSTANCEARN = process.env.TRAGET_INSTANCEARN;
 let FLOWNAME = process.env.FLOWNAME;
 let CONTACTFLOWTYPE = process.env.CONTACTFLOWTYPE;
+const REGION = process.env.REGION;
+const RETRY_ATTEMPTS = process.env.RETRY_ATTEMPTS;
 console.log('INSTANCEARN', INSTANCEARN);
 console.log('TRAGETINSTANCEARN', TRAGETINSTANCEARN);
 console.log('FLOWNAME', FLOWNAME);
 console.log('CONTACTFLOWTYPE', CONTACTFLOWTYPE);
+console.log('REGION', REGION);
+console.log('RETRY_ATTEMPTS', RETRY_ATTEMPTS);
 let PRIMARYFLOWID = '';
 let isExist;
 let TARGETJSON ='';
@@ -167,7 +171,7 @@ if (!primaryFlowArn){
     const token = PRIMARYCFS.NextToken;
     instanceIdTargetParamListP.NextToken = token;
     console.log('instanceIdTargetParamListP',instanceIdTargetParamListP);
-    PRIMARYCFS = await listContactFlowFunc(instanceIdTargetParamListP, 3);
+    PRIMARYCFS = await listContactFlowFunc(instanceIdTargetParamListP, RETRY_ATTEMPTS);
     primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
      // If primaryFlowArn exists, break the loop
      if (primaryFlowArn) {
@@ -190,7 +194,7 @@ async function describeContactFlow(instanceId, PRIMARYFLOWID, region) {
   let data = await connect.describeContactFlow(params).promise();
   return data;
 }
-const data = await describeContactFlow(INSTANCEARN, PRIMARYFLOWID, 'us-east-1');
+const data = await describeContactFlow(INSTANCEARN, PRIMARYFLOWID, REGION);
 
 console.log('Data:',data);
 const flow = data;
@@ -556,7 +560,7 @@ async function listContactFlowFunc (params, retryAttempts) {
           'error::',
           (error)
         );
-        if (error.code === 'TooManyRequestsException' && retryAttempts > 0) {
+        if (error.code === 'TooManyRequestsException' && (retryAttempts || 3)> 0) {
           await sleep(parseInt(2500, 10) || 1000);
           --retryAttempts;
           doRetry = true;
@@ -570,25 +574,4 @@ async function listContactFlowFunc (params, retryAttempts) {
     console.log('error::', error);
     return error;
   }
-};
-
-
-async function listContactFlowFunc2 (params, retryAttempts) {
- 
-        let listContactFlows = ''; 
-        listContactFlows = await connect.listContactFlows(params, function(err, data) {
-          if (err) console.log(err, err.stack); // an error occurred
-          else    { 
-                  // console.log('PRIMARYCFS', data)
-                  listContactFlows = data;
-                  };            // successful response
-         }).promise();
-        if (listContactFlows) {
-          return listContactFlows;
-        } else {
-          return null;
-        }
-     
-  
-  
 };

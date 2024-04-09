@@ -50,6 +50,8 @@ jobs:
           echo "QA_INSTANCEARN: ${{ env.QA_INSTANCEARN }}"
           echo "FLOWNAME: ${{ env.FLOWNAME }}"
           echo "CONTACTFLOWTYPE: ${{ env.CONTACTFLOWTYPE }}"
+          echo "REGION: ${{ env.REGION }}"
+          echo "RETRY_ATTEMPTS: ${{ env.RETRY_ATTEMPTS }}"
 
       - name: Run script
         run: |
@@ -60,6 +62,8 @@ jobs:
           TRAGET_INSTANCEARN: ${{ env.QA_INSTANCEARN }}
           FLOWNAME: ${{ env.FLOWNAME }}
           CONTACTFLOWTYPE: ${{ env.CONTACTFLOWTYPE }}
+          REGION: ${{ env.REGION }}
+          RETRY_ATTEMPTS: ${{ env.RETRY_ATTEMPTS }}
 
   deploy_qa_to_uat:
     needs: deploy_dev_to_qa
@@ -106,6 +110,8 @@ jobs:
           echo "QA_INSTANCEARN: ${{ env.UAT_INSTANCEARN }}"
           echo "FLOWNAME: ${{ env.FLOWNAME }}"
           echo "CONTACTFLOWTYPE: ${{ env.CONTACTFLOWTYPE }}"
+          echo "REGION: ${{ env.REGION }}"
+          echo "RETRY_ATTEMPTS: ${{ env.RETRY_ATTEMPTS }}"
 
       - name: Run script
         run: |
@@ -116,5 +122,7 @@ jobs:
           TRAGET_INSTANCEARN: ${{ env.UAT_INSTANCEARN }}
           FLOWNAME: ${{ env.FLOWNAME }}
           CONTACTFLOWTYPE: ${{ env.CONTACTFLOWTYPE }}
+          REGION: ${{ env.REGION }}
+          RETRY_ATTEMPTS: ${{ env.RETRY_ATTEMPTS }}
 
 
