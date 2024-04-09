@@ -1,16 +1,14 @@
 import AWS from 'aws-sdk';
 const connect = new AWS.Connect();
-
-// const INSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/4bbee21d-72b8-442b-af39-dce4128ca77e';
-// const TRAGETINSTANCEARN = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e';
 const INSTANCEARN = process.env.SOURCE_INSTANCEARN;
 const TRAGETINSTANCEARN = process.env.TRAGET_INSTANCEARN;
+let FLOWNAME = process.env.FLOWNAME;
+let CONTACTFLOWTYPE = process.env.CONTACTFLOWTYPE;
 console.log('INSTANCEARN', INSTANCEARN);
 console.log('TRAGETINSTANCEARN', TRAGETINSTANCEARN);
-// let PRIMARYFLOWID = 'a222d77e-f37a-42f6-b00e-9a3a1671e9bc';
+console.log('FLOWNAME', FLOWNAME);
+console.log('CONTACTFLOWTYPE', CONTACTFLOWTYPE);
 let PRIMARYFLOWID = '';
-let FLOWNAME = 'copilot-test-contact-flow';
-let CONTACTFLOWTYPE = 'CONTACT_FLOW';
 let isExist;
 let TARGETJSON ='';
 let TARGETFLOWID = '';
@@ -28,7 +26,6 @@ let PRIMARYQC = '';
 let TARGETQC = '';
 let PRIMARYHOP = '';
 let TARGETHOP = '';
-
 
 async function handleConnectAPI(){
     const instanceIdParam = {

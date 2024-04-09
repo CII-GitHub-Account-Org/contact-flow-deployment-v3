@@ -48,6 +48,8 @@ jobs:
         run: |
           echo "DEV_INSTANCEARN: ${{ env.DEV_INSTANCEARN }}"
           echo "QA_INSTANCEARN: ${{ env.QA_INSTANCEARN }}"
+          echo "DEV_INSTANCEARN: ${{ env.FLOWNAME }}"
+          echo "QA_INSTANCEARN: ${{ env.CONTACTFLOWTYPE }}"
 
       - name: Run script
         run: |
@@ -94,6 +96,13 @@ jobs:
               echo "$line" >> $GITHUB_ENV
             fi
           done
+
+      - name: Print environment variables
+        run: |
+          echo "DEV_INSTANCEARN: ${{ env.QA_INSTANCEARN }}"
+          echo "QA_INSTANCEARN: ${{ env.UAT_INSTANCEARN }}"
+          echo "DEV_INSTANCEARN: ${{ env.FLOWNAME }}"
+          echo "QA_INSTANCEARN: ${{ env.CONTACTFLOWTYPE }}"
 
       - name: Run script
         run: |
