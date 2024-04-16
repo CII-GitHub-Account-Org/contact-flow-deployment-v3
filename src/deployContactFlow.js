@@ -37,19 +37,19 @@ const paramsQueue = {
 };
 
 let response = await connect.listQueues(paramsQueue).promise();
-PRIMARYQUEUES.concat(response.QueueSummaryList);
+PRIMARYQUEUES.push(response.QueueSummaryList);
 
 while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
   const token = PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken;
   paramsQueue.NextToken = token;
   console.log('paramsQueue', paramsQueue);
   response = await listQueuesFunc(paramsQueue, RETRY_ATTEMPTS);
-  PRIMARYQUEUES.concat(response.QueueSummaryList);
+  PRIMARYQUEUES.push(response.QueueSummaryList);
 }
 
 console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
-
-
+console.log('PRIMARYQUEUES Lentgh', JSON.stringify(PRIMARYQUEUES.length));
+console.log('PRIMARYQUEUES Last Array', JSON.stringify(PRIMARYQUEUES[PRIMARYQUEUES.length - 1]));
 
 
 // async function handleConnectAPI(){
