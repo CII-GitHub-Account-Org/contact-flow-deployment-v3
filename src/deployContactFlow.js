@@ -30,13 +30,16 @@ let PRIMARYQC = '';
 let TARGETQC = '';
 let PRIMARYHOP = '';
 let TARGETHOP = '';
+    const instanceIdParam = {
+        InstanceId: INSTANCEARN // replace with your instance id
+      };
 
 const paramsQueue = {
   InstanceId: INSTANCEARN, /* required */
   MaxResults: 100,
 };
 
-let response = await connect.listQueues(paramsQueue).promise();
+let response = await connect.listQueues(instanceIdParam).promise();
 PRIMARYQUEUES.push(response.QueueSummaryList);
 
 while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
