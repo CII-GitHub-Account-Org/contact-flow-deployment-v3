@@ -37,14 +37,14 @@ const paramsQueue = {
 };
 
 let response = await connect.listQueues(paramsQueue).promise();
-PRIMARYQUEUES.push(response.QueueSummaryList);
+PRIMARYQUEUES.concat(response.QueueSummaryList);
 
 while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
   const token = PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken;
   paramsQueue.NextToken = token;
   console.log('paramsQueue', paramsQueue);
   response = await listQueuesFunc(paramsQueue, RETRY_ATTEMPTS);
-  PRIMARYQUEUES.push(response.QueueSummaryList);
+  PRIMARYQUEUES.concat(response.QueueSummaryList);
 }
 
 console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
