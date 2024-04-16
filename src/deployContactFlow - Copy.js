@@ -24,14 +24,14 @@ let PRIMARYBOT = '';
 let TARGETBOT = '';
 let PRIMARYCFS = '';
 let TARGETCFS = '';
-let PRIMARYQUEUES;
-let TARGETQUEUES;
+let PRIMARYQUEUES = [];
+let TARGETQUEUES = [];
 let PRIMARYUSERS = '';
 let TARGETUSERS = '';
 let PRIMARYQC = '';
 let TARGETQC = '';
-let PRIMARYHOP;
-let TARGETHOP;
+let PRIMARYHOP = [];
+let TARGETHOP = [];
 const instanceIdParam = {
   InstanceId: INSTANCEARN // replace with your instance id
 };
@@ -39,159 +39,99 @@ const targetInstanceIdParam = {
   InstanceId: TRAGETINSTANCEARN // replace with your target instance id
 };
 
-// // Handling List Queues************************************************************************************************
-// let responsePrimaryQueue = await connect.listQueues(instanceIdParam).promise();
-// PRIMARYQUEUES.push(responsePrimaryQueue);
-// const paramsQueuePrimary = {
-//   InstanceId: INSTANCEARN, /* required */
-//   MaxResults: 1000,
-// };
-// while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
-//   const token = PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken;
-//   paramsQueuePrimary.NextToken = token;
-//   // console.log('paramsQueuePrimary', paramsQueuePrimary);
-//   responsePrimaryQueue = await listResourcesFunc(paramsQueuePrimary, RETRY_ATTEMPTS, 'queues');
-//   PRIMARYQUEUES.push(responsePrimaryQueue);
-// };
-// // console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
-// try {
-//   const queuePath1 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'PRIMARYQUEUES.json');
-//   console.log('Writing data to file...');
-//   fs.writeFileSync(queuePath1, JSON.stringify(PRIMARYQUEUES, null, 2));
-//   console.log(`Data written to ${queuePath1}`);
-// } catch (error) {
-//   console.error('Error writing file:', error);
-// }
-
-// let responseTargetQueue = await connect.listQueues(targetInstanceIdParam).promise();
-// TARGETQUEUES.push(responseTargetQueue);
-// const paramsQueueTarget = {
-//   InstanceId: TRAGETINSTANCEARN, /* required */
-//   MaxResults: 1000,
-// };
-// while (TARGETQUEUES[TARGETQUEUES.length - 1].NextToken) {
-//   const token = TARGETQUEUES[TARGETQUEUES.length - 1].NextToken;
-//   paramsQueueTarget.NextToken = token;
-//   // console.log('paramsQueueTarget', paramsQueueTarget);
-//   responseTargetQueue = await listResourcesFunc(paramsQueueTarget, RETRY_ATTEMPTS, 'queues');
-//   TARGETQUEUES.push(responseTargetQueue);
-// };
-// // console.log('TARGETQUEUES', JSON.stringify(TARGETQUEUES));
-// try {
-//   const queuePath2 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'TARGETQUEUES.json');
-//   console.log('Writing data to file...');
-//   fs.writeFileSync(queuePath2, JSON.stringify(TARGETQUEUES, null, 2));
-//   console.log(`Data written to ${queuePath2}`);
-// } catch (error) {
-//   console.error('Error writing file:', error);
-// }
-
-// // Handling List Hours of Operations************************************************************************************************
-// let responsePrimaryHOP = await connect.listHoursOfOperations(instanceIdParam).promise();
-// PRIMARYHOP.push(responsePrimaryHOP);
-// const paramsPrimaryHOP = {
-//   InstanceId: INSTANCEARN, /* required */
-//   MaxResults: 1000,
-// };
-// while (PRIMARYHOP[PRIMARYHOP.length - 1].NextToken) {
-//   const token = PRIMARYHOP[PRIMARYHOP.length - 1].NextToken;
-//   paramsPrimaryHOP.NextToken = token;
-//   // console.log('paramsPrimaryHOP', paramsPrimaryHOP);
-//   responsePrimaryHOP = await listResourcesFunc(paramsQueuePrimary, RETRY_ATTEMPTS, 'hoursOfOperations');
-//   PRIMARYHOP.push(responsePrimaryHOP);
-// };
-// //  console.log('PRIMARYHOP', JSON.stringify(PRIMARYHOP));
-// try {
-//   const PathHOP1 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'PRIMARYHOP.json');
-//   console.log('Writing data to file...');
-//   fs.writeFileSync(PathHOP1, JSON.stringify(PRIMARYHOP, null, 2));
-//   console.log(`Data written to ${PathHOP1}`);
-// } catch (error) {
-//   console.error('Error writing file:', error);
-// }
-
-// let responseTargetHOP = await connect.listHoursOfOperations(targetInstanceIdParam).promise();
-// TARGETHOP.push(responseTargetHOP);
-// const paramsTargetHOP = {
-//   InstanceId: TRAGETINSTANCEARN, /* required */
-//   MaxResults: 1000,
-// };
-// while (TARGETHOP[TARGETHOP.length - 1].NextToken) {
-//   const token = TARGETHOP[TARGETHOP.length - 1].NextToken;
-//   paramsTargetHOP.NextToken = token;
-//   // console.log('paramsTargetHOP', paramsTargetHOP);
-//   responseTargetHOP = await listResourcesFunc(paramsTargetHOP, RETRY_ATTEMPTS, 'hoursOfOperations');
-//   TARGETHOP.push(responseTargetHOP);
-// };
-// //  console.log('TARGETHOP', JSON.stringify(TARGETHOP));
-// try {
-//   const PathHOP2 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'TARGETHOP.json');
-//   console.log('Writing data to file...');
-//   fs.writeFileSync(PathHOP2, JSON.stringify(TARGETHOP, null, 2));
-//   console.log(`Data written to ${PathHOP2}`);
-// } catch (error) {
-//   console.error('Error writing file:', error);
-// }
-
-// Helper function to handle listing resources with pagination
-async function listResourcesWithPagination(params, resourceType) {
-  const resources = [];
-  let response = await connect[`list${resourceType}`](params).promise();
-  resources.push(response);
-  
-  while (response.NextToken) {
-    params.NextToken = response.NextToken;
-    response = await connect[`list${resourceType}`](params).promise();
-    resources.push(response);
-  }
-  return resources;
+// Handling List Queues************************************************************************************************
+let responsePrimaryQueue = await connect.listQueues(instanceIdParam).promise();
+PRIMARYQUEUES.push(responsePrimaryQueue);
+const paramsQueuePrimary = {
+  InstanceId: INSTANCEARN, /* required */
+  MaxResults: 1000,
+};
+while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
+  const token = PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken;
+  paramsQueuePrimary.NextToken = token;
+  // console.log('paramsQueuePrimary', paramsQueuePrimary);
+  responsePrimaryQueue = await listResourcesFunc(paramsQueuePrimary, RETRY_ATTEMPTS, 'queues');
+  PRIMARYQUEUES.push(responsePrimaryQueue);
+};
+// console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
+try {
+  const queuePath1 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'PRIMARYQUEUES.json');
+  console.log('Writing data to file...');
+  fs.writeFileSync(queuePath1, JSON.stringify(PRIMARYQUEUES, null, 2));
+  console.log(`Data written to ${queuePath1}`);
+} catch (error) {
+  console.error('Error writing file:', error);
 }
 
-// Helper function to write data to a file
-async function writeDataToFile(fileName, data) {
-  try {
-    const fullPath = path.resolve(process.env.GITHUB_WORKSPACE, 'src', fileName);
-    console.log('Writing data to file...');
-    fs.writeFileSync(fullPath, JSON.stringify(data, null, 2));
-    console.log(`Data written to ${fullPath}`);
-  } catch (error) {
-    console.error('Error writing file:', error);
-  }
+let responseTargetQueue = await connect.listQueues(targetInstanceIdParam).promise();
+TARGETQUEUES.push(responseTargetQueue);
+const paramsQueueTarget = {
+  InstanceId: TRAGETINSTANCEARN, /* required */
+  MaxResults: 1000,
+};
+while (TARGETQUEUES[TARGETQUEUES.length - 1].NextToken) {
+  const token = TARGETQUEUES[TARGETQUEUES.length - 1].NextToken;
+  paramsQueueTarget.NextToken = token;
+  // console.log('paramsQueueTarget', paramsQueueTarget);
+  responseTargetQueue = await listResourcesFunc(paramsQueueTarget, RETRY_ATTEMPTS, 'queues');
+  TARGETQUEUES.push(responseTargetQueue);
+};
+// console.log('TARGETQUEUES', JSON.stringify(TARGETQUEUES));
+try {
+  const queuePath2 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'TARGETQUEUES.json');
+  console.log('Writing data to file...');
+  fs.writeFileSync(queuePath2, JSON.stringify(TARGETQUEUES, null, 2));
+  console.log(`Data written to ${queuePath2}`);
+} catch (error) {
+  console.error('Error writing file:', error);
 }
 
-// Handling List Queues
-PRIMARYQUEUES = await listResourcesWithPagination({
-  InstanceId: INSTANCEARN,
-  MaxResults: 1000
-}, 'Queues');
+// Handling List Hours of Operations************************************************************************************************
+let responsePrimaryHOP = await connect.listHoursOfOperations(instanceIdParam).promise();
+PRIMARYHOP.push(responsePrimaryHOP);
+const paramsPrimaryHOP = {
+  InstanceId: INSTANCEARN, /* required */
+  MaxResults: 1000,
+};
+while (PRIMARYHOP[PRIMARYHOP.length - 1].NextToken) {
+  const token = PRIMARYHOP[PRIMARYHOP.length - 1].NextToken;
+  paramsPrimaryHOP.NextToken = token;
+  // console.log('paramsPrimaryHOP', paramsPrimaryHOP);
+  responsePrimaryHOP = await listResourcesFunc(paramsQueuePrimary, RETRY_ATTEMPTS, 'hoursOfOperations');
+  PRIMARYHOP.push(responsePrimaryHOP);
+};
+//  console.log('PRIMARYHOP', JSON.stringify(PRIMARYHOP));
+try {
+  const PathHOP1 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'PRIMARYHOP.json');
+  console.log('Writing data to file...');
+  fs.writeFileSync(PathHOP1, JSON.stringify(PRIMARYHOP, null, 2));
+  console.log(`Data written to ${PathHOP1}`);
+} catch (error) {
+  console.error('Error writing file:', error);
+}
 
-TARGETQUEUES = await listResourcesWithPagination({
-  InstanceId: TRAGETINSTANCEARN,
-  MaxResults: 1000
-}, 'Queues');
-
-// Writing primaryQueues and targetQueues to files
-await writeDataToFile('PRIMARYQUEUES.json', PRIMARYQUEUES);
-
-await writeDataToFile('TARGETQUEUES.json', TARGETQUEUES);
-
-
-// Handling List Hours of Operations
-PRIMARYHOP = await listResourcesWithPagination({
-  InstanceId: INSTANCEARN,
-  MaxResults: 1000
-}, 'HoursOfOperations');
-
-TARGETHOP = await listResourcesWithPagination({
-  InstanceId: TRAGETINSTANCEARN,
-  MaxResults: 1000
-}, 'HoursOfOperations');
-
-// Writing primaryHOP and targetHOP to files
-await writeDataToFile('PRIMARYHOP.json', PRIMARYHOP);
-
-await writeDataToFile('TARGETHOP.json', TARGETHOP);
-
+let responseTargetHOP = await connect.listHoursOfOperations(targetInstanceIdParam).promise();
+TARGETHOP.push(responseTargetHOP);
+const paramsTargetHOP = {
+  InstanceId: TRAGETINSTANCEARN, /* required */
+  MaxResults: 1000,
+};
+while (TARGETHOP[TARGETHOP.length - 1].NextToken) {
+  const token = TARGETHOP[TARGETHOP.length - 1].NextToken;
+  paramsTargetHOP.NextToken = token;
+  // console.log('paramsTargetHOP', paramsTargetHOP);
+  responseTargetHOP = await listResourcesFunc(paramsTargetHOP, RETRY_ATTEMPTS, 'hoursOfOperations');
+  TARGETHOP.push(responseTargetHOP);
+};
+//  console.log('TARGETHOP', JSON.stringify(TARGETHOP));
+try {
+  const PathHOP2 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'TARGETHOP.json');
+  console.log('Writing data to file...');
+  fs.writeFileSync(PathHOP2, JSON.stringify(TARGETHOP, null, 2));
+  console.log(`Data written to ${PathHOP2}`);
+} catch (error) {
+  console.error('Error writing file:', error);
+}
 
 // async function handleConnectAPI(){
 //     const instanceIdParam = {
