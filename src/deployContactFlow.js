@@ -23,39 +23,50 @@ let TARGETBOT = '';
 let PRIMARYCFS = '';
 let TARGETCFS = '';
 let PRIMARYQUEUES = [];
-let TARGETQUEUES = '';
+let TARGETQUEUES = [];
 let PRIMARYUSERS = '';
 let TARGETUSERS = '';
 let PRIMARYQC = '';
 let TARGETQC = '';
 let PRIMARYHOP = '';
 let TARGETHOP = '';
-    const instanceIdParam = {
-        InstanceId: INSTANCEARN // replace with your instance id
-      };
-
-const paramsQueue = {
-  InstanceId: INSTANCEARN, /* required */
-  MaxResults: 100,
+const instanceIdParam = {
+  InstanceId: INSTANCEARN // replace with your instance id
+};
+const targetInstanceIdParam = {
+  InstanceId: TRAGETINSTANCEARN // replace with your target instance id
 };
 
-let response = await connect.listQueues(instanceIdParam).promise();
-PRIMARYQUEUES.push(response);
 
-console.log('PRIMARYQUEUES 1st resp', JSON.stringify(PRIMARYQUEUES));
-
+let responsePrimaryQueue = await connect.listQueues(instanceIdParam).promise();
+PRIMARYQUEUES.push(responsePrimaryQueue);
+const paramsQueuePrimary = {
+  InstanceId: INSTANCEARN, /* required */
+  MaxResults: 1000,
+};
 while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
   const token = PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken;
-  paramsQueue.NextToken = token;
-  console.log('paramsQueue', paramsQueue);
-  response = await listQueuesFunc(paramsQueue, RETRY_ATTEMPTS);
-  PRIMARYQUEUES.push(response);
+  paramsQueuePrimary.NextToken = token;
+  // console.log('paramsQueuePrimary', paramsQueuePrimary);
+  responsePrimaryQueue = await listQueuesFunc(paramsQueuePrimary, RETRY_ATTEMPTS);
+  PRIMARYQUEUES.push(responsePrimaryQueue);
 };
-console.log('ENDEDDDD');
-console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
-console.log('PRIMARYQUEUES Lentgh', JSON.stringify(PRIMARYQUEUES.length));
-console.log('PRIMARYQUEUES Last Array', JSON.stringify(PRIMARYQUEUES[PRIMARYQUEUES.length - 1]));
 
+let responseTargetQueue = await connect.listQueues(targetInstanceIdParam).promise();
+TARGETQUEUES.push(responseTargetQueue);
+const paramsQueueTarget = {
+  InstanceId: TRAGETINSTANCEARN, /* required */
+  MaxResults: 1000,
+};
+while (TARGETQUEUES[TARGETQUEUES.length - 1].NextToken) {
+  const token = TARGETQUEUES[TARGETQUEUES.length - 1].NextToken;
+  paramsQueueTarget.NextToken = token;
+  // console.log('paramsQueueTarget', paramsQueueTarget);
+  responseTargetQueue = await listQueuesFunc(paramsQueueTarget, RETRY_ATTEMPTS);
+  TARGETQUEUES.push(responseTargetQueue);
+};
+
+console.log('TARGETQUEUES', TARGETQUEUES);
 
 // async function handleConnectAPI(){
 //     const instanceIdParam = {
@@ -665,7 +676,7 @@ async function listQueuesFunc (params, retryAttempts) {
         listQueues = await connect.listQueues(params, function(err, data) {
           if (err) console.log(err, err.stack); // an error occurred
           else    { 
-                  console.log('listQueues', data)
+                  // console.log('listQueues', data)
                   listQueues = data;
                   };            // successful response
          }).promise();
