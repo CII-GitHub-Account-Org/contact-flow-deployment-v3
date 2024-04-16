@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-const fs = require('fs');
+import fs from 'fs';
 const connect = new AWS.Connect();
 const INSTANCEARN = process.env.SOURCE_INSTANCEARN;
 const TRAGETINSTANCEARN = process.env.TRAGET_INSTANCEARN;
