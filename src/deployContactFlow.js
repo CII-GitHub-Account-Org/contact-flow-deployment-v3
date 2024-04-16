@@ -22,7 +22,7 @@ let PRIMARYBOT = '';
 let TARGETBOT = '';
 let PRIMARYCFS = '';
 let TARGETCFS = '';
-let PRIMARYQUEUES = [];
+let PRIMARYQUEUES = '';
 let TARGETQUEUES = '';
 let PRIMARYUSERS = '';
 let TARGETUSERS = '';
@@ -42,7 +42,7 @@ const instanceIdParam = {
 await connect.listQueues(paramsQueue, function(err, data) {
   if (err) console.log(err, err.stack); // an error occurred
   else    { 
-          PRIMARYQUEUES.push(data);
+          PRIMARYQUEUES = data;
           console.log('PRIMARYQUEUES', PRIMARYQUEUES)
           };            // successful response
 }).promise();
