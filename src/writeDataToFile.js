@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 // Helper function to write data to a file
-export async function writeDataToFile(fileName, data) {
+export default async function writeDataToFile(fileName, data) {
         try {
             const fullPath = path.resolve(process.env.GITHUB_WORKSPACE, 'src', fileName);
             console.log('Writing data to file...');
