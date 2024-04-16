@@ -17,7 +17,7 @@ export async function listResourcesWithPagination(params, resourceType) {
   }
   
   // Helper function to handle throttling
-  async function listResourcesFunc(params, retryAttempts, resourceType) {
+ export async function listResourcesFunc(params, retryAttempts, resourceType) {
     try {
       let doRetry = false;
       do {
