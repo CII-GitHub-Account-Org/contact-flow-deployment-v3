@@ -69,7 +69,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: output
-          path: ./*.json
+          path: ./src/*.json
 
   deploy_qa_to_uat:
     needs: deploy_dev_to_qa
