@@ -160,12 +160,12 @@ async function writeDataToFile(fileName, data) {
 // Handling List Queues
 const PRIMARYQUEUES = await listResourcesWithPagination({
   InstanceId: INSTANCEARN,
-  MaxResults: 100
+  MaxResults: 50
 }, 'Queues');
 
 const TARGETQUEUES = await listResourcesWithPagination({
   InstanceId: TRAGETINSTANCEARN,
-  MaxResults: 100
+  MaxResults: 50
 }, 'Queues');
 
 // Writing primaryQueues and targetQueues to files
@@ -177,12 +177,12 @@ await writeDataToFile('TARGETQUEUES.json', TARGETQUEUES);
 // Handling List Hours of Operations
 const PRIMARYHOP = await listResourcesWithPagination({
   InstanceId: INSTANCEARN,
-  MaxResults: 100
+  MaxResults: 50
 }, 'HoursOfOperations');
 
 const TARGETHOP = await listResourcesWithPagination({
   InstanceId: TRAGETINSTANCEARN,
-  MaxResults: 100
+  MaxResults: 50
 }, 'HoursOfOperations');
 
 // Writing primaryHOP and targetHOP to files
