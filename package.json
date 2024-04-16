@@ -27,6 +27,7 @@
   "dependencies": {
     "@aws-sdk/client-connect": "^3.549.0",
     "aws-sdk": "^2.1595.0",
-    "fs": "^0.0.1-security"
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7"
   }
 }

@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import fs from 'fs';
+import path from 'path';
 const connect = new AWS.Connect();
 const INSTANCEARN = process.env.SOURCE_INSTANCEARN;
 const TRAGETINSTANCEARN = process.env.TRAGET_INSTANCEARN;
@@ -53,9 +54,10 @@ while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
   PRIMARYQUEUES.push(responsePrimaryQueue);
 };
 // console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
+const outputPath1 = path.resolve(process.cwd(), 'PRIMARYQUEUES.json');
 console.log('Writing data to file...');
-fs.writeFileSync('PRIMARYQUEUES.json', JSON.stringify(PRIMARYQUEUES, null, 2));
-console.log('Data written to PRIMARYQUEUES.json');
+fs.writeFileSync(outputPath1, JSON.stringify(PRIMARYQUEUES, null, 2));
+console.log(`Data written to ${outputPath1}`)
 
 
 let responseTargetQueue = await connect.listQueues(targetInstanceIdParam).promise();
@@ -72,9 +74,10 @@ while (TARGETQUEUES[TARGETQUEUES.length - 1].NextToken) {
   TARGETQUEUES.push(responseTargetQueue);
 };
 // console.log('TARGETQUEUES', JSON.stringify(TARGETQUEUES));
+const outputPath2 = path.resolve(process.cwd(), 'TARGETQUEUES.json');
 console.log('Writing data to file...');
-fs.writeFileSync('TARGETQUEUES.json', JSON.stringify(TARGETQUEUES, null, 2));
-console.log('Data written to TARGETQUEUES.json');
+fs.writeFileSync(outputPath2, JSON.stringify(TARGETQUEUES, null, 2));
+console.log(`Data written to ${outputPath2}`);
 // async function handleConnectAPI(){
 //     const instanceIdParam = {
 //         InstanceId: INSTANCEARN // replace with your instance id
