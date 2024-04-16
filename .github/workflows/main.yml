@@ -65,6 +65,12 @@ jobs:
           REGION: ${{ env.REGION }}
           RETRY_ATTEMPTS: ${{ env.RETRY_ATTEMPTS }}
 
+      - name: Upload output
+        uses: actions/upload-artifact@v2
+        with:
+          name: output
+          path: ./*.json
+
   deploy_qa_to_uat:
     needs: deploy_dev_to_qa
     runs-on: ubuntu-latest
@@ -125,4 +131,8 @@ jobs:
           REGION: ${{ env.REGION }}
           RETRY_ATTEMPTS: ${{ env.RETRY_ATTEMPTS }}
 
-
+      - name: Upload output
+        uses: actions/upload-artifact@v2
+        with:
+          name: output
+          path: ./*.json
