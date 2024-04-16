@@ -22,7 +22,7 @@ let PRIMARYBOT = '';
 let TARGETBOT = '';
 let PRIMARYCFS = '';
 let TARGETCFS = '';
-let PRIMARYQUEUES = '';
+let PRIMARYQUEUES = [];
 let TARGETQUEUES = '';
 let PRIMARYUSERS = '';
 let TARGETUSERS = '';
@@ -109,18 +109,40 @@ async function handleConnectAPI(){
                 TARGETUSERS = data;
                 };            // successful response
       }).promise();
+      // await connect.listQueues(instanceIdParam, function(err, data) {
+      //   if (err) console.log(err, err.stack); // an error occurred
+      //   else    { 
+      //           PRIMARYQUEUES = data;
+      //           console.log('PRIMARYQUEUES', data)
+      //           };            // successful response
+      // }).promise();
       await connect.listQueues(instanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
-                PRIMARYQUEUES = data;
-                console.log('PRIMARYQUEUES', data)
+                PRIMARYQUEUES.push(data);
+                
                 };            // successful response
       }).promise();
+      
+      var paramsQueue = {
+        InstanceId: INSTANCEARN, /* required */
+        MaxResults: 1000,
+      };
+      
+      while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
+        const token = PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken;
+        paramsQueue.NextToken = token;
+        console.log('paramsQueue',paramsQueue);
+        let newQueues = await listQueuesFunc(paramsQueue, RETRY_ATTEMPTS);
+        PRIMARYQUEUES.push(newQueues);
+      }
+      console.log('PRIMARYQUEUES', PRIMARYQUEUES)
+
       await connect.listQueues(targetInstanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
                 TARGETQUEUES = data;
-                console.log('TARGETQUEUES', data)
+                // console.log('TARGETQUEUES', data)
                 };            // successful response
       }).promise();
       await connect.listQuickConnects(instanceIdParam, function(err, data) {
@@ -575,6 +597,54 @@ async function listContactFlowFunc (params, retryAttempts) {
          }).promise();
         if (listContactFlows) {
           return listContactFlows;
+        } else {
+          return null;
+        }
+      } catch (error) {
+        console.log(
+          'error::',
+          (error)
+        );
+        if (error.code === 'TooManyRequestsException' && (retryAttempts || 3)> 0) {
+          await sleep(parseInt(2500, 10) || 1000);
+          --retryAttempts;
+          doRetry = true;
+          console.log('doRetry::', doRetry);
+        } else {
+          return error;
+        }
+      }
+    } while (doRetry);
+  } catch (error) {
+    console.log('error::', error);
+    return error;
+  }
+};
+
+
+
+
+
+
+
+
+
+async function listQueuesFunc (params, retryAttempts) {
+  try {
+    let doRetry = false;
+    do {
+      doRetry = false;
+      try {
+        let listQueues = ''; 
+        listQueues = await connect.listQueues(params, function(err, data) {
+          if (err) console.log(err, err.stack); // an error occurred
+          else    { 
+                  console.log('listQueues', data)
+                  listQueues = data;
+                  };            // successful response
+         }).promise();
+        if (listQueues) {
+          return listQueues;
         } else {
           return null;
         }
