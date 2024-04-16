@@ -51,6 +51,7 @@ while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
   responsePrimaryQueue = await listQueuesFunc(paramsQueuePrimary, RETRY_ATTEMPTS);
   PRIMARYQUEUES.push(responsePrimaryQueue);
 };
+// console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
 
 let responseTargetQueue = await connect.listQueues(targetInstanceIdParam).promise();
 TARGETQUEUES.push(responseTargetQueue);
@@ -65,8 +66,7 @@ while (TARGETQUEUES[TARGETQUEUES.length - 1].NextToken) {
   responseTargetQueue = await listQueuesFunc(paramsQueueTarget, RETRY_ATTEMPTS);
   TARGETQUEUES.push(responseTargetQueue);
 };
-
-console.log('TARGETQUEUES', TARGETQUEUES);
+console.log('TARGETQUEUES', JSON.stringify(TARGETQUEUES));
 
 // async function handleConnectAPI(){
 //     const instanceIdParam = {
