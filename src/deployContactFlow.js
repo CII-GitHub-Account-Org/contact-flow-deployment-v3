@@ -30,24 +30,25 @@ let PRIMARYQC = '';
 let TARGETQC = '';
 let PRIMARYHOP = '';
 let TARGETHOP = '';
-    const instanceIdParam = {
-        InstanceId: INSTANCEARN // replace with your instance id
-      };
+
+const instanceIdParam = {
+  InstanceId: INSTANCEARN // replace with your instance id
+};
 
 const paramsQueue = {
   InstanceId: INSTANCEARN, /* required */
-  MaxResults: 100,
+  MaxResults: 1000,
 };
 
 let response = await connect.listQueues(instanceIdParam).promise();
-PRIMARYQUEUES.push(response.QueueSummaryList);
+PRIMARYQUEUES.concat(response.QueueSummaryList);
 
-while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
-  const token = PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken;
+while (response.NextToken) {
+  const token = response.NextToken;
   paramsQueue.NextToken = token;
   console.log('paramsQueue', paramsQueue);
   response = await listQueuesFunc(paramsQueue, RETRY_ATTEMPTS);
-  PRIMARYQUEUES.push(response.QueueSummaryList);
+  PRIMARYQUEUES.concat(response.QueueSummaryList);
 }
 
 console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
