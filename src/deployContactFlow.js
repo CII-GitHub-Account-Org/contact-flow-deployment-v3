@@ -100,7 +100,7 @@ while (PRIMARYHOP[PRIMARYHOP.length - 1].NextToken) {
   responsePrimaryHOP = await listResourcesFunc(paramsQueuePrimary, RETRY_ATTEMPTS, 'hoursOfOperations');
   PRIMARYHOP.push(responsePrimaryHOP);
 };
-// console.log('PRIMARYHOP', JSON.stringify(PRIMARYHOP));
+ console.log('PRIMARYHOP', JSON.stringify(PRIMARYHOP));
 try {
   const PathHOP1 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'PRIMARYHOP.json');
   console.log('Writing data to file...');
