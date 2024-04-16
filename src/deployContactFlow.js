@@ -708,30 +708,17 @@ try {
 
 
 
-async function listResourcesFunc (params, retryAttempts, resourceType) {
+async function listResourcesFunc(params, retryAttempts, resourceType) {
   try {
     let doRetry = false;
     do {
       doRetry = false;
       try {
-
-        let listResources = ''; 
-        if (resourceType==='queues') {
-          listResources = await connect.listQueues(params, function(err, data) {
-            if (err) console.log(err, err.stack); // an error occurred
-            else    { 
-                    // console.log('listQueues', data)
-                    listQueues = data;
-                    };            // successful response
-           }).promise();
-        } else if (resourceType==='hoursOfOperations') {
-          listResources = await connect.listHoursOfOperations(params, function(err, data) {
-            if (err) console.log(err, err.stack); // an error occurred
-            else    { 
-                    // console.log('listQueues', data)
-                    listQueues = data;
-                    };            // successful response
-           }).promise();
+        let listResources = '';
+        if (resourceType === 'queues') {
+          listResources = await connect.listQueues(params).promise();
+        } else if (resourceType === 'hoursOfOperations') {
+          listResources = await connect.listHoursOfOperations(params).promise();
         }
 
         if (listResources) {
@@ -740,22 +727,19 @@ async function listResourcesFunc (params, retryAttempts, resourceType) {
           return null;
         }
       } catch (error) {
-        console.log(
-          'error::',
-          (error)
-        );
-        if (error.code === 'TooManyRequestsException' && (retryAttempts || 3)> 0) {
+        console.log('error:', error);
+        if (error.code === 'TooManyRequestsException' && (retryAttempts || 3) > 0) {
           await sleep(parseInt(2500, 10) || 1000);
           --retryAttempts;
           doRetry = true;
-          console.log('doRetry::', doRetry);
+          console.log('doRetry:', doRetry);
         } else {
           return error;
         }
       }
     } while (doRetry);
   } catch (error) {
-    console.log('error::', error);
+    console.log('error:', error);
     return error;
   }
 };
