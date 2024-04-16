@@ -18,8 +18,6 @@ let PRIMARYFLOWID = '';
 let isExist;
 let TARGETJSON ='';
 let TARGETFLOWID = '';
-let PRIMARYBOT = '';
-let TARGETBOT = '';
 
 // Helper function to handle listing resources with pagination
 async function listResourcesWithPagination(params, resourceType) {
@@ -78,28 +76,24 @@ async function writeDataToFile(fileName, data) {
   }
 }
 
-
-
 // Handling List Contact Flows
-const primaryContactFlows = await listResourcesWithPagination({
+const primaryContactFlows = await listResourcesFunc({
   InstanceId: instanceArn,
   ContactFlowTypes: [
     contactFlowType
   ],
    MaxResults: 50
-}, 'ContactFlows');
-
-const targetContactFlows = await listResourcesWithPagination({
+}, retryAttempts, 'ContactFlows');
+const targetContactFlows = await listResourcesFunc({
   InstanceId: targetInstanceArn,
   ContactFlowTypes: [
     contactFlowType
   ],
    MaxResults: 50
-}, 'ContactFlows');
+}, retryAttempts, 'ContactFlows');
 
-// Writing primaryHOP and targetHOP to files
+// Writing primaryContactFlows and targetContactFlows to files
 await writeDataToFile('primaryContactFlows.json', primaryContactFlows);
-
 await writeDataToFile('targetContactFlows.json', targetContactFlows);
 
 // Handling List Queues
@@ -107,7 +101,6 @@ const primaryQueues = await listResourcesFunc({
   InstanceId: instanceArn,
   MaxResults: 50
 }, retryAttempts, 'Queues');
-
 const targetQueues = await listResourcesFunc({
   InstanceId: targetInstanceArn,
   MaxResults: 50
@@ -115,7 +108,6 @@ const targetQueues = await listResourcesFunc({
 
 // Writing primaryQueues and targetQueues to files
 await writeDataToFile('primaryQueues.json', primaryQueues);
-
 await writeDataToFile('targetQueues.json', targetQueues);
 
 
@@ -124,7 +116,6 @@ const primaryHOP = await listResourcesWithPagination({
   InstanceId: instanceArn,
   MaxResults: 50
 }, 'HoursOfOperations');
-
 const targetHOP = await listResourcesWithPagination({
   InstanceId: targetInstanceArn,
   MaxResults: 50
@@ -132,10 +123,35 @@ const targetHOP = await listResourcesWithPagination({
 
 // Writing primaryHOP and targetHOP to files
 await writeDataToFile('primaryHOP.json', primaryHOP);
-
 await writeDataToFile('targetHOP.json', targetHOP);
 
+// Handling List Lex Bots
+const primaryLexBot = await listResourcesWithPagination({
+  InstanceId: instanceArn,
+  MaxResults: 50
+}, 'LexBots');
+const targetLexBot = await listResourcesWithPagination({
+  InstanceId: targetInstanceArn,
+  MaxResults: 50
+}, 'LexBots');
 
+// Writing primaryLexBot and targetLexBot to files
+await writeDataToFile('primaryLexBot.json', primaryLexBot);
+await writeDataToFile('targetLexBot.json', targetLexBot);
+
+// Handling List Lambda Functions
+const primaryLambda = await listResourcesWithPagination({
+  InstanceId: instanceArn,
+  MaxResults: 50
+}, 'LambdaFunctions');
+const targetLambda = await listResourcesWithPagination({
+  InstanceId: targetInstanceArn,
+  MaxResults: 50
+}, 'LambdaFunctions');
+
+// Writing primaryLambda and targetLambda to files
+await writeDataToFile('primaryLambda.json', primaryLambda);
+await writeDataToFile('targetLambda.json', targetLambda);
 
 
 // async function handleConnectAPI(){
@@ -167,13 +183,13 @@ await writeDataToFile('targetHOP.json', targetHOP);
 //                 PRIMARYBOT = data;
 //                 };            // successful response
 //       }).promise();
-//       await connect.listLexBots(targetInstanceIdParam, function(err, data) {
-//         if (err) console.log(err, err.stack); // an error occurred
-//         else    { 
-//                 // console.log('TARGETBOT', data)
-//                 TARGETBOT = data;
-//                 };            // successful response
-//       }).promise();
+      // await connect.listLexBots(targetInstanceIdParam, function(err, data) {
+      //   if (err) console.log(err, err.stack); // an error occurred
+      //   else    { 
+      //           // console.log('TARGETBOT', data)
+      //           TARGETBOT = data;
+      //           };            // successful response
+      // }).promise();
       
 //         const instanceIdParamList = {
 //             InstanceId: INSTANCEARN,
