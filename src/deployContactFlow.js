@@ -54,10 +54,10 @@ while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
   PRIMARYQUEUES.push(responsePrimaryQueue);
 };
 // console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
-const outputPath1 = path.resolve(process.cwd(), 'PRIMARYQUEUES.json');
+const outputPath1 = path.resolve(process.env.GITHUB_WORKSPACE, 'PRIMARYQUEUES.json');
 console.log('Writing data to file...');
 fs.writeFileSync(outputPath1, JSON.stringify(PRIMARYQUEUES, null, 2));
-console.log(`Data written to ${outputPath1}`)
+console.log(`Data written to ${outputPath1}`);
 
 
 let responseTargetQueue = await connect.listQueues(targetInstanceIdParam).promise();
@@ -74,10 +74,11 @@ while (TARGETQUEUES[TARGETQUEUES.length - 1].NextToken) {
   TARGETQUEUES.push(responseTargetQueue);
 };
 // console.log('TARGETQUEUES', JSON.stringify(TARGETQUEUES));
-const outputPath2 = path.resolve(process.cwd(), 'TARGETQUEUES.json');
-console.log('Writing data to file...');
-fs.writeFileSync(outputPath2, JSON.stringify(TARGETQUEUES, null, 2));
-console.log(`Data written to ${outputPath2}`);
+// const outputPath2 = path.resolve(process.cwd(), 'TARGETQUEUES.json');
+// console.log('Writing data to file...');
+// fs.writeFileSync(outputPath2, JSON.stringify(TARGETQUEUES, null, 2));
+// console.log(`Data written to ${outputPath2}`);
+
 // async function handleConnectAPI(){
 //     const instanceIdParam = {
 //         InstanceId: INSTANCEARN // replace with your instance id
