@@ -54,10 +54,14 @@ while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
   PRIMARYQUEUES.push(responsePrimaryQueue);
 };
 // console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
-const outputPath1 = path.resolve(process.env.GITHUB_WORKSPACE, 'PRIMARYQUEUES.json');
-console.log('Writing data to file...');
-fs.writeFileSync(outputPath1, JSON.stringify(PRIMARYQUEUES, null, 2));
-console.log(`Data written to ${outputPath1}`);
+try {
+  const outputPath1 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'PRIMARYQUEUES.json');
+  console.log('Writing data to file...');
+  fs.writeFileSync(outputPath1, JSON.stringify(PRIMARYQUEUES, null, 2));
+  console.log(`Data written to ${outputPath1}`);
+} catch (error) {
+  console.error('Error writing file:', error);
+}
 
 
 let responseTargetQueue = await connect.listQueues(targetInstanceIdParam).promise();
