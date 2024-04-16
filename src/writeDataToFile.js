@@ -13,4 +13,3 @@ export default async function writeDataToFile(fileName, data) {
         }
     }
 
-module.exports = writeDataToFile;

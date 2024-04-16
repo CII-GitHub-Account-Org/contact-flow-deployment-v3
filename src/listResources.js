@@ -48,7 +48,3 @@ export async function listResourcesWithPagination(params, resourceType) {
   };
   
 
-module.exports = {
-    listResourcesWithPagination,
-    listResourcesFunc
-};
