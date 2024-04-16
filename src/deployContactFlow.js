@@ -128,11 +128,11 @@ await writeDataToFile('targetHOP.json', targetHOP);
 // Handling List Lex Bots
 const primaryLexBot = await listResourcesWithPagination({
   InstanceId: instanceArn,
-  MaxResults: 50
+  MaxResults: 25
 }, 'LexBots');
 const targetLexBot = await listResourcesWithPagination({
   InstanceId: targetInstanceArn,
-  MaxResults: 50
+  MaxResults: 25
 }, 'LexBots');
 
 // Writing primaryLexBot and targetLexBot to files
@@ -142,11 +142,11 @@ await writeDataToFile('targetLexBot.json', targetLexBot);
 // Handling List Lambda Functions
 const primaryLambda = await listResourcesWithPagination({
   InstanceId: instanceArn,
-  MaxResults: 50
+  MaxResults: 25
 }, 'LambdaFunctions');
 const targetLambda = await listResourcesWithPagination({
   InstanceId: targetInstanceArn,
-  MaxResults: 50
+  MaxResults: 25
 }, 'LambdaFunctions');
 
 // Writing primaryLambda and targetLambda to files
