@@ -30,27 +30,28 @@ let PRIMARYQC = '';
 let TARGETQC = '';
 let PRIMARYHOP = '';
 let TARGETHOP = '';
-
-const instanceIdParam = {
-  InstanceId: INSTANCEARN // replace with your instance id
-};
+    const instanceIdParam = {
+        InstanceId: INSTANCEARN // replace with your instance id
+      };
 
 const paramsQueue = {
   InstanceId: INSTANCEARN, /* required */
-  MaxResults: 1000,
+  MaxResults: 100,
 };
 
 let response = await connect.listQueues(instanceIdParam).promise();
-PRIMARYQUEUES.concat(response.QueueSummaryList);
+PRIMARYQUEUES.push(response);
 
-while (response.NextToken) {
-  const token = response.NextToken;
+console.log('PRIMARYQUEUES 1st resp', JSON.stringify(PRIMARYQUEUES));
+
+while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
+  const token = PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken;
   paramsQueue.NextToken = token;
   console.log('paramsQueue', paramsQueue);
   response = await listQueuesFunc(paramsQueue, RETRY_ATTEMPTS);
-  PRIMARYQUEUES.concat(response.QueueSummaryList);
-}
-
+  PRIMARYQUEUES.push(response);
+};
+console.log('ENDEDDDD');
 console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
 console.log('PRIMARYQUEUES Lentgh', JSON.stringify(PRIMARYQUEUES.length));
 console.log('PRIMARYQUEUES Last Array', JSON.stringify(PRIMARYQUEUES[PRIMARYQUEUES.length - 1]));
