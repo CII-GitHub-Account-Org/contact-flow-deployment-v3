@@ -120,23 +120,23 @@ async function handleConnectAPI(){
         if (err) console.log(err, err.stack); // an error occurred
         else    { 
                 PRIMARYQUEUES.push(data);
-                
+                console.log('PRIMARYQUEUES', PRIMARYQUEUES)
                 };            // successful response
       }).promise();
       
-      var paramsQueue = {
-        InstanceId: INSTANCEARN, /* required */
-        MaxResults: 1000,
-      };
+      // var paramsQueue = {
+      //   InstanceId: INSTANCEARN, /* required */
+      //   MaxResults: 1000,
+      // };
       
-      while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
-        const token = PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken;
-        paramsQueue.NextToken = token;
-        console.log('paramsQueue',paramsQueue);
-        let newQueues = await listQueuesFunc(paramsQueue, RETRY_ATTEMPTS);
-        PRIMARYQUEUES.push(newQueues);
-      }
-      console.log('PRIMARYQUEUES', PRIMARYQUEUES)
+      // while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
+      //   const token = PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken;
+      //   paramsQueue.NextToken = token;
+      //   console.log('paramsQueue',paramsQueue);
+      //   let newQueues = await listQueuesFunc(paramsQueue, RETRY_ATTEMPTS);
+      //   PRIMARYQUEUES.push(newQueues);
+      // }
+      // console.log('PRIMARYQUEUES', PRIMARYQUEUES)
 
       await connect.listQueues(targetInstanceIdParam, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
