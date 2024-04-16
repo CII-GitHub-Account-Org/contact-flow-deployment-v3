@@ -53,8 +53,7 @@ while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
   responsePrimaryQueue = await listResourcesFunc(paramsQueuePrimary, RETRY_ATTEMPTS, 'queues');
   PRIMARYQUEUES.push(responsePrimaryQueue);
 };
-console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
-console.log('PRIMARYQUEUES Length', (PRIMARYQUEUES.length));
+// console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
 try {
   const queuePath1 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'PRIMARYQUEUES.json');
   console.log('Writing data to file...');
@@ -101,12 +100,35 @@ while (PRIMARYHOP[PRIMARYHOP.length - 1].NextToken) {
   responsePrimaryHOP = await listResourcesFunc(paramsQueuePrimary, RETRY_ATTEMPTS, 'hoursOfOperations');
   PRIMARYHOP.push(responsePrimaryHOP);
 };
- console.log('PRIMARYHOP', JSON.stringify(PRIMARYHOP));
+//  console.log('PRIMARYHOP', JSON.stringify(PRIMARYHOP));
 try {
   const PathHOP1 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'PRIMARYHOP.json');
   console.log('Writing data to file...');
   fs.writeFileSync(PathHOP1, JSON.stringify(PRIMARYHOP, null, 2));
   console.log(`Data written to ${PathHOP1}`);
+} catch (error) {
+  console.error('Error writing file:', error);
+}
+
+let responseTargetHOP = await connect.listHoursOfOperations(targetInstanceIdParam).promise();
+TARGETHOP.push(responseTargetHOP);
+const paramsTargetHOP = {
+  InstanceId: TRAGETINSTANCEARN, /* required */
+  MaxResults: 1000,
+};
+while (TARGETHOP[TARGETHOP.length - 1].NextToken) {
+  const token = TARGETHOP[TARGETHOP.length - 1].NextToken;
+  paramsTargetHOP.NextToken = token;
+  // console.log('paramsTargetHOP', paramsTargetHOP);
+  responseTargetHOP = await listResourcesFunc(paramsTargetHOP, RETRY_ATTEMPTS, 'hoursOfOperations');
+  TARGETHOP.push(responseTargetHOP);
+};
+//  console.log('TARGETHOP', JSON.stringify(TARGETHOP));
+try {
+  const PathHOP2 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'TARGETHOP.json');
+  console.log('Writing data to file...');
+  fs.writeFileSync(PathHOP2, JSON.stringify(TARGETHOP, null, 2));
+  console.log(`Data written to ${PathHOP2}`);
 } catch (error) {
   console.error('Error writing file:', error);
 }
