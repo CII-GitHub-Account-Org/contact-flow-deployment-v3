@@ -33,7 +33,7 @@ let TARGETHOP = '';
 
 const paramsQueue = {
   InstanceId: INSTANCEARN, /* required */
-  MaxResults: 1000,
+  MaxResults: 100,
 };
 
 let response = await connect.listQueues(paramsQueue).promise();
