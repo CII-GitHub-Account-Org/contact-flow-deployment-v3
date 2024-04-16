@@ -25,12 +25,12 @@ let TARGETBOT = '';
 async function listResourcesWithPagination(params, resourceType) {
   const resources = [];
   let response = await connect[`list${resourceType}`](params).promise();
-  resources.push(...response);
+  resources.push(response);
   
   while (response.NextToken) {
     params.NextToken = response.NextToken;
     response = await connect[`list${resourceType}`](params).promise();
-    resources.push(...response);
+    resources.push(response);
   }
   return resources;
 }
