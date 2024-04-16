@@ -24,14 +24,12 @@ let PRIMARYBOT = '';
 let TARGETBOT = '';
 let PRIMARYCFS = '';
 let TARGETCFS = '';
-let PRIMARYQUEUES;
-let TARGETQUEUES;
+
 let PRIMARYUSERS = '';
 let TARGETUSERS = '';
 let PRIMARYQC = '';
 let TARGETQC = '';
-let PRIMARYHOP;
-let TARGETHOP;
+
 const instanceIdParam = {
   InstanceId: INSTANCEARN // replace with your instance id
 };
@@ -160,14 +158,14 @@ async function writeDataToFile(fileName, data) {
 }
 
 // Handling List Queues
-PRIMARYQUEUES = await listResourcesWithPagination({
+const PRIMARYQUEUES = await listResourcesWithPagination({
   InstanceId: INSTANCEARN,
-  MaxResults: 1000
+  MaxResults: 100
 }, 'Queues');
 
-TARGETQUEUES = await listResourcesWithPagination({
+const TARGETQUEUES = await listResourcesWithPagination({
   InstanceId: TRAGETINSTANCEARN,
-  MaxResults: 1000
+  MaxResults: 100
 }, 'Queues');
 
 // Writing primaryQueues and targetQueues to files
@@ -177,14 +175,14 @@ await writeDataToFile('TARGETQUEUES.json', TARGETQUEUES);
 
 
 // Handling List Hours of Operations
-PRIMARYHOP = await listResourcesWithPagination({
+const PRIMARYHOP = await listResourcesWithPagination({
   InstanceId: INSTANCEARN,
-  MaxResults: 1000
+  MaxResults: 100
 }, 'HoursOfOperations');
 
-TARGETHOP = await listResourcesWithPagination({
+const TARGETHOP = await listResourcesWithPagination({
   InstanceId: TRAGETINSTANCEARN,
-  MaxResults: 1000
+  MaxResults: 100
 }, 'HoursOfOperations');
 
 // Writing primaryHOP and targetHOP to files
