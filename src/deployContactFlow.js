@@ -78,10 +78,14 @@ while (TARGETQUEUES[TARGETQUEUES.length - 1].NextToken) {
   TARGETQUEUES.push(responseTargetQueue);
 };
 // console.log('TARGETQUEUES', JSON.stringify(TARGETQUEUES));
-// const outputPath2 = path.resolve(process.cwd(), 'TARGETQUEUES.json');
-// console.log('Writing data to file...');
-// fs.writeFileSync(outputPath2, JSON.stringify(TARGETQUEUES, null, 2));
-// console.log(`Data written to ${outputPath2}`);
+try {
+  const outputPath2 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'TARGETQUEUES.json');
+  console.log('Writing data to file...');
+  fs.writeFileSync(outputPath2, JSON.stringify(TARGETQUEUES, null, 2));
+  console.log(`Data written to ${outputPath2}`);
+} catch (error) {
+  console.error('Error writing file:', error);
+}
 
 // async function handleConnectAPI(){
 //     const instanceIdParam = {
