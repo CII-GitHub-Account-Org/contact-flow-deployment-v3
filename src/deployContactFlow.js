@@ -42,7 +42,7 @@ const instanceIdParam = {
 await connect.listQueues(paramsQueue, function(err, data) {
   if (err) console.log(err, err.stack); // an error occurred
   else    { 
-          PRIMARYQUEUES = data;
+          PRIMARYQUEUES = data.QueueSummaryList;
           console.log('PRIMARYQUEUES', PRIMARYQUEUES)
           };            // successful response
 }).promise();
