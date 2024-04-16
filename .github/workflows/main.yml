@@ -65,11 +65,14 @@ jobs:
           REGION: ${{ env.REGION }}
           RETRY_ATTEMPTS: ${{ env.RETRY_ATTEMPTS }}
 
+      - name: List files in src directory
+        run: ls -l ${{ github.workspace }}/src
+
       - name: Upload output
         uses: actions/upload-artifact@v2
         with:
           name: output
-          path: ./src/*.json
+          path: ${{ github.workspace }}/src/*.json
 
   deploy_qa_to_uat:
     needs: deploy_dev_to_qa
@@ -131,8 +134,11 @@ jobs:
           REGION: ${{ env.REGION }}
           RETRY_ATTEMPTS: ${{ env.RETRY_ATTEMPTS }}
 
+      - name: List files in src directory
+        run: ls -l ${{ github.workspace }}/src
+
       - name: Upload output
         uses: actions/upload-artifact@v2
         with:
           name: output
-          path: ./*.json
+          path: ${{ github.workspace }}/src/*.json
