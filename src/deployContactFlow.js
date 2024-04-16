@@ -30,8 +30,8 @@ let PRIMARYUSERS = '';
 let TARGETUSERS = '';
 let PRIMARYQC = '';
 let TARGETQC = '';
-let PRIMARYHOP = '';
-let TARGETHOP = '';
+let PRIMARYHOP = [];
+let TARGETHOP = [];
 const instanceIdParam = {
   InstanceId: INSTANCEARN // replace with your instance id
 };
@@ -39,7 +39,7 @@ const targetInstanceIdParam = {
   InstanceId: TRAGETINSTANCEARN // replace with your target instance id
 };
 
-
+// Handling List Queues************************************************************************************************
 let responsePrimaryQueue = await connect.listQueues(instanceIdParam).promise();
 PRIMARYQUEUES.push(responsePrimaryQueue);
 const paramsQueuePrimary = {
@@ -50,19 +50,18 @@ while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
   const token = PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken;
   paramsQueuePrimary.NextToken = token;
   // console.log('paramsQueuePrimary', paramsQueuePrimary);
-  responsePrimaryQueue = await listQueuesFunc(paramsQueuePrimary, RETRY_ATTEMPTS);
+  responsePrimaryQueue = await listResourcesFunc(paramsQueuePrimary, RETRY_ATTEMPTS, 'queues');
   PRIMARYQUEUES.push(responsePrimaryQueue);
 };
 // console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
 try {
-  const outputPath1 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'PRIMARYQUEUES.json');
+  const queuePath1 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'PRIMARYQUEUES.json');
   console.log('Writing data to file...');
-  fs.writeFileSync(outputPath1, JSON.stringify(PRIMARYQUEUES, null, 2));
-  console.log(`Data written to ${outputPath1}`);
+  fs.writeFileSync(queuePath1, JSON.stringify(PRIMARYQUEUES, null, 2));
+  console.log(`Data written to ${queuePath1}`);
 } catch (error) {
   console.error('Error writing file:', error);
 }
-
 
 let responseTargetQueue = await connect.listQueues(targetInstanceIdParam).promise();
 TARGETQUEUES.push(responseTargetQueue);
@@ -74,15 +73,39 @@ while (TARGETQUEUES[TARGETQUEUES.length - 1].NextToken) {
   const token = TARGETQUEUES[TARGETQUEUES.length - 1].NextToken;
   paramsQueueTarget.NextToken = token;
   // console.log('paramsQueueTarget', paramsQueueTarget);
-  responseTargetQueue = await listQueuesFunc(paramsQueueTarget, RETRY_ATTEMPTS);
+  responseTargetQueue = await listResourcesFunc(paramsQueueTarget, RETRY_ATTEMPTS, 'queues');
   TARGETQUEUES.push(responseTargetQueue);
 };
 // console.log('TARGETQUEUES', JSON.stringify(TARGETQUEUES));
 try {
-  const outputPath2 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'TARGETQUEUES.json');
+  const queuePath2 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'TARGETQUEUES.json');
   console.log('Writing data to file...');
-  fs.writeFileSync(outputPath2, JSON.stringify(TARGETQUEUES, null, 2));
-  console.log(`Data written to ${outputPath2}`);
+  fs.writeFileSync(queuePath2, JSON.stringify(TARGETQUEUES, null, 2));
+  console.log(`Data written to ${queuePath2}`);
+} catch (error) {
+  console.error('Error writing file:', error);
+}
+
+// Handling List Hours of Operations************************************************************************************************
+let responsePrimaryHOP = await connect.listHoursOfOperations(instanceIdParam).promise();
+PRIMARYHOP.push(responsePrimaryHOP);
+const paramsPrimaryHOP = {
+  InstanceId: INSTANCEARN, /* required */
+  MaxResults: 1000,
+};
+while (PRIMARYHOP[PRIMARYHOP.length - 1].NextToken) {
+  const token = PRIMARYHOP[PRIMARYHOP.length - 1].NextToken;
+  paramsPrimaryHOP.NextToken = token;
+  // console.log('paramsPrimaryHOP', paramsPrimaryHOP);
+  responsePrimaryHOP = await listResourcesFunc(paramsQueuePrimary, RETRY_ATTEMPTS, 'hoursOfOperations');
+  PRIMARYHOP.push(responsePrimaryHOP);
+};
+// console.log('PRIMARYHOP', JSON.stringify(PRIMARYHOP));
+try {
+  const PathHOP1 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'PRIMARYHOP.json');
+  console.log('Writing data to file...');
+  fs.writeFileSync(PathHOP1, JSON.stringify(PRIMARYHOP, null, 2));
+  console.log(`Data written to ${PathHOP1}`);
 } catch (error) {
   console.error('Error writing file:', error);
 }
@@ -685,22 +708,34 @@ try {
 
 
 
-async function listQueuesFunc (params, retryAttempts) {
+async function listResourcesFunc (params, retryAttempts, resourceType) {
   try {
     let doRetry = false;
     do {
       doRetry = false;
       try {
-        let listQueues = ''; 
-        listQueues = await connect.listQueues(params, function(err, data) {
-          if (err) console.log(err, err.stack); // an error occurred
-          else    { 
-                  // console.log('listQueues', data)
-                  listQueues = data;
-                  };            // successful response
-         }).promise();
-        if (listQueues) {
-          return listQueues;
+
+        let listResources = ''; 
+        if (resourceType==='queues') {
+          listResources = await connect.listQueues(params, function(err, data) {
+            if (err) console.log(err, err.stack); // an error occurred
+            else    { 
+                    // console.log('listQueues', data)
+                    listQueues = data;
+                    };            // successful response
+           }).promise();
+        } else if (resourceType==='hoursOfOperations') {
+          listResources = await connect.listHoursOfOperations(params, function(err, data) {
+            if (err) console.log(err, err.stack); // an error occurred
+            else    { 
+                    // console.log('listQueues', data)
+                    listQueues = data;
+                    };            // successful response
+           }).promise();
+        }
+
+        if (listResources) {
+          return listResources;
         } else {
           return null;
         }
