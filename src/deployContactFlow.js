@@ -53,7 +53,8 @@ while (PRIMARYQUEUES[PRIMARYQUEUES.length - 1].NextToken) {
   responsePrimaryQueue = await listResourcesFunc(paramsQueuePrimary, RETRY_ATTEMPTS, 'queues');
   PRIMARYQUEUES.push(responsePrimaryQueue);
 };
-// console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
+console.log('PRIMARYQUEUES', JSON.stringify(PRIMARYQUEUES));
+console.log('PRIMARYQUEUES Length', (PRIMARYQUEUES.length));
 try {
   const queuePath1 = path.resolve(process.env.GITHUB_WORKSPACE, 'src', 'PRIMARYQUEUES.json');
   console.log('Writing data to file...');
