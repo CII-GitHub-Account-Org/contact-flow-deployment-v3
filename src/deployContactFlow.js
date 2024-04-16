@@ -16,8 +16,8 @@ let PRIMARYFLOWID = '';
 let isExist;
 let TARGETJSON ='';
 let TARGETFLOWID = '';
-const { listResourcesWithPagination, listResourcesFunc } = require('./listResources');
-const  writeDataToFile  = require('./writeDataToFile');
+const { listResourcesWithPagination, listResourcesFunc } = require('./listResources.js');
+const  writeDataToFile  = require('./writeDataToFile.js');
 
 // Handling List Contact Flows
 const primaryContactFlows = await listResourcesFunc({
