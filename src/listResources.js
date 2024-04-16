@@ -3,7 +3,7 @@ const connect = new AWS.Connect();
 
 
 // Helper function to handle listing resources with pagination
-async function listResourcesWithPagination(params, resourceType) {
+export async function listResourcesWithPagination(params, resourceType) {
     const resources = [];
     let response = await connect[`list${resourceType}`](params).promise();
     resources.push(response);
