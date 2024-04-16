@@ -103,37 +103,37 @@ await writeDataToFile('primaryContactFlows.json', primaryContactFlows);
 await writeDataToFile('targetContactFlows.json', targetContactFlows);
 
 // Handling List Queues
-const PRIMARYQUEUES = await listResourcesFunc({
+const primaryQueues = await listResourcesFunc({
   InstanceId: instanceArn,
   MaxResults: 50
-}, retryAttempts, 'queues');
+}, retryAttempts, 'Queues');
 
-const TARGETQUEUES = await listResourcesFunc({
+const targetQueues = await listResourcesFunc({
   InstanceId: targetInstanceArn,
   MaxResults: 50
 }, retryAttempts,'Queues');
 
 // Writing primaryQueues and targetQueues to files
-await writeDataToFile('PRIMARYQUEUES.json', PRIMARYQUEUES);
+await writeDataToFile('primaryQueues.json', primaryQueues);
 
-await writeDataToFile('TARGETQUEUES.json', TARGETQUEUES);
+await writeDataToFile('targetQueues.json', targetQueues);
 
 
 // Handling List Hours of Operations
-const PRIMARYHOP = await listResourcesWithPagination({
+const primaryHOP = await listResourcesWithPagination({
   InstanceId: instanceArn,
   MaxResults: 50
 }, 'HoursOfOperations');
 
-const TARGETHOP = await listResourcesWithPagination({
+const targetHOP = await listResourcesWithPagination({
   InstanceId: targetInstanceArn,
   MaxResults: 50
 }, 'HoursOfOperations');
 
 // Writing primaryHOP and targetHOP to files
-await writeDataToFile('PRIMARYHOP.json', PRIMARYHOP);
+await writeDataToFile('primaryHOP.json', primaryHOP);
 
-await writeDataToFile('TARGETHOP.json', TARGETHOP);
+await writeDataToFile('targetHOP.json', targetHOP);
 
 
 
