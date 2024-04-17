@@ -23,11 +23,11 @@ export default async function getPrimaryFlowId(primaryContactFlows, flowName) {
     }
   );
 
-  if (!flowArn) {
+  if (!primaryFlowArn) {
     console.log('Not Found Primary Contact Flow');
     return undefined;
   }
 
-  return flowArn;
+  return primaryFlowArn;
 
 }
