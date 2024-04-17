@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 const lexModelsV2 = new AWS.LexModelsV2();
-const { LexModelsV2Client, ListBotsCommand } = require("@aws-sdk/client-lex-models-v2");
+import { LexModelsV2Client, ListBotsCommand } from "@aws-sdk/client-lex-models-v2";
 
 const client = new LexModelsV2Client({ region: "us-east-1" });
 
