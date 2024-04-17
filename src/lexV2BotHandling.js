@@ -4,10 +4,10 @@ import { LexModelsV2Client, ListBotsCommand, ListBotAliasesCommand, DescribeBotC
 
 const client = new LexModelsV2Client({ region: "us-east-1" });
 
-export default async function lexV2BotHandling(primary, aliasArn, target) {
+export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLexBot) {
 
     const lexV2BotName = await getlexV2BotName(aliasArn);
-    console.log('lexV2BotName', lexV2BotName);
+    console.log('lexV2BotName : ', lexV2BotName);
     // let lexv2bots;
     // const commandListBotsCommand = new ListBotsCommand({
     //     sortBy: {

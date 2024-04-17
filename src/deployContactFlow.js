@@ -72,12 +72,14 @@ await writeDataToFile('targetHOP.json', targetHOP);
 // Handling List Lex Bots
 const primaryLexBot = await listResourcesWithPagination({
   InstanceId: instanceArn,
+  LexVersion: V2,
   MaxResults: 25
-}, 'LexBots');
+}, 'Bots');
 const targetLexBot = await listResourcesWithPagination({
   InstanceId: targetInstanceArn,
+  LexVersion: V2,
   MaxResults: 25
-}, 'LexBots');
+}, 'Bots');
 
 // Writing primaryLexBot and targetLexBot to files
 await writeDataToFile('primaryLexBot.json', primaryLexBot);
