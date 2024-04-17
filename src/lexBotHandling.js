@@ -8,7 +8,7 @@ export default async function lexBotHandling(primary, botId, target) {
 
     const params = {
     name: botName,
-    versionOrAlias: '$LATEST'
+    versionOrAlias: 'HNDLCSYFMP'
     };
 
     lexmodelbuildingservice.getBot(params, function(err, data) {
