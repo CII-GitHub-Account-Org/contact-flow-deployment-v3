@@ -65,7 +65,7 @@ export default async function lexV2BotHandling(primary, aliasArn, target) {
 async function getlexV2BotName (aliasArn) {
   const botId = aliasArn.split('/')[1];
   const inputDescribeBotRequest = { // DescribeBotRequest
-    botId: botIdFromArn, // required
+    botId: botId, // required
   };
   // console.log('inputDescribeBotRequest', inputDescribeBotRequest);
   const commandDescribeBotRequest = new DescribeBotCommand(inputDescribeBotRequest);
