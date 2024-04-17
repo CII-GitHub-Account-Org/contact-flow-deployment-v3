@@ -18,6 +18,7 @@ let TARGETJSON ='';
 let TARGETFLOWID = '';
 import { listResourcesWithPagination, listResourcesFunc } from './listResources.js';
 import  writeDataToFile  from './writeDataToFile.js';
+import getPrimaryFlowId from './getPrimaryFlowId.js';
 
 // Handling List Contact Flows
 const primaryContactFlows = await listResourcesFunc({
@@ -96,52 +97,32 @@ const targetLambda = await listResourcesWithPagination({
 await writeDataToFile('primaryLambda.json', primaryLambda);
 await writeDataToFile('targetLambda.json', targetLambda);
 
-// // flowArn = 'arn:aws:connect:us-east-1:750344256621:instance/561af6e6-7907-4131-9f18-71b466e8763e/contact-flow/30a04cc3-44c6-4f30-aeb2-13155235c6d3';
-// let instanceIdTargetParamListP = {
-//   InstanceId: INSTANCEARN,
-//   ContactFlowTypes: [
-//    CONTACTFLOWTYPE
-//  ],
-//   MaxResults: 1000
-// };
-// let primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
-
-// if (!primaryFlowArn){
-//   while (PRIMARYCFS.NextToken) {
-
-//     const token = PRIMARYCFS.NextToken;
-//     instanceIdTargetParamListP.NextToken = token;
-//     console.log('instanceIdTargetParamListP',instanceIdTargetParamListP);
-//     PRIMARYCFS = await listContactFlowFunc(instanceIdTargetParamListP, RETRY_ATTEMPTS);
-//     primaryFlowArn = getPrimaryFlowId(PRIMARYCFS, FLOWNAME);
-//      // If primaryFlowArn exists, break the loop
-//      if (primaryFlowArn) {
-//       console.log('primaryFlowArn', primaryFlowArn);
-//       break;
-//     }
-//   }
-// }
+// get primary flow Arn
+let primaryFlowArn = await getPrimaryFlowId(primaryContactFlows, flowName);
+console.log('primaryFlowArn', primaryFlowArn);
 
 
-// PRIMARYFLOWID = primaryFlowArn.split('/')[3];
-// console.log('PRIMARYFLOWID', PRIMARYFLOWID);
+PRIMARYFLOWID = primaryFlowArn.split('/')[3];
+console.log('PRIMARYFLOWID', PRIMARYFLOWID);
 
-// async function describeContactFlow(instanceId, PRIMARYFLOWID, region) {
-//   AWS.config.update({ region });
-//   const params = {
-//       InstanceId: instanceId,
-//       ContactFlowId: PRIMARYFLOWID
-//   };
-//   let data = await connect.describeContactFlow(params).promise();
-//   return data;
-// }
-// const data = await describeContactFlow(INSTANCEARN, PRIMARYFLOWID, REGION);
+async function describeContactFlow(instanceId, PRIMARYFLOWID, region) {
+  AWS.config.update({ region });
+  const params = {
+      InstanceId: instanceId,
+      ContactFlowId: PRIMARYFLOWID
+  };
+  let data = await connect.describeContactFlow(params).promise();
+  return data;
+}
+const data = await describeContactFlow(instanceArn, PRIMARYFLOWID, region);
 
-// console.log('Data:',data);
-// const flow = data;
-// const content = flow.ContactFlow.Content;
-// TARGETJSON = content;
+console.log('Data:',data);
+const flow = data;
+const content = flow.ContactFlow.Content;
+TARGETJSON = content;
 
+let contentActions = JSON.parse(content).Actions;
+console.log("contentActions Before Replacing", contentActions);
 
 // let instanceIdTargetParamListT = {
 //   InstanceId: TRAGETINSTANCEARN,
@@ -180,8 +161,7 @@ await writeDataToFile('targetLambda.json', targetLambda);
 
 
 
-// let contentActions = JSON.parse(content).Actions;
-// console.log("contentActions Before Replacing", contentActions);
+
 
 // for (let i = 0; i < contentActions.length; i++) {
 //   let obj = contentActions[i];
