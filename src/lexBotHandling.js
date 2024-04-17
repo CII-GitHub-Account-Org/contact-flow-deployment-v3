@@ -1,33 +1,25 @@
 import AWS from 'aws-sdk';
-const lexmodelbuildingservice = new AWS.LexModelBuildingService();
+const lexModelsV2 = new AWS.LexModelsV2();
+const { LexModelsV2Client, ListBotsCommand } = require("@aws-sdk/client-lex-models-v2");
+
+const client = new LexModelsV2Client({ region: "us-east-1" });
 
 export default async function lexBotHandling(primary, botId, target) {
 
     const aliasArn = "arn:aws:lex:us-east-1:750344256621:bot-alias/88GUJWR4HL/HNDLCSYFMP";
 
-    // List all bots
-        lexmodelbuildingservice.getBots({}, function(err, data) {
-            if (err) console.log(err, err.stack); // an error occurred
-            else {
-            // For each bot
-            for (let bot of data.bots) {
-                // Get the bot's aliases
-                lexmodelbuildingservice.getBotAliases({name: bot.name}, function(err, aliasesData) {
-                if (err) console.log(err, err.stack); // an error occurred
-                else {
-                    // For each alias
-                    for (let alias of aliasesData.BotAliases) {
-                    // If the alias ARN matches
-                    if (alias.botAliasArn === aliasArn) {
-                        // Print the bot name
-                        console.log(bot.name);
-                    }
-                    }
-                }
-                });
-            }
-            }
-        });
+
+    const command = new ListBotsCommand({
+        sortBy: {
+          attribute: "BotName",
+          order: "Ascending"
+        },
+        maxResults: 10
+      });
+      
+      client.send(command)
+        .then(data => console.log('lexv2bots', data))
+        .catch(err => console.log(err, err.stack));
 
     // const pl = primary;
     // const tl = target;
