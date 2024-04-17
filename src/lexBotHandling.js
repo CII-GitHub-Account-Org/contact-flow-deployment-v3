@@ -4,18 +4,30 @@ const lexmodelbuildingservice = new AWS.LexModelBuildingService();
 export default async function lexBotHandling(primary, botId, target) {
 
     const aliasArn = "arn:aws:lex:us-east-1:750344256621:bot-alias/88GUJWR4HL/HNDLCSYFMP";
-    const botName = aliasArn.split('/')[1];
 
-    const params = {
-    name: botName,
-    versionOrAlias: 'HNDLCSYFMP'
-    };
-
-    lexmodelbuildingservice.getBot(params, function(err, data) {
-    if (err) console.log(err, err.stack); // an error occurred
-    else     console.log("Lex Bot : " , data);           // successful response
-    });
-
+    // List all bots
+        lexmodelbuildingservice.getBots({}, function(err, data) {
+            if (err) console.log(err, err.stack); // an error occurred
+            else {
+            // For each bot
+            for (let bot of data.bots) {
+                // Get the bot's aliases
+                lexmodelbuildingservice.getBotAliases({name: bot.name}, function(err, aliasesData) {
+                if (err) console.log(err, err.stack); // an error occurred
+                else {
+                    // For each alias
+                    for (let alias of aliasesData.BotAliases) {
+                    // If the alias ARN matches
+                    if (alias.botAliasArn === aliasArn) {
+                        // Print the bot name
+                        console.log(bot.name);
+                    }
+                    }
+                }
+                });
+            }
+            }
+        });
 
     // const pl = primary;
     // const tl = target;
