@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 const lexModelsV2 = new AWS.LexModelsV2();
-import { LexModelsV2Client, ListBotsCommand, ListBotAliasesCommand   } from "@aws-sdk/client-lex-models-v2";
+import { LexModelsV2Client, ListBotsCommand, ListBotAliasesCommand, DescribeBotCommand   } from "@aws-sdk/client-lex-models-v2";
 
 const client = new LexModelsV2Client({ region: "us-east-1" });
 
@@ -8,30 +8,41 @@ export default async function lexBotHandling(primary, botId, target) {
 
     const aliasArn = "arn:aws:lex:us-east-1:750344256621:bot-alias/88GUJWR4HL/HNDLCSYFMP";
 
-    let lexv2bots;
-    const commandListBotsCommand = new ListBotsCommand({
-        sortBy: {
-          attribute: "BotName",
-          order: "Ascending"
-        },
-        maxResults: 200
-      });
+    const botId = aliasArn.split('/')[1];
+    const botAliasId = aliasArn.split('/')[2];
+    // let lexv2bots;
+    // const commandListBotsCommand = new ListBotsCommand({
+    //     sortBy: {
+    //       attribute: "BotName",
+    //       order: "Ascending"
+    //     },
+    //     maxResults: 200
+    //   });
       
-      client.send(commandListBotsCommand)
-        .then((data) => {
-            // console.log('lexv2bots', data);
-            lexv2bots = data.botSummaries;
-        })
-        .catch(err => console.log(err, err.stack));
+    //   client.send(commandListBotsCommand)
+    //     .then((data) => {
+    //         // console.log('lexv2bots', data);
+    //         lexv2bots = data.botSummaries;
+    //     })
+    //     .catch(err => console.log(err, err.stack));
 
 
-        const inputListBotAliasesRequest = { // ListBotAliasesRequest
-          botId: '608D5ZYTKH', // required
-          maxResults: 200
+        // const inputListBotAliasesRequest = { // ListBotAliasesRequest
+        //   botId: '88GUJWR4HL', // required
+        //   maxResults: 200
+        // };
+        // const commandListBotAliasesRequest = new ListBotAliasesCommand(inputListBotAliasesRequest);
+        // const response = await client.send(commandListBotAliasesRequest);
+        // console.log('ListBotAliasesRequest', response);
+
+        const inputDescribeBotRequest = { // DescribeBotRequest
+          botId: botId, // required
         };
-        const commandListBotAliasesRequest = new ListBotAliasesCommand(inputListBotAliasesRequest);
-        const response = await client.send(commandListBotAliasesRequest);
-        console.log('ListBotAliasesRequest', response);
+        console.log('inputDescribeBotRequest', inputDescribeBotRequest);
+        const commandDescribeBotRequest = new DescribeBotCommand(inputDescribeBotRequest);
+        const responseDescribeBotRequest = await client.send(commandDescribeBotRequest);
+        console.log('DescribeBotRequest', responseDescribeBotRequest);
+
     // const pl = primary;
     // const tl = target;
     // let fName = '';
