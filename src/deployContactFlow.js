@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 const connect = new AWS.Connect();
 const instanceArn = process.env.SOURCE_INSTANCEARN;
 const targetInstanceArn = process.env.TRAGET_INSTANCEARN;
-let flowName = process.env.FLOWNAME;
+const flowName = process.env.FLOWNAME;
 const contactFlowType = process.env.CONTACTFLOWTYPE;
 const region = process.env.REGION;
 const retryAttempts = process.env.RETRY_ATTEMPTS;
@@ -13,9 +13,11 @@ console.log('contactFlowType', contactFlowType);
 console.log('region', region);
 console.log('retryAttempts', retryAttempts);
 let isExist;
+let targetJson;
 import { listResourcesWithPagination, listResourcesFunc } from './listResources.js';
 import  writeDataToFile  from './writeDataToFile.js';
 import getContactFlowArn from './getContactFlowArn.js';
+import createOrUpdateFlow from './createOrUpdateFlow.js';
 
 // Handling List Contact Flows
 const primaryContactFlows = await listResourcesFunc({
@@ -99,7 +101,7 @@ const primaryFlowArn = await getContactFlowArn(primaryContactFlows, flowName);
 console.log('primaryFlowArn', primaryFlowArn);
 if (!primaryFlowArn){
   console.log('Primary Flow Not Found, Please check the flow name and try again.');
-}
+} else {
 
 // get primary flow Id
 const primaryFlowId = primaryFlowArn.split('/')[3];
@@ -133,9 +135,14 @@ async function describeContactFlow(instanceId, primaryFlowId, region) {
 const flowData = await describeContactFlow(instanceArn, primaryFlowId, region);
 console.log('Data:',flowData);
 const flowContent = flowData.ContactFlow.Content;
-let targetJson = flowContent;
-let contentActions = JSON.parse(flowContent).Actions;
-console.log("contentActions Before Replacing", contentActions);
+targetJson = flowContent;
+let contentActions = JSON.parse(targetJson).Actions;
+console.log("Content  Actions Before Replacing", contentActions);
+
+// contentActions = JSON.parse(targetJson).Actions;
+// console.log("contentActions After Replacing", contentActions);
+// await createOrUpdateFlow(isExist, flowName, targetInstanceArn, contactFlowType, targetJson, targetFlowId)
+}
 
 // for (let i = 0; i < contentActions.length; i++) {
 //   let obj = contentActions[i];
@@ -186,65 +193,8 @@ console.log("contentActions Before Replacing", contentActions);
 //   }
 // }
 
-// contentActions = JSON.parse(content).Actions;
-// console.log("contentActions After Replacing", contentActions);
-
-// async function createOrUpdateFlow(isExist, FLOWNAME, CONTACTFLOWTYPE, TARGETJSON, TARGETFLOWID) {
-//     console.log('isExist: ',isExist);
-//     if (!isExist) {
-//         const params = {
-//             InstanceId: TRAGETINSTANCEARN,
-//             Name: FLOWNAME,
-//             Type: CONTACTFLOWTYPE,
-//             Content: TARGETJSON
-//         };
-//         console.log("params: ", params);
-//         try {
-//             const data = await connect.createContactFlow(params).promise();
-//             console.log(data);
-//             console.log('NEW FLOW HAS BEEN CREATED');
-//         } catch (error) {
-//             console.error(error);
-//         }
-//     } else {
-//         console.log("Updating Flow");
-
-//         const params = {
-//             InstanceId: TRAGETINSTANCEARN,
-//             ContactFlowId: TARGETFLOWID,
-//             Content: TARGETJSON
-//         };
-//         console.log("params: ", params);
-//         try {
-//             const data = await connect.updateContactFlowContent(params).promise();
-//             console.log(data);
-//             console.log('FLOW HAS BEEN UPDATED');
-//         } catch (error) {
-//             console.error(error);
-//         }
-//     }
-// }
-
-// await createOrUpdateFlow(isExist, FLOWNAME, CONTACTFLOWTYPE, TARGETJSON, TARGETFLOWID);
 
 
-// function getPrimaryFlowId(primary, flowName) {
-//   let rId = '';
-//   const pl = primary;
-  
-//   console.log(`Searching for flowName : ${flowName}`);
-
-
-//   const primaryObj = pl && pl.ContactFlowSummaryList ? pl.ContactFlowSummaryList.find(obj => obj.Name === flowName) : undefined;
-//   if (primaryObj) {
-//     rId = primaryObj.Arn;
-//     console.log(`Found flow Arn : ${rId}`);
-//     return rId;
-//   } else {
-//     console.log('Not Found Primary Contact Flow');
-//     return undefined;
-//   }
-// }
 
 // async function getFlowId(flowArn, target, FLOWNAME) {
 //   const tl = target;
@@ -334,38 +284,6 @@ console.log("contentActions Before Replacing", contentActions);
 //   }
 // }
 
-// function getUserId(primary, userId, target) {
-//   const pl = primary;
-//   const tl = target;
-//   let fName = '';
-//   let rId = '';
-
-//   console.log(`Searching for userId : ${userId}`);
-
-//   for (let i = 0; i < pl.UserSummaryList.length; i++) {
-//       const obj = pl.UserSummaryList[i];
-//       if (obj.Arn === userId) {
-//           fName = obj.Username;
-//           console.log(`Found user name : ${fName}`);
-//           break;
-//       }
-//   }
-
-//   console.log(`Searching for userId for : ${fName}`);
-
-//   for (let i = 0; i < tl.UserSummaryList.length; i++) {
-//       const obj = tl.UserSummaryList[i];
-//       if (obj.Username === fName) {
-//           rId = obj.Arn;
-//           console.log(`Found flow id : ${rId}`);
-//           return rId;
-//       } else if (i === tl.UserSummaryList.length - 1) {
-//           console.log('create user');
-//           return undefined;
-//       }
-//   }
-// }
-
 // function getHOPId(primary, hopId, target) {
 //   const pl = primary;
 //   const tl = target;
@@ -398,33 +316,6 @@ console.log("contentActions Before Replacing", contentActions);
 //   }
 // }
 
-// function getPromptId(primary, searchId, target) {
-//     const pl = primary;
-//     const tl = target;
-//     let fName = '';
-//     let rId = '';
-  
-//     console.log(`Searching for promptId : ${searchId}`);
-  
-//     const primaryObj = pl.PromptSummaryList.find(obj => obj.Arn === searchId);
-//     if (primaryObj) {
-//       fName = primaryObj.Name;
-//       console.log(`Found name : ${fName}`);
-//     }
-  
-//     console.log(`Searching for prompt for : ${fName}`);
-  
-//     const targetObj = tl && tl.PromptSummaryList ? tl.PromptSummaryList.find(obj => obj.Name === fName) : undefined;
-//     if (targetObj) {
-//       rId = targetObj.Arn;
-//       console.log(`Found id : ${rId}`);
-//       return rId;
-//     } else {
-//     //   console.log('prompt cant created');
-//       console.log('Prompt Not Found Please Create prompt');
-//       return undefined;
-//     }
-// }
 
 // function getLexBotId(primary, botId, target) {
 //     const pl = primary;
@@ -453,11 +344,3 @@ console.log("contentActions Before Replacing", contentActions);
 //       return undefined;
 //     }
 // }
-
-
-
-
-
-
-
-

@@ -14,7 +14,7 @@ export default async function getContactFlowArn(contactFlows, flowName) {
             item.ContactFlowSummaryList.forEach((item) => {
                 if (item.Name === flowName) {
                   contactFlowArn = item.Arn;
-                    console.log(`Found flow Arn : ${contactFlowArn}`);
+                  console.log(`Found flow Arn : ${contactFlowArn}`);
                 }
               });
         }
