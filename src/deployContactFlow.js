@@ -151,7 +151,7 @@ for (let i = 0; i < contentActions.length; i++) {
           console.log('Inside LexBot Handling');
           const LexV2BotAliasArn = obj && obj.Parameters && obj.Parameters.LexV2Bot && obj.Parameters.LexV2Bot.AliasArn ? obj.Parameters.LexV2Bot.AliasArn : undefined;
           console.log('LexV2BotAliasArn : ', LexV2BotAliasArn);
-          await lexV2BotHandling(primaryLexBot, obj.Parameters.LexV2Bot.AliasArn, targetLexBot);
+          await lexV2BotHandling(primaryLexBot, obj.Parameters.LexV2Bot.AliasArn, targetLexBot, region);
           // let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
           // handle lex bot
         } else {
