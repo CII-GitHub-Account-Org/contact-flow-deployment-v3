@@ -99,7 +99,6 @@ const primaryFlowArn = await getContactFlowArn(primaryContactFlows, flowName);
 console.log('primaryFlowArn', primaryFlowArn);
 if (!primaryFlowArn){
   console.log('Primary Flow Not Found, Please check the flow name and try again.');
-  return;
 }
 
 // get primary flow Id
