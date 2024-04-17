@@ -500,45 +500,6 @@ await writeDataToFile('targetLambda.json', targetLambda);
 //     }
 // }
 
-// async function listContactFlowFunc (params, retryAttempts) {
-//   try {
-//     let doRetry = false;
-//     do {
-//       doRetry = false;
-//       try {
-//         let listContactFlows = ''; 
-//         listContactFlows = await connect.listContactFlows(params, function(err, data) {
-//           if (err) console.log(err, err.stack); // an error occurred
-//           else    { 
-//                   // console.log('PRIMARYCFS', data)
-//                   listContactFlows = data;
-//                   };            // successful response
-//          }).promise();
-//         if (listContactFlows) {
-//           return listContactFlows;
-//         } else {
-//           return null;
-//         }
-//       } catch (error) {
-//         console.log(
-//           'error::',
-//           (error)
-//         );
-//         if (error.code === 'TooManyRequestsException' && (retryAttempts || 3)> 0) {
-//           await sleep(parseInt(2500, 10) || 1000);
-//           --retryAttempts;
-//           doRetry = true;
-//           console.log('doRetry::', doRetry);
-//         } else {
-//           return error;
-//         }
-//       }
-//     } while (doRetry);
-//   } catch (error) {
-//     console.log('error::', error);
-//     return error;
-//   }
-// };
 
 
 
