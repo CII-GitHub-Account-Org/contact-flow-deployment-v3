@@ -12,13 +12,10 @@ console.log('flowName', flowName);
 console.log('contactFlowType', contactFlowType);
 console.log('region', region);
 console.log('retryAttempts', retryAttempts);
-let PRIMARYFLOWID = '';
 let isExist;
-let TARGETJSON ='';
-let TARGETFLOWID = '';
 import { listResourcesWithPagination, listResourcesFunc } from './listResources.js';
 import  writeDataToFile  from './writeDataToFile.js';
-import getPrimaryFlowId from './getPrimaryFlowId.js';
+import getContactFlowArn from './getContactFlowArn.js';
 
 // Handling List Contact Flows
 const primaryContactFlows = await listResourcesFunc({
@@ -98,70 +95,48 @@ await writeDataToFile('primaryLambda.json', primaryLambda);
 await writeDataToFile('targetLambda.json', targetLambda);
 
 // get primary flow Arn
-let primaryFlowArn = await getPrimaryFlowId(primaryContactFlows, flowName);
+const primaryFlowArn = await getContactFlowArn(primaryContactFlows, flowName);
 console.log('primaryFlowArn', primaryFlowArn);
+if (!primaryFlowArn){
+  console.log('Primary Flow Not Found, Please check the flow name and try again.');
+  return;
+}
 
+// get primary flow Id
+const primaryFlowId = primaryFlowArn.split('/')[3];
+console.log('primaryFlowId', primaryFlowId);
 
-PRIMARYFLOWID = primaryFlowArn.split('/')[3];
-console.log('PRIMARYFLOWID', PRIMARYFLOWID);
+// get target flow Arn
+const targetFlowArn = await getContactFlowArn(targetContactFlows, flowName);
+console.log('targetFlowArn', targetFlowArn);
+if (!targetFlowArn){
+  console.log('Target flow not found, Creating contact flow.');
+  isExist = false;
+} else { 
+  isExist = true;
+  console.log(`Target flow found, Updating contact flow : ${flowName}`);
+ }
 
-async function describeContactFlow(instanceId, PRIMARYFLOWID, region) {
+// get target flow Id
+const targetFlowId = targetFlowArn.split('/')[3];
+console.log('targetFlowId', targetFlowId);
+
+// describe contact flow and get content
+async function describeContactFlow(instanceId, primaryFlowId, region) {
   AWS.config.update({ region });
   const params = {
       InstanceId: instanceId,
-      ContactFlowId: PRIMARYFLOWID
+      ContactFlowId: primaryFlowId
   };
   let data = await connect.describeContactFlow(params).promise();
   return data;
 }
-const data = await describeContactFlow(instanceArn, PRIMARYFLOWID, region);
-
-console.log('Data:',data);
-const flow = data;
-const content = flow.ContactFlow.Content;
-TARGETJSON = content;
-
-let contentActions = JSON.parse(content).Actions;
+const flowData = await describeContactFlow(instanceArn, primaryFlowId, region);
+console.log('Data:',flowData);
+const flowContent = flowData.ContactFlow.Content;
+let targetJson = flowContent;
+let contentActions = JSON.parse(flowContent).Actions;
 console.log("contentActions Before Replacing", contentActions);
-
-// let instanceIdTargetParamListT = {
-//   InstanceId: TRAGETINSTANCEARN,
-//   ContactFlowTypes: [
-//    CONTACTFLOWTYPE
-//  ],
-//   MaxResults: 1000
-// };
-// let targetFlowArn = await getFlowId(primaryFlowArn, TARGETCFS, FLOWNAME);
-
-// if (!targetFlowArn){
-//   while (TARGETCFS.NextToken) {
-
-//     const token = TARGETCFS.NextToken;
-//     instanceIdTargetParamListT.NextToken = token;
-//     console.log('instanceIdTargetParamListT',instanceIdTargetParamListT);
-//     TARGETCFS = await listContactFlowFunc(instanceIdTargetParamListT, RETRY_ATTEMPTS);
-//     targetFlowArn = await getFlowId(primaryFlowArn, TARGETCFS, FLOWNAME);
-//      // If targetFlowArn exists, break the loop
-//      if (targetFlowArn) {
-//       console.log('targetFlowArn', targetFlowArn);
-//       break;
-//     }
-//   }
-// }
-
-// // let flowArn = getFlowId(PRIMARYCFS, flow.ContactFlow.Arn, TARGETCFS);
-// if (targetFlowArn) {
-//     console.log('taking TARGETFLOWID from targetFlowArn', targetFlowArn);
-//     TARGETFLOWID = targetFlowArn.split('/')[3];
-//     isExist = true;
-//     console.log(`Need to update flowId : ${TARGETFLOWID}`);
-// } else {
-//     isExist = false;
-// }
-
-
-
-
 
 // for (let i = 0; i < contentActions.length; i++) {
 //   let obj = contentActions[i];
