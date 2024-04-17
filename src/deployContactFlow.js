@@ -18,6 +18,7 @@ import { listResourcesWithPagination, listResourcesFunc } from './listResources.
 import  writeDataToFile  from './writeDataToFile.js';
 import getContactFlowArn from './getContactFlowArn.js';
 import createOrUpdateFlow from './createOrUpdateFlow.js';
+import lexBotHandling from './lexBotHandling.js';
 
 // Handling List Contact Flows
 const primaryContactFlows = await listResourcesFunc({
@@ -139,6 +140,20 @@ targetJson = flowContent;
 let contentActions = JSON.parse(targetJson).Actions;
 console.log("Content Actions Before Replacing : ", contentActions);
 await writeDataToFile('contentActions.json', contentActions);
+
+for (let i = 0; i < contentActions.length; i++) {
+    let obj = contentActions[i];
+    console.log(`Type value: ${obj.Type}`);
+
+    if (obj.Type === 'ConnectParticipantWithLexBot') {
+          console.log('Inside LexBot Handling');
+          await lexBotHandling(primaryLexBot, obj.Parameters.LexV2Bot.AliasArn, targetLexBot);
+          // let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
+          // handle lex bot
+        } else {
+          console.log(`No handling for the type : ${obj.Type}`);
+        }
+}
 
 // contentActions = JSON.parse(targetJson).Actions;
 // console.log("contentActions After Replacing", contentActions);
