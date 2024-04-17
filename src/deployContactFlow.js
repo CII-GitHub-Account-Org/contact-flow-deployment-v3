@@ -138,6 +138,7 @@ const flowContent = flowData.ContactFlow.Content;
 targetJson = flowContent;
 let contentActions = JSON.parse(targetJson).Actions;
 console.log("Content Actions Before Replacing : ", contentActions);
+await writeDataToFile('contentActions.json', contentActions);
 
 // contentActions = JSON.parse(targetJson).Actions;
 // console.log("contentActions After Replacing", contentActions);
