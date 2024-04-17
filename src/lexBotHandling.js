@@ -8,7 +8,7 @@ export default async function lexBotHandling(primary, botId, target) {
 
     const aliasArn = "arn:aws:lex:us-east-1:750344256621:bot-alias/88GUJWR4HL/HNDLCSYFMP";
 
-    const botId = aliasArn.split('/')[1];
+    const botIdFromArn = aliasArn.split('/')[1];
     const botAliasId = aliasArn.split('/')[2];
     // let lexv2bots;
     // const commandListBotsCommand = new ListBotsCommand({
@@ -36,7 +36,7 @@ export default async function lexBotHandling(primary, botId, target) {
         // console.log('ListBotAliasesRequest', response);
 
         const inputDescribeBotRequest = { // DescribeBotRequest
-          botId: botId, // required
+          botId: botIdFromArn, // required
         };
         console.log('inputDescribeBotRequest', inputDescribeBotRequest);
         const commandDescribeBotRequest = new DescribeBotCommand(inputDescribeBotRequest);
