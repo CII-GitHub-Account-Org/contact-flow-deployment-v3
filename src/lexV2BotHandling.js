@@ -4,12 +4,10 @@ import { LexModelsV2Client, ListBotsCommand, ListBotAliasesCommand, DescribeBotC
 
 const client = new LexModelsV2Client({ region: "us-east-1" });
 
-export default async function lexBotHandling(primary, botId, target) {
+export default async function lexV2BotHandling(primary, aliasArn, target) {
 
-    const aliasArn = "arn:aws:lex:us-east-1:750344256621:bot-alias/88GUJWR4HL/HNDLCSYFMP";
-
-    const botIdFromArn = aliasArn.split('/')[1];
-    const botAliasId = aliasArn.split('/')[2];
+    const lexV2BotName = await getlexV2BotName(aliasArn);
+    console.log('lexV2BotName', lexV2BotName);
     // let lexv2bots;
     // const commandListBotsCommand = new ListBotsCommand({
     //     sortBy: {
@@ -35,13 +33,7 @@ export default async function lexBotHandling(primary, botId, target) {
         // const response = await client.send(commandListBotAliasesRequest);
         // console.log('ListBotAliasesRequest', response);
 
-        const inputDescribeBotRequest = { // DescribeBotRequest
-          botId: botIdFromArn, // required
-        };
-        console.log('inputDescribeBotRequest', inputDescribeBotRequest);
-        const commandDescribeBotRequest = new DescribeBotCommand(inputDescribeBotRequest);
-        const responseDescribeBotRequest = await client.send(commandDescribeBotRequest);
-        console.log('DescribeBotRequest', responseDescribeBotRequest);
+ 
 
     // const pl = primary;
     // const tl = target;
@@ -70,6 +62,18 @@ export default async function lexBotHandling(primary, botId, target) {
     // }
 }
 
+async function getlexV2BotName (aliasArn) {
+  const botId = aliasArn.split('/')[1];
+  const inputDescribeBotRequest = { // DescribeBotRequest
+    botId: botIdFromArn, // required
+  };
+  // console.log('inputDescribeBotRequest', inputDescribeBotRequest);
+  const commandDescribeBotRequest = new DescribeBotCommand(inputDescribeBotRequest);
+  const responseDescribeBotRequest = await client.send(commandDescribeBotRequest);
+  // console.log('DescribeBotRequest', responseDescribeBotRequest);
+  const botName = responseDescribeBotRequest.botName;
+  return botName;
+}
 
 
 

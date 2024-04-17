@@ -18,7 +18,7 @@ import { listResourcesWithPagination, listResourcesFunc } from './listResources.
 import  writeDataToFile  from './writeDataToFile.js';
 import getContactFlowArn from './getContactFlowArn.js';
 import createOrUpdateFlow from './createOrUpdateFlow.js';
-import lexBotHandling from './lexBotHandling.js';
+import lexV2BotHandling from './lexV2BotHandling.js';
 
 // Handling List Contact Flows
 const primaryContactFlows = await listResourcesFunc({
@@ -147,7 +147,7 @@ for (let i = 0; i < contentActions.length; i++) {
 
     if (obj.Type === 'ConnectParticipantWithLexBot') {
           console.log('Inside LexBot Handling');
-          await lexBotHandling(primaryLexBot, obj.Parameters.LexV2Bot.AliasArn, targetLexBot);
+          await lexV2BotHandling(primaryLexBot, obj.Parameters.LexV2Bot.AliasArn, targetLexBot);
           // let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
           // handle lex bot
         } else {
