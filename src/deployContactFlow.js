@@ -120,7 +120,7 @@ if (!targetFlowArn){
 
 // get target flow Id
 const targetFlowId = targetFlowArn.split('/')[3];
-console.log('targetFlowId', targetFlowId);
+console.log('targetFlowId : ', targetFlowId);
 
 // describe contact flow and get content
 async function describeContactFlow(instanceId, primaryFlowId, region) {
@@ -133,11 +133,11 @@ async function describeContactFlow(instanceId, primaryFlowId, region) {
   return data;
 }
 const flowData = await describeContactFlow(instanceArn, primaryFlowId, region);
-console.log('Data:',flowData);
+console.log('Data : ',flowData);
 const flowContent = flowData.ContactFlow.Content;
 targetJson = flowContent;
 let contentActions = JSON.parse(targetJson).Actions;
-console.log("Content  Actions Before Replacing", contentActions);
+console.log("Content Actions Before Replacing : ", contentActions);
 
 // contentActions = JSON.parse(targetJson).Actions;
 // console.log("contentActions After Replacing", contentActions);
