@@ -4,13 +4,15 @@ const instanceArn = process.env.SOURCE_INSTANCEARN;
 const targetInstanceArn = process.env.TRAGET_INSTANCEARN;
 const flowName = process.env.FLOWNAME;
 const contactFlowType = process.env.CONTACTFLOWTYPE;
-const region = process.env.REGION;
+const sourceRegion = process.env.DEV_REGION;
+const targetRegion = process.env.QA_REGION;
 const retryAttempts = process.env.RETRY_ATTEMPTS;
 console.log('instanceArn', instanceArn);
 console.log('targetInstanceArn', targetInstanceArn);
 console.log('flowName', flowName);
 console.log('contactFlowType', contactFlowType);
-console.log('region', region);
+console.log('sourceRegion', sourceRegion);
+console.log('targetRegion', targetRegion);
 console.log('retryAttempts', retryAttempts);
 let isExist;
 let targetJson;
@@ -126,8 +128,8 @@ const targetFlowId = targetFlowArn.split('/')[3];
 console.log('targetFlowId : ', targetFlowId);
 
 // describe contact flow and get content
-async function describeContactFlow(instanceId, primaryFlowId, region) {
-  AWS.config.update({ region });
+async function describeContactFlow(instanceId, primaryFlowId, sourceRegion) {
+  AWS.config.update({ sourceRegion });
   const params = {
       InstanceId: instanceId,
       ContactFlowId: primaryFlowId
@@ -135,7 +137,7 @@ async function describeContactFlow(instanceId, primaryFlowId, region) {
   let data = await connect.describeContactFlow(params).promise();
   return data;
 }
-const flowData = await describeContactFlow(instanceArn, primaryFlowId, region);
+const flowData = await describeContactFlow(instanceArn, primaryFlowId, sourceRegion);
 console.log('Data : ',flowData);
 const flowContent = flowData.ContactFlow.Content;
 targetJson = flowContent;
@@ -143,25 +145,41 @@ let contentActions = JSON.parse(targetJson).Actions;
 console.log("Content Actions Before Replacing : ", contentActions);
 await writeDataToFile('contentActions.json', contentActions);
 
+const missedResourcesInTarget = [];
 for (let i = 0; i < contentActions.length; i++) {
     let obj = contentActions[i];
     console.log(`Type value: ${obj.Type}`);
 
     if (obj.Type === 'ConnectParticipantWithLexBot') {
           console.log('Inside LexBot Handling');
-          const LexV2BotAliasArn = obj && obj.Parameters && obj.Parameters.LexV2Bot && obj.Parameters.LexV2Bot.AliasArn ? obj.Parameters.LexV2Bot.AliasArn : undefined;
-          console.log('LexV2BotAliasArn : ', LexV2BotAliasArn);
-          await lexV2BotHandling(primaryLexBot, obj.Parameters.LexV2Bot.AliasArn, targetLexBot, region);
-          // let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
-          // handle lex bot
+          const lexV2BotAliasArn = obj && obj.Parameters && obj.Parameters.LexV2Bot && obj.Parameters.LexV2Bot.AliasArn ? obj.Parameters.LexV2Bot.AliasArn : undefined;
+          console.log('lexV2BotAliasArn : ', lexV2BotAliasArn);
+          const targetLexV2BotResources = await lexV2BotHandling(primaryLexBot, lexV2BotAliasArn, targetLexBot, targetRegion);
+          console.log('targetLexV2BotResources : ', targetLexV2BotResources);
+          if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'exists') {
+            // targetJson = targetJson.replace(new RegExp(LexV2BotAliasArn, 'g'), targetAliasArn);
+          } else if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'notExists') {
+            missedResourcesInTarget.push({
+              "ResourceType": targetLexV2BotResources.ResourceType,
+              "ResourceName": targetLexV2BotResources.ResourceName,
+              "ResourceArn": targetLexV2BotResources.ResourceArn
+            });
+          }
         } else {
           console.log(`No handling for the type : ${obj.Type}`);
         }
 }
 
+if (missedResourcesInTarget.length > 0) {
+  // Writing missedResourcesInTarget to files
+    console.log('missedResourcesInTarget : ', missedResourcesInTarget);
+    await writeDataToFile('missedResourcesInTarget.json', missedResourcesInTarget);
+    console.log('Note : Please create the missed resources in target instance');
+} else {
 // contentActions = JSON.parse(targetJson).Actions;
 // console.log("contentActions After Replacing", contentActions);
 // await createOrUpdateFlow(isExist, flowName, targetInstanceArn, contactFlowType, targetJson, targetFlowId)
+}
 }
 
 // for (let i = 0; i < contentActions.length; i++) {

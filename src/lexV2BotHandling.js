@@ -4,18 +4,20 @@ let regionToUse;
 
 export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLexBot, region) {
     regionToUse = region;
-    const lexV2BotName = await getlexV2BotName(aliasArn, region);
-    console.log('lexV2BotName : ', lexV2BotName);
+   
+    const primaryLexV2BotName = await getlexV2BotName(aliasArn, regionToUse);
+    console.log('primaryLexV2BotName : ', primaryLexV2BotName);
 
     if (!Array.isArray(primaryLexBot) || primaryLexBot.length === 0) {
       console.log('primaryLexBot is empty or not an array');
-      return undefined;
+      return {
+        "ResourceStatus": "notExists",
+        "ResourceType": "lexV2Bot",
+        "ResourceName": primaryLexV2BotName,
+        "ResourceArn": aliasArn
+      };
     }
     
-    const primaryLexV2BotName = await getlexV2BotName(aliasArn, regionToUse);
-    console.log('primaryLexV2BotName : ', primaryLexV2BotName);
-    
-
     let foundAliasArnInPrimary = false;
     primaryLexBot.forEach((item) => {
       if (item && item.LexBots){
@@ -31,12 +33,22 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
     });
     if (!foundAliasArnInPrimary) {
       console.log('Not Found aliasArn in primaryLexBot');
-      return undefined;
+      return {
+        "ResourceStatus": "notExists",
+        "ResourceType": "lexV2Bot",
+        "ResourceName": primaryLexV2BotName,
+        "ResourceArn": aliasArn
+      };;
     } 
     
     if (!Array.isArray(targetLexBot) || targetLexBot.length === 0) {
       console.log('targetLexBot is empty or not an array');
-      return undefined;
+      return {
+        "ResourceStatus": "notExists",
+        "ResourceType": "lexV2Bot",
+        "ResourceName": primaryLexV2BotName,
+        "ResourceArn": aliasArn
+      };;
     }
 
     let foundAliasArnInTarget = false;
@@ -58,9 +70,17 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
 
     if (!foundAliasArnInTarget) {
       console.log('Not Found aliasArn in targetLexBot');
-      return undefined;
+      return {
+        "ResourceStatus": "notExists",
+        "ResourceType": "lexV2Bot",
+        "ResourceName": primaryLexV2BotName,
+        "ResourceArn": aliasArn
+      };
     } else {
-      return targetAliasArn;
+      return {
+        "ResourceStatus": "exists",
+        "TargetAliasArn": targetAliasArn
+      };
     } 
 
   }

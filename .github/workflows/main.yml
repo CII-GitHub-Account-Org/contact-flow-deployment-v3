@@ -62,7 +62,8 @@ jobs:
           TRAGET_INSTANCEARN: ${{ env.QA_INSTANCEARN }}
           FLOWNAME: ${{ env.FLOWNAME }}
           CONTACTFLOWTYPE: ${{ env.CONTACTFLOWTYPE }}
-          REGION: ${{ env.REGION }}
+          SOURCE_REGION: ${{ env.DEV_REGION }}
+          TARGET_REGION: ${{ env.QA_REGION }}
           RETRY_ATTEMPTS: ${{ env.RETRY_ATTEMPTS }}
 
       - name: List files in src directory
