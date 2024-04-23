@@ -22,6 +22,7 @@ import getContactFlowArn from './getContactFlowArn.js';
 import createOrUpdateFlow from './createOrUpdateFlow.js';
 import lexV2BotHandling from './lexV2BotHandling.js';
 import lambdaHandling from './lambdaHandling.js';
+import queueHandling from './queueHandling.js';
 
 // Handling List Contact Flows
 const primaryContactFlows = await listResourcesFunc({
@@ -154,10 +155,19 @@ for (let i = 0; i < contentActions.length; i++) {
         if (obj.Type === 'UpdateContactTargetQueue') {
           console.log('Inside Queue Handling');
           console.log('obj : ', obj);
-          const queueId = obj && obj.Parameters && obj.Parameters.QueueId ? obj.Parameters.QueueId : undefined;
-
-
-
+          const queueArn = obj && obj.Parameters && obj.Parameters.QueueId ? obj.Parameters.QueueId : undefined;
+          console.log('queueArn : ', queueArn);
+          const targetQueueResources = await queueHandling(primaryQueues, queueArn, targetQueues);
+          console.log('targetQueueResources : ', targetQueueResources);
+          if (targetQueueResources && targetQueueResources.ResourceStatus === 'exists') {
+            // targetJson = targetJson.replace(new RegExp(LexV2BotAliasArn, 'g'), targetAliasArn);
+          } else if (targetQueueResources && targetQueueResources.ResourceStatus === 'notExists') {
+            missedResourcesInTarget.push({
+              "ResourceType": targetQueueResources.ResourceType,
+              "ResourceName": targetQueueResources.ResourceName,
+              "ResourceArn": targetQueueResources.ResourceArn
+            });
+          }
         } else if (obj.Type === 'ConnectParticipantWithLexBot') {
           console.log('Inside LexBot Handling');
           const lexV2BotAliasArn = obj && obj.Parameters && obj.Parameters.LexV2Bot && obj.Parameters.LexV2Bot.AliasArn ? obj.Parameters.LexV2Bot.AliasArn : undefined;
