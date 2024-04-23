@@ -166,9 +166,20 @@ for (let i = 0; i < contentActions.length; i++) {
             });
           }
         } else if (obj.Type === 'InvokeLambdaFunction') {
-        
-          console.log('Inside Lambda Handling', obj);
-        
+          console.log('Inside Lambda Handling');
+          const lambdaFunctionARN = obj && obj.Parameters && obj.Parameters.LambdaFunctionARN ? obj.Parameters.LambdaFunctionARN : undefined;
+          console.log('lambdaFunctionARN : ', lambdaFunctionARN);
+          const targetLambdaResources = await lambdaHandling(primaryLambda, lambdaFunctionARN, targetLambda, targetRegion);
+          // console.log('targetLexV2BotResources : ', targetLexV2BotResources);
+          // if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'exists') {
+          //   // targetJson = targetJson.replace(new RegExp(LexV2BotAliasArn, 'g'), targetAliasArn);
+          // } else if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'notExists') {
+          //   missedResourcesInTarget.push({
+          //     "ResourceType": targetLexV2BotResources.ResourceType,
+          //     "ResourceName": targetLexV2BotResources.ResourceName,
+          //     "ResourceArn": targetLexV2BotResources.ResourceArn
+          //   });
+          // }
         } else {
           console.log(`No handling for the type : ${obj.Type}`);
         }
