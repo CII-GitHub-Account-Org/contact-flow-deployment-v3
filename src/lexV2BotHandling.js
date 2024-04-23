@@ -6,7 +6,9 @@ import writeDataToFile from './writeDataToFile.js';
 export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLexBot, region) {
     regionToUse = region;
    
-    const primaryLexV2BotName = await getlexV2BotName(aliasArn, regionToUse);
+    const primaryLexV2BotId = aliasArn.split('/')[1];
+    const describeLexV2BotResponse = await describeLexV2Bot(primaryLexV2BotId, regionToUse);
+    const primaryLexV2BotName = describeLexV2BotResponse.botName;
     console.log('primaryLexV2BotName : ', primaryLexV2BotName);
 
     if (!Array.isArray(primaryLexBot) || primaryLexBot.length === 0) {
@@ -62,7 +64,9 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
       if (item && item.LexBots) {
         for (const lexBot of item.LexBots) {
           if (lexBot && lexBot.LexV2Bot && lexBot.LexV2Bot.AliasArn) {
-            const targetLexV2BotName = await getlexV2BotName(lexBot.LexV2Bot.AliasArn, regionToUse);
+            const botId = aliasArn.split('/')[1];
+            const describeLexV2BotRes = await describeLexV2Bot(botId, regionToUse);
+            const targetLexV2BotName = describeLexV2BotRes.botName;
             if (targetLexV2BotName === primaryLexV2BotName) {
               console.log('Found aliasArn in targetLexBot');
               foundAliasArnInTarget = true;
@@ -85,6 +89,26 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
     const listLexV2BotsResponse = await listLexV2BotsFunc(regionToUse,inputListLexV2Bots);
       // Writing missedResourcesInTarget to files
       await writeDataToFile('listLexV2BotsResponse.json', listLexV2BotsResponse);
+      outerLoop: // label for the outer loop
+      for (const item of listLexV2BotsResponse) {
+        if (item && item.botSummaries) {
+          for (const lexBot of item.botSummaries) {
+              const botName = lexBot.botName;
+              if (botName === primaryLexV2BotName) {
+                console.log('Found botName in listLexV2BotsResponse');
+                const botId = lexBot.botId;
+                const describeLexV2BotRes = await describeLexV2Bot(botId, regionToUse);
+                console.log('describeLexV2BotRes', describeLexV2BotRes);
+                // const targetLexV2BotName = describeLexV2BotRes.botName;
+                // foundAliasArnInTarget = true;
+                // targetAliasArn = lexBot.LexV2Bot.AliasArn;
+                break outerLoop; // break the outer loop
+              }
+          }
+        }
+      }
+
+
     }
 
     if (!foundAliasArnInTarget) {
@@ -103,9 +127,8 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
     } 
   }
 
-async function getlexV2BotName (aliasArn, region) {
+async function describeLexV2Bot (botId, region) {
     const client = new LexModelsV2Client({ region: region });
-    const botId = aliasArn.split('/')[1];
     const inputDescribeBotRequest = { // DescribeBotRequest
       botId: botId, // required
     };
@@ -113,8 +136,8 @@ async function getlexV2BotName (aliasArn, region) {
     const commandDescribeBotRequest = new DescribeBotCommand(inputDescribeBotRequest);
     const responseDescribeBotRequest = await client.send(commandDescribeBotRequest);
     // console.log('DescribeBotRequest', responseDescribeBotRequest);
-    const botName = responseDescribeBotRequest.botName;
-    return botName;
+    // const botName = responseDescribeBotRequest.botName;
+    return responseDescribeBotRequest;
 }
 
 async function listLexV2Bots (region,params) {
