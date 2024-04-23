@@ -16,7 +16,7 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
       };
     }
 
-    let foundLambdaFunctionARNInPrimary = false;
+    let foundLambdaFunctionARNInPrimary = false; // flag to check if lambdaFunctionARN is found in primaryLambda
     outerLoop: // label for the outer loop
     for (const item of primaryLambda) {
         if (item && item.LambdaFunctions) {
