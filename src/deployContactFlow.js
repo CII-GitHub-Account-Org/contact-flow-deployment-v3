@@ -165,6 +165,10 @@ for (let i = 0; i < contentActions.length; i++) {
               "ResourceArn": targetLexV2BotResources.ResourceArn
             });
           }
+        } else if (obj.Type === 'InvokeLambdaFunction') {
+        
+          console.log('Inside Lambda Handling', obj);
+        
         } else {
           console.log(`No handling for the type : ${obj.Type}`);
         }
