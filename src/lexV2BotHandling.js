@@ -1,6 +1,6 @@
 
 import { LexModelsV2Client, DescribeBotCommand, ListBotsCommand, ListBotAliasesCommand } from "@aws-sdk/client-lex-models-v2";
-
+import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
 import writeDataToFile from './writeDataToFile.js';
 
 export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLexBot, sourceRegion, targetRegion) {
@@ -104,8 +104,7 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
                 // const ListBotAliasesLexV2BotRes = await ListBotAliasesLexV2Bot(botId, targetRegion);
                 const listLexV2BotsResponse2 = await listLexV2BotsFunc(targetRegion,inputListBotAliasesLexV2Bot, ListBotAliasesCommand);
                 console.log('listLexV2BotsResponse2', listLexV2BotsResponse2);
-                let lexV2BotSummary = listLexV2BotsResponse2[0].botAliasSummaries[1];
-                console.log( 'lexV2BotSummary' , lexV2BotSummary)
+                let lexV2BotSummary = listLexV2BotsResponse2[0].botAliasSummaries[0];
                 for (const botAlias of listLexV2BotsResponse2 ) {
                     if (botAlias && botAlias.botAliasSummaries) {
                       for (const botSummary of botAlias.botAliasSummaries) {
@@ -115,7 +114,23 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
                       }
                     }
                 }
-                console.log( 'lexV2BotSummary' , lexV2BotSummary)
+                console.log();
+                // Create an STS client
+                const stsClient = new STSClient({ region: targetRegion });
+
+                // Create a command to get caller identity
+                const stsCommand = new GetCallerIdentityCommand({});
+
+                // Send the command and get the response
+                const stsResponse = await stsClient.send(stsCommand);
+
+                // Extract the account ID from the response
+                const accountId = stsResponse.Account;
+
+                // Construct the ARN
+                const botAliasArnConstruct = `arn:aws:lex:${targetRegion}:${accountId}:bot/${botId}:${lexV2BotSummary.botAliasId}`;
+                console.log('botAliasArnConstruct', botAliasArnConstruct);
+
                 // const targetLexV2BotName = describeLexV2BotRes.botName;
                 // foundAliasArnInTarget = true;
                 // targetAliasArn = lexBot.LexV2Bot.AliasArn;
