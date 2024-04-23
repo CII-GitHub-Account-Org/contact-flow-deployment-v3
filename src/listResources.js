@@ -31,7 +31,7 @@ export async function listResourcesWithPagination(params, resourceType) {
           }
         } catch (error) {
           console.log('error:', error);
-          if (error.code === 'TooManyRequestsException' && (retryAttempts || 3) > 0) {
+          if (error.code === 'TooManyRequestsException' && (retryAttempts || 5) > 0) {
             await sleep(parseInt(2500, 10) || 1000);
             --retryAttempts;
             doRetry = true;
