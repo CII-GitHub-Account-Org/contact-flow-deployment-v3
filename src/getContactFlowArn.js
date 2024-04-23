@@ -2,7 +2,7 @@
 export default async function getContactFlowArn(contactFlows, flowName) {
   let contactFlowArn = '';
   
-  console.log(`To find cobatct flow arn, searching for flowName : ${flowName}`);
+  console.log(`To find contact flow arn, searching for flowName : ${flowName}`);
 
   if (!Array.isArray(contactFlows) || contactFlows.length === 0) {
     console.log('ContactFlows is empty or not an array');
