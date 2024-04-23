@@ -151,7 +151,14 @@ for (let i = 0; i < contentActions.length; i++) {
     let obj = contentActions[i];
     console.log(`Type value: ${obj.Type}`);
 
-    if (obj.Type === 'ConnectParticipantWithLexBot') {
+        if (obj.Type === 'UpdateContactTargetQueue') {
+          console.log('Inside Queue Handling');
+          console.log('obj : ', obj);
+          const queueId = obj && obj.Parameters && obj.Parameters.QueueId ? obj.Parameters.QueueId : undefined;
+
+
+
+        } else if (obj.Type === 'ConnectParticipantWithLexBot') {
           console.log('Inside LexBot Handling');
           const lexV2BotAliasArn = obj && obj.Parameters && obj.Parameters.LexV2Bot && obj.Parameters.LexV2Bot.AliasArn ? obj.Parameters.LexV2Bot.AliasArn : undefined;
           console.log('lexV2BotAliasArn : ', lexV2BotAliasArn);
