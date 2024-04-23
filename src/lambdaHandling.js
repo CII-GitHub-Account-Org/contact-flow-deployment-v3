@@ -18,18 +18,21 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
     }
 
     let foundLambdaFunctionARNInPrimary = false;
-    primaryLambda.forEach((item) => {
-      if (item && item.LambdaFunctions){
-          item.LambdaFunctions.forEach((item) => {
-                if (item === lambdaFunctionARN) {
-                console.log('Found lambdaFunctionARN in primaryLambda');
-                foundLambdaFunctionARNInPrimary = true;
-              }
-              
-            });
-      }
-    });
-    if (!foundAliasArnInPrimary) {
+    outerLoop: // label for the outer loop
+    for (const item of primaryLambda) {
+        if (item && item.LambdaFunctions) {
+            for (const lambdaFunction of item.LambdaFunctions) {
+                if (lambdaFunction === lambdaFunctionARN) {
+                    console.log('Found lambdaFunctionARN in primaryLambda');
+                    foundLambdaFunctionARNInPrimary = true;
+                    break outerLoop; // break the outer loop
+                }
+            }
+        }
+    }
+
+
+    if (!foundLambdaFunctionARNInPrimary) {
       console.log('Not Found lambdaFunctionARN in primaryLambda');
       return {
         "ResourceStatus": "notExists",
@@ -39,46 +42,47 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
       };;
     } 
     
-    // if (!Array.isArray(targetLexBot) || targetLexBot.length === 0) {
-    //   console.log('targetLexBot is empty or not an array');
-    //   return {
-    //     "ResourceStatus": "notExists",
-    //     "ResourceType": "lexV2Bot",
-    //     "ResourceName": primaryLexV2BotName,
-    //     "ResourceArn": aliasArn
-    //   };;
-    // }
+    if (!Array.isArray(targetLambda) || targetLambda.length === 0) {
+      console.log('targetLambda is empty or not an array');
+      return {
+        "ResourceStatus": "notExists",
+        "ResourceType": "lambda",
+        "ResourceName": primaryLambdaName,
+        "ResourceArn": lambdaFunctionARN
+      };
+    }
 
-    // let foundAliasArnInTarget = false;
-    // let targetAliasArn;
-    // for (const item of targetLexBot) {
-    //   if (item && item.LexBots) {
-    //     for (const lexBot of item.LexBots) {
-    //       if (lexBot && lexBot.LexV2Bot && lexBot.LexV2Bot.AliasArn) {
-    //         const targetLexV2BotName = await getlexV2BotName(lexBot.LexV2Bot.AliasArn, regionToUse);
-    //         if (targetLexV2BotName === primaryLexV2BotName) {
-    //           console.log('Found aliasArn in targetLexBot');
-    //           foundAliasArnInTarget = true;
-    //           targetAliasArn = lexBot.LexV2Bot.AliasArn;
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
+    let foundLambdaFunctionARNInTarget = false;
+    let targetLambdaFunctionARN;
+    outerLoop: // label for the outer loop
+    for (const item of targetLambda) {
+        if (item && item.LambdaFunctions) {
+            for (const lambdaArn of item.LambdaFunctions) {
+                const parts2 = lambdaArn.split(":");
+                const targetLambdaName = parts2[parts2.length - 1];
+                if (targetLambdaName === primaryLambdaName) {
+                    console.log('Found lambdaFunctionARN in targetLambda');
+                    foundLambdaFunctionARNInTarget = true;
+                    targetLambdaFunctionARN = lambdaArn;
+                    break outerLoop; // break the outer loop
+                }
+            }
+        }
+    }
 
-    // if (!foundAliasArnInTarget) {
-    //   console.log('Not Found aliasArn in targetLexBot');
-    //   return {
-    //     "ResourceStatus": "notExists",
-    //     "ResourceType": "lexV2Bot",
-    //     "ResourceName": primaryLexV2BotName,
-    //     "ResourceArn": aliasArn
-    //   };
-    // } else {
-    //   return {
-    //     "ResourceStatus": "exists",
-    //     "TargetAliasArn": targetAliasArn
-    //   };
-    // } 
+    if (!foundLambdaFunctionARNInTarget) {
+      console.log('Not Found lambdaFunctionARN in targetLambda');
+      return {
+        "ResourceStatus": "notExists",
+        "ResourceType": "lambda",
+        "ResourceName": primaryLambdaName,
+        "ResourceArn": lambdaFunctionARN
+      };
+    } else {
+      return {
+        "ResourceStatus": "exists",
+        "ResourceArn": targetLambdaFunctionARN
+      };
+    } 
 
 }

@@ -171,16 +171,16 @@ for (let i = 0; i < contentActions.length; i++) {
           const lambdaFunctionARN = obj && obj.Parameters && obj.Parameters.LambdaFunctionARN ? obj.Parameters.LambdaFunctionARN : undefined;
           console.log('lambdaFunctionARN : ', lambdaFunctionARN);
           const targetLambdaResources = await lambdaHandling(primaryLambda, lambdaFunctionARN, targetLambda, targetRegion);
-          // console.log('targetLexV2BotResources : ', targetLexV2BotResources);
-          // if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'exists') {
-          //   // targetJson = targetJson.replace(new RegExp(LexV2BotAliasArn, 'g'), targetAliasArn);
-          // } else if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'notExists') {
-          //   missedResourcesInTarget.push({
-          //     "ResourceType": targetLexV2BotResources.ResourceType,
-          //     "ResourceName": targetLexV2BotResources.ResourceName,
-          //     "ResourceArn": targetLexV2BotResources.ResourceArn
-          //   });
-          // }
+          console.log('targetLambdaResources : ', targetLambdaResources);
+          if (targetLambdaResources && targetLambdaResources.ResourceStatus === 'exists') {
+            // targetJson = targetJson.replace(new RegExp(LexV2BotAliasArn, 'g'), targetAliasArn);
+          } else if (targetLambdaResources && targetLambdaResources.ResourceStatus === 'notExists') {
+            missedResourcesInTarget.push({
+              "ResourceType": targetLambdaResources.ResourceType,
+              "ResourceName": targetLambdaResources.ResourceName,
+              "ResourceArn": targetLambdaResources.ResourceArn
+            });
+          }
         } else {
           console.log(`No handling for the type : ${obj.Type}`);
         }
