@@ -65,7 +65,7 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
       if (item && item.LexBots) {
         for (const lexBot of item.LexBots) {
           if (lexBot && lexBot.LexV2Bot && lexBot.LexV2Bot.AliasArn) {
-            const describeLexV2BotRes = await describeLexV2Bot(lexBot.LexV2Bot.AliasAr.split('/')[1];, regionToUse);
+            const describeLexV2BotRes = await describeLexV2Bot(lexBot.LexV2Bot.AliasAr.split('/')[1], regionToUse);
             const targetLexV2BotName = describeLexV2BotRes.botName;
             console.log('targetLexV2BotName : ', targetLexV2BotName);
             if (targetLexV2BotName === primaryLexV2BotName) {
