@@ -17,29 +17,27 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
       };
     }
 
-    console.log('primaryLambda : ', primaryLambda);
-    // let foundLambdaFunctionARNInPrimary = false;
-    // primaryLambda.forEach((item) => {
-    //   if (item && item.LexBots){
-    //       item.LexBots.forEach((item) => {
-    //         if (item && item.LexV2Bot && item.LexV2Bot.AliasArn){
-    //           if (item.LexV2Bot.AliasArn === aliasArn) {
-    //             console.log('Found lambdaFunctionARN in primaryLambda');
-    //             foundLambdaFunctionARNInPrimary = true;
-    //           }
-    //         }    
-    //         });
-    //   }
-    // });
-    // if (!foundAliasArnInPrimary) {
-    //   console.log('Not Found aliasArn in primaryLexBot');
-    //   return {
-    //     "ResourceStatus": "notExists",
-    //     "ResourceType": "lexV2Bot",
-    //     "ResourceName": primaryLexV2BotName,
-    //     "ResourceArn": aliasArn
-    //   };;
-    // } 
+    let foundLambdaFunctionARNInPrimary = false;
+    primaryLambda.forEach((item) => {
+      if (item && item.LambdaFunctions){
+          item.LambdaFunctions.forEach((item) => {
+                if (item === lambdaFunctionARN) {
+                console.log('Found lambdaFunctionARN in primaryLambda');
+                foundLambdaFunctionARNInPrimary = true;
+              }
+              
+            });
+      }
+    });
+    if (!foundAliasArnInPrimary) {
+      console.log('Not Found lambdaFunctionARN in primaryLambda');
+      return {
+        "ResourceStatus": "notExists",
+        "ResourceType": "lambda",
+        "ResourceName": primaryLambdaName,
+        "ResourceArn": lambdaFunctionARN
+      };;
+    } 
     
     // if (!Array.isArray(targetLexBot) || targetLexBot.length === 0) {
     //   console.log('targetLexBot is empty or not an array');
