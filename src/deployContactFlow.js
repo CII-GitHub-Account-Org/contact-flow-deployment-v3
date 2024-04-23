@@ -172,7 +172,7 @@ for (let i = 0; i < contentActions.length; i++) {
           console.log('Inside LexBot Handling');
           const lexV2BotAliasArn = obj && obj.Parameters && obj.Parameters.LexV2Bot && obj.Parameters.LexV2Bot.AliasArn ? obj.Parameters.LexV2Bot.AliasArn : undefined;
           console.log('lexV2BotAliasArn : ', lexV2BotAliasArn);
-          const targetLexV2BotResources = await lexV2BotHandling(primaryLexBot, lexV2BotAliasArn, targetLexBot, targetRegion);
+          const targetLexV2BotResources = await lexV2BotHandling(primaryLexBot, lexV2BotAliasArn, targetLexBot, sourceRegion, targetRegion);
           console.log('targetLexV2BotResources : ', targetLexV2BotResources);
           if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'exists') {
             // targetJson = targetJson.replace(new RegExp(LexV2BotAliasArn, 'g'), targetAliasArn);
