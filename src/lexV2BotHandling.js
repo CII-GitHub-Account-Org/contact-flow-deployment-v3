@@ -123,7 +123,7 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
 
                 // Send the command and get the response
                 const stsResponse = await stsClient.send(stsCommand);
-
+                await writeDataToFile('stsResponse.json', stsResponse);
                 // Extract the account ID from the response
                 const accountId = stsResponse.Account;
 
