@@ -3,8 +3,7 @@ let regionToUse;
 export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, targetLambda, region) {
     regionToUse = region;
 
-    const parts = lambdaFunctionARN.split(":");
-    const primaryLambdaName = parts[parts.length - 1];
+    const primaryLambdaName = lambdaFunctionARN.split(":")[6];
     console.log('primaryLambdaName : ', primaryLambdaName);
 
     if (!Array.isArray(primaryLambda) || primaryLambda.length === 0) {
@@ -30,7 +29,6 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
             }
         }
     }
-
 
     if (!foundLambdaFunctionARNInPrimary) {
       console.log('Not Found lambdaFunctionARN in primaryLambda');
@@ -58,8 +56,7 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
     for (const item of targetLambda) {
         if (item && item.LambdaFunctions) {
             for (const lambdaArn of item.LambdaFunctions) {
-                const parts2 = lambdaArn.split(":");
-                const targetLambdaName = parts2[parts2.length - 1];
+                const targetLambdaName = lambdaArn.split(":")[6];
                 if (targetLambdaName === primaryLambdaName) {
                     console.log('Found lambdaFunctionARN in targetLambda');
                     foundLambdaFunctionARNInTarget = true;

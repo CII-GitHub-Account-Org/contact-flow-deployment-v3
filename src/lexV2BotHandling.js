@@ -19,18 +19,21 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
     }
     
     let foundAliasArnInPrimary = false;
-    primaryLexBot.forEach((item) => {
-      if (item && item.LexBots){
-          item.LexBots.forEach((item) => {
-            if (item && item.LexV2Bot && item.LexV2Bot.AliasArn){
-              if (item.LexV2Bot.AliasArn === aliasArn) {
-                console.log('Found aliasArn in primaryLexBot');
-                foundAliasArnInPrimary = true;
-              }
-            }    
-            });
+    outerLoop: // label for the outer loop
+    for (const item of primaryLexBot) {
+      if (item && item.LexBots) {
+        for (const lexBot of item.LexBots) {
+          if (lexBot && lexBot.LexV2Bot && lexBot.LexV2Bot.AliasArn) {
+            if (lexBot.LexV2Bot.AliasArn === aliasArn) {
+              console.log('Found aliasArn in primaryLexBot');
+              foundAliasArnInPrimary = true;
+              break outerLoop; // break the outer loop
+            }
+          }
+        }
       }
-    });
+    }
+  
     if (!foundAliasArnInPrimary) {
       console.log('Not Found aliasArn in primaryLexBot');
       return {
@@ -53,6 +56,7 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
 
     let foundAliasArnInTarget = false;
     let targetAliasArn;
+    outerLoop: // label for the outer loop
     for (const item of targetLexBot) {
       if (item && item.LexBots) {
         for (const lexBot of item.LexBots) {
@@ -62,6 +66,7 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
               console.log('Found aliasArn in targetLexBot');
               foundAliasArnInTarget = true;
               targetAliasArn = lexBot.LexV2Bot.AliasArn;
+              break outerLoop; // break the outer loop
             }
           }
         }
