@@ -21,6 +21,7 @@ import  writeDataToFile  from './writeDataToFile.js';
 import getContactFlowArn from './getContactFlowArn.js';
 import createOrUpdateFlow from './createOrUpdateFlow.js';
 import lexV2BotHandling from './lexV2BotHandling.js';
+import lambdaHandling from './lambdaHandling.js';
 
 // Handling List Contact Flows
 const primaryContactFlows = await listResourcesFunc({

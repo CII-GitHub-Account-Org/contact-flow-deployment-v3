@@ -1,6 +1,6 @@
 let regionToUse;
 
-export default async function leambdaHandling(primaryLambda, lambdaFunctionARN, targetLambda, region) {
+export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, targetLambda, region) {
     regionToUse = region;
 
     const parts = lambdaFunctionARN.split(":");
@@ -39,7 +39,7 @@ export default async function leambdaHandling(primaryLambda, lambdaFunctionARN, 
     //     "ResourceName": primaryLexV2BotName,
     //     "ResourceArn": aliasArn
     //   };;
-    } 
+    // } 
     
     // if (!Array.isArray(targetLexBot) || targetLexBot.length === 0) {
     //   console.log('targetLexBot is empty or not an array');
@@ -83,5 +83,4 @@ export default async function leambdaHandling(primaryLambda, lambdaFunctionARN, 
     //   };
     // } 
 
-  }
-
+}
