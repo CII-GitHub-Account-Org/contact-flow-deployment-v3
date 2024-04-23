@@ -1,5 +1,5 @@
 
-import { LexModelsV2Client, DescribeBotCommand } from "@aws-sdk/client-lex-models-v2";
+import { LexModelsV2Client, DescribeBotCommand, ListBotsCommand } from "@aws-sdk/client-lex-models-v2";
 let regionToUse;
 
 export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLexBot, region) {
@@ -74,6 +74,11 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
     }
 
     if (!foundAliasArnInTarget) {
+     const listLexV2BotsResponse = await listLexV2Bots(regionToUse);
+     console.log('listLexV2Bots : ', listLexV2BotsResponse);
+    }
+
+    if (!foundAliasArnInTarget) {
       console.log('Not Found aliasArn in targetLexBot');
       return {
         "ResourceStatus": "notExists",
@@ -87,7 +92,6 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
         "TargetAliasArn": targetAliasArn
       };
     } 
-
   }
 
 async function getlexV2BotName (aliasArn, region) {
@@ -102,4 +106,18 @@ async function getlexV2BotName (aliasArn, region) {
     // console.log('DescribeBotRequest', responseDescribeBotRequest);
     const botName = responseDescribeBotRequest.botName;
     return botName;
+}
+
+async function listLexV2Bots (region) {
+  const client = new LexModelsV2Client({ region: region });
+  const inputListLexV2Bots = { // ListBotsRequest
+    sortBy: { // BotSortBy
+      attribute: "BotName", // required
+      order: "Ascending", // required
+    },
+    maxResults: 10
+  };
+const commandListLexV2Bots = new ListBotsCommand(inputListLexV2Bots);
+const responseListLexV2Bots = await client.send(commandListLexV2Bots);
+return responseListLexV2Bots;
 }

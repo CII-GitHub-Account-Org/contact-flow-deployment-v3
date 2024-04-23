@@ -57,7 +57,6 @@ export default async function queueHandling(primaryQueues, queueArn, targetQueue
         if (item && item.QueueSummaryList) {
             for (const Queues of item.QueueSummaryList) {
                 const targetQueueName = Queues.Name;
-                console.log('targetQueueName : ', targetQueueName);
                 if (targetQueueName === primaryQueueName) {
                     console.log('Found queueArn in targetQueues');
                     foundQueueArnInTarget = true;
