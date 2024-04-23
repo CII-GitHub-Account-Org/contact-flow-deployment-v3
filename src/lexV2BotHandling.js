@@ -7,6 +7,7 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
     regionToUse = region;
    
     const primaryLexV2BotId = aliasArn.split('/')[1];
+    console.log('primaryLexV2BotId : ', primaryLexV2BotId);
     const describeLexV2BotResponse = await describeLexV2Bot(primaryLexV2BotId, regionToUse);
     const primaryLexV2BotName = describeLexV2BotResponse.botName;
     console.log('primaryLexV2BotName : ', primaryLexV2BotName);
@@ -22,7 +23,7 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
     }
     
     let foundAliasArnInPrimary = false;
-    outerLoop: // label for the outer loop
+    outerLoop1: // label for the outer loop
     for (const item of primaryLexBot) {
       if (item && item.LexBots) {
         for (const lexBot of item.LexBots) {
@@ -30,7 +31,7 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
             if (lexBot.LexV2Bot.AliasArn === aliasArn) {
               console.log('Found aliasArn in primaryLexBot');
               foundAliasArnInPrimary = true;
-              break outerLoop; // break the outer loop
+              break outerLoop1; // break the outer loop
             }
           }
         }
@@ -59,19 +60,19 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
 
     let foundAliasArnInTarget = false;
     let targetAliasArn;
-    outerLoop: // label for the outer loop
+    outerLoop2: // label for the outer loop
     for (const item of targetLexBot) {
       if (item && item.LexBots) {
         for (const lexBot of item.LexBots) {
           if (lexBot && lexBot.LexV2Bot && lexBot.LexV2Bot.AliasArn) {
-            const botId = aliasArn.split('/')[1];
-            const describeLexV2BotRes = await describeLexV2Bot(botId, regionToUse);
+            const describeLexV2BotRes = await describeLexV2Bot(lexBot.LexV2Bot.AliasAr.split('/')[1];, regionToUse);
             const targetLexV2BotName = describeLexV2BotRes.botName;
+            console.log('targetLexV2BotName : ', targetLexV2BotName);
             if (targetLexV2BotName === primaryLexV2BotName) {
               console.log('Found aliasArn in targetLexBot');
               foundAliasArnInTarget = true;
               targetAliasArn = lexBot.LexV2Bot.AliasArn;
-              break outerLoop; // break the outer loop
+              break outerLoop2; // break the outer loop
             }
           }
         }
@@ -94,6 +95,7 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
         if (item && item.botSummaries) {
           for (const lexBot of item.botSummaries) {
               const botName = lexBot.botName;
+              console.log('botName : ', botName);
               if (botName === primaryLexV2BotName) {
                 console.log('Found botName in listLexV2BotsResponse');
                 const botId = lexBot.botId;
@@ -107,8 +109,6 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
           }
         }
       }
-
-
     }
 
     if (!foundAliasArnInTarget) {
