@@ -85,7 +85,7 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
         },
         maxResults: 10
       };
-    const listLexV2BotsResponse = await listLexV2BotsFunc(targetRegion,inputListLexV2Bots);
+    const listLexV2BotsResponse = await listLexV2BotsFunc(targetRegion,inputListLexV2Bots, ListBotsCommand);
       // Writing missedResourcesInTarget to files
       // await writeDataToFile('listLexV2BotsResponse.json', listLexV2BotsResponse);
       outerLoop: // label for the outer loop
@@ -97,11 +97,12 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
               if (botName === primaryLexV2BotName) {
                 console.log('Found botName in listLexV2BotsResponse');
                 const botId = lexBot.botId;
-                const ListBotAliasesLexV2BotRes = await ListBotAliasesLexV2Bot(botId, targetRegion);
-                console.log('ListBotAliasesLexV2BotRes', ListBotAliasesLexV2BotRes);
-                let lexV2BotSummary = ListBotAliasesLexV2BotRes[0].botAliasSummaries[1];
+                // const ListBotAliasesLexV2BotRes = await ListBotAliasesLexV2Bot(botId, targetRegion);
+                const listLexV2BotsResponse2 = await listLexV2BotsFunc(targetRegion,inputListLexV2Bots, ListBotAliasesCommand);
+                console.log('listLexV2BotsResponse2', listLexV2BotsResponse2);
+                let lexV2BotSummary = listLexV2BotsResponse2[0].botAliasSummaries[1];
                 console.log( 'lexV2BotSummary' , lexV2BotSummary)
-                for (const botAlias of ListBotAliasesLexV2BotRes ) {
+                for (const botAlias of listLexV2BotsResponse2 ) {
                     if (botAlias && botAlias.botAliasSummaries) {
                       for (const botSummary of botAlias.botAliasSummaries) {
                         if (botSummary.creationDateTime > lexV2BotSummary.creationDateTime) {
@@ -150,15 +151,15 @@ async function describeLexV2Bot (botId, region) {
     return responseDescribeBotRequest;
 }
 
-async function listLexV2Bots (region,params) {
+async function listLexV2Bots (region,params, action) {
   let responseListLexV2Bots = [];
   const client = new LexModelsV2Client({ region: region });
-  let commandListLexV2Bots = new ListBotsCommand(params);
+  let commandListLexV2Bots = new action(params);
   let response = await client.send(commandListLexV2Bots);
   responseListLexV2Bots.push(response);
   while (response.nextToken) {
     params.nextToken = response.nextToken;
-    commandListLexV2Bots = new ListBotsCommand(params);
+    commandListLexV2Bots = new action(params);
     response = await client.send(commandListLexV2Bots);
     responseListLexV2Bots.push(response);
   }
@@ -166,13 +167,13 @@ async function listLexV2Bots (region,params) {
 }
 
   // Helper function to handle throttling
-  export async function listLexV2BotsFunc(region, params) {
+  export async function listLexV2BotsFunc(region, params, action) {
     try {
       let doRetry = false;
       do {
         doRetry = false;
         try {
-          const listResources = await listLexV2Bots(region, params);
+          const listResources = await listLexV2Bots(region, params, action);
           if (listResources) {
             return listResources;
           } else {
