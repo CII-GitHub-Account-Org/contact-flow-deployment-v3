@@ -74,17 +74,17 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
       }
     }
 
-    const inputListLexV2Bots = { // ListBotsRequest
-      sortBy: { // BotSortBy
-        attribute: "BotName", // required
-        order: "Ascending", // required
-      },
-      maxResults: 10
-    };
-
     if (!foundAliasArnInTarget) {
-     const listLexV2BotsResponse = await listLexV2BotsFunc(regionToUse,inputListLexV2Bots);
-     console.log('listLexV2Bots : ', listLexV2BotsResponse);
+      const inputListLexV2Bots = { // ListBotsRequest
+        sortBy: { // BotSortBy
+          attribute: "BotName", // required
+          order: "Ascending", // required
+        },
+        maxResults: 10
+      };
+    const listLexV2BotsResponse = await listLexV2BotsFunc(regionToUse,inputListLexV2Bots);
+      // Writing missedResourcesInTarget to files
+      await writeDataToFile('listLexV2BotsResponse.json', listLexV2BotsResponse);
     }
 
     if (!foundAliasArnInTarget) {
@@ -116,8 +116,6 @@ async function getlexV2BotName (aliasArn, region) {
     const botName = responseDescribeBotRequest.botName;
     return botName;
 }
-
-
 
 async function listLexV2Bots (region,params) {
   let responseListLexV2Bots = [];
