@@ -97,8 +97,12 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
               if (botName === primaryLexV2BotName) {
                 console.log('Found botName in listLexV2BotsResponse');
                 const botId = lexBot.botId;
+                const inputListBotAliasesLexV2Bot = { // ListBotAliasesRequest
+                  botId: botId, // required
+                  maxResults: 10,
+                };
                 // const ListBotAliasesLexV2BotRes = await ListBotAliasesLexV2Bot(botId, targetRegion);
-                const listLexV2BotsResponse2 = await listLexV2BotsFunc(targetRegion,inputListLexV2Bots, ListBotAliasesCommand);
+                const listLexV2BotsResponse2 = await listLexV2BotsFunc(targetRegion,inputListBotAliasesLexV2Bot, ListBotAliasesCommand);
                 console.log('listLexV2BotsResponse2', listLexV2BotsResponse2);
                 let lexV2BotSummary = listLexV2BotsResponse2[0].botAliasSummaries[1];
                 console.log( 'lexV2BotSummary' , lexV2BotSummary)
