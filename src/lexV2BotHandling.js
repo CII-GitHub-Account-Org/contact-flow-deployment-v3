@@ -215,3 +215,7 @@ async function listLexV2Bots (region,params, action) {
       return error;
     }
   };
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
