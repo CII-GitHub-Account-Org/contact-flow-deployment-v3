@@ -71,6 +71,7 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
               console.log('Found aliasArn in targetLexBot');
               foundAliasArnInTarget = true;
               targetAliasArn = lexBot.LexV2Bot.AliasArn;
+              console.log('targetLexV2BotName : ', targetLexV2BotName);
               console.log('targetAliasArn : ', targetAliasArn);
               break outerLoop; // break the outer loop
             }
