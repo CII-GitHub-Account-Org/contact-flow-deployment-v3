@@ -154,13 +154,14 @@ for (let i = 0; i < contentActions.length; i++) {
 
         if (obj.Type === 'UpdateContactTargetQueue') {
           console.log('Inside Queue Handling');
-          console.log('obj : ', obj);
           const queueArn = obj && obj.Parameters && obj.Parameters.QueueId ? obj.Parameters.QueueId : undefined;
           console.log('queueArn : ', queueArn);
           const targetQueueResources = await queueHandling(primaryQueues, queueArn, targetQueues);
           console.log('targetQueueResources : ', targetQueueResources);
           if (targetQueueResources && targetQueueResources.ResourceStatus === 'exists') {
-            // targetJson = targetJson.replace(new RegExp(LexV2BotAliasArn, 'g'), targetAliasArn);
+            let targetJsonString = JSON.stringify(targetJson);
+            targetJsonString = targetJsonString.replace(new RegExp(queueArn, 'g'), targetQueueResources.ResourceArn);
+            targetJson = JSON.parse(targetJsonString);
           } else if (targetQueueResources && targetQueueResources.ResourceStatus === 'notExists') {
             missedResourcesInTarget.push({
               "ResourceType": targetQueueResources.ResourceType,
@@ -168,6 +169,12 @@ for (let i = 0; i < contentActions.length; i++) {
               "ResourceArn": targetQueueResources.ResourceArn
             });
           }
+        } else if (obj.Type === 'CheckHoursOfOperation') {
+          console.log('Inside HOP Handling');
+          console.log('obj : ', obj);
+        
+        
+        
         } else if (obj.Type === 'ConnectParticipantWithLexBot') {
           console.log('Inside LexBot Handling');
           const lexV2BotAliasArn = obj && obj.Parameters && obj.Parameters.LexV2Bot && obj.Parameters.LexV2Bot.AliasArn ? obj.Parameters.LexV2Bot.AliasArn : undefined;
@@ -175,7 +182,9 @@ for (let i = 0; i < contentActions.length; i++) {
           const targetLexV2BotResources = await lexV2BotHandling(primaryLexBot, lexV2BotAliasArn, targetLexBot, sourceRegion, targetRegion);
           console.log('targetLexV2BotResources : ', targetLexV2BotResources);
           if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'exists') {
-            // targetJson = targetJson.replace(new RegExp(LexV2BotAliasArn, 'g'), targetAliasArn);
+            let targetJsonString = JSON.stringify(targetJson);
+            targetJsonString = targetJsonString.replace(new RegExp(lexV2BotAliasArn, 'g'), targetLexV2BotResources.ResourceArn);
+            targetJson = JSON.parse(targetJsonString);
           } else if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'notExists') {
             missedResourcesInTarget.push({
               "ResourceType": targetLexV2BotResources.ResourceType,
@@ -190,7 +199,9 @@ for (let i = 0; i < contentActions.length; i++) {
           const targetLambdaResources = await lambdaHandling(primaryLambda, lambdaFunctionARN, targetLambda, sourceRegion, targetRegion);
           console.log('targetLambdaResources : ', targetLambdaResources);
           if (targetLambdaResources && targetLambdaResources.ResourceStatus === 'exists') {
-            // targetJson = targetJson.replace(new RegExp(LexV2BotAliasArn, 'g'), targetAliasArn);
+            let targetJsonString = JSON.stringify(targetJson);
+            targetJsonString = targetJsonString.replace(new RegExp(lambdaFunctionARN, 'g'), targetLambdaResources.ResourceArn);
+            targetJson = JSON.parse(targetJsonString);
           } else if (targetLambdaResources && targetLambdaResources.ResourceStatus === 'notExists') {
             missedResourcesInTarget.push({
               "ResourceType": targetLambdaResources.ResourceType,
