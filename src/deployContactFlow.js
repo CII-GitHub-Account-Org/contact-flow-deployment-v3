@@ -140,13 +140,13 @@ async function describeContactFlow(instanceId, primaryFlowId, sourceRegion) {
   return data;
 }
 const flowData = await describeContactFlow(instanceArn, primaryFlowId, sourceRegion);
-console.log('Data : ',flowData);
+// console.log('Data : ',flowData);
 const flowContent = flowData.ContactFlow.Content;
 targetJson = flowContent;
 let contentActions = JSON.parse(targetJson).Actions;
-console.log("Content Actions Before Replacing : ", contentActions);
+// console.log("Content Actions Before Replacing : ", contentActions);
 await writeDataToFile('contentActions.json', contentActions);
-
+await writeDataToFile('targetJson.json', targetJson);
 const missedResourcesInTarget = [];
 for (let i = 0; i < contentActions.length; i++) {
     let obj = contentActions[i];
@@ -154,6 +154,7 @@ for (let i = 0; i < contentActions.length; i++) {
 
         if (obj.Type === 'UpdateContactTargetQueue') {
           console.log('Inside Queue Handling');
+          console.log('obj : ', obj);
           const queueArn = obj && obj.Parameters && obj.Parameters.QueueId ? obj.Parameters.QueueId : undefined;
           console.log('queueArn : ', queueArn);
           const targetQueueResources = await queueHandling(primaryQueues, queueArn, targetQueues);
@@ -172,10 +173,23 @@ for (let i = 0; i < contentActions.length; i++) {
         } else if (obj.Type === 'CheckHoursOfOperation') {
           console.log('Inside HOP Handling');
           console.log('obj : ', obj);
-        
-        
-        
-        } else if (obj.Type === 'ConnectParticipantWithLexBot') {
+          // const hopArn = obj && obj.Parameters && obj.Parameters.HoursOfOperationId ? obj.Parameters.HoursOfOperationId : undefined;
+          // console.log('hopArn : ', hopArn);
+          // const targetHopResources = await hopHandling(primaryHOP, hopArn, targetHOP);
+          // console.log('targetHopResources : ', targetHopResources);
+          // if (targetHopResources && targetHopResources.ResourceStatus === 'exists') {
+          //   let targetJsonString = JSON.stringify(targetJson);
+          //   targetJsonString = targetJsonString.replace(new RegExp(hopArn, 'g'), targetHopResources.ResourceArn);
+          //   targetJson = JSON.parse(targetJsonString);
+          // } else if (targetHopResources && targetHopResources.ResourceStatus === 'notExists') {
+          //   missedResourcesInTarget.push({
+          //     "ResourceType": targetHopResources.ResourceType,
+          //     "ResourceName": targetHopResources.ResourceName,
+          //     "ResourceArn": targetHopResources.ResourceArn
+          //   });
+          // }
+        } 
+        else if (obj.Type === 'ConnectParticipantWithLexBot') {
           console.log('Inside LexBot Handling');
           const lexV2BotAliasArn = obj && obj.Parameters && obj.Parameters.LexV2Bot && obj.Parameters.LexV2Bot.AliasArn ? obj.Parameters.LexV2Bot.AliasArn : undefined;
           console.log('lexV2BotAliasArn : ', lexV2BotAliasArn);
@@ -213,7 +227,7 @@ for (let i = 0; i < contentActions.length; i++) {
           console.log(`No handling for the type : ${obj.Type}`);
         }
 }
-
+await writeDataToFile('targetJsonUpdated.json', targetJson);
 if (missedResourcesInTarget.length > 0) {
   // Writing missedResourcesInTarget to files
     console.log('missedResourcesInTarget : ', missedResourcesInTarget);
@@ -225,6 +239,9 @@ if (missedResourcesInTarget.length > 0) {
 // await createOrUpdateFlow(isExist, flowName, targetInstanceArn, contactFlowType, targetJson, targetFlowId)
 }
 }
+
+
+
 
 // for (let i = 0; i < contentActions.length; i++) {
 //   let obj = contentActions[i];
@@ -273,156 +290,4 @@ if (missedResourcesInTarget.length > 0) {
 //   } else {
 //     console.log(`No handling for ${JSON.stringify(obj.Parameters)} of type : ${obj.Type}`);
 //   }
-// }
-
-
-
-
-// async function getFlowId(flowArn, target, FLOWNAME) {
-//   const tl = target;
-//   let rId = '';
-//   // const pl = primary;
-
-//   console.log(`Searching for flowArn in target: ${flowArn}`);
-
-//   // const primaryObj = pl && pl.ContactFlowSummaryList ? pl.ContactFlowSummaryList.find(obj => obj.Arn === flowId) : undefined;
-//   // if (primaryObj) {
-//   //   fName = primaryObj.Name;
-//   //   console.log(`Found flow name : ${fName}`);
-//   // }
-
-//   console.log(`Searching for flow name in target: ${FLOWNAME}`);
-//   const targetObj = tl && tl.ContactFlowSummaryList ? tl.ContactFlowSummaryList.find(obj => obj.Name === FLOWNAME) : undefined;
-    
-//   if (targetObj) {
-//     rId = targetObj.Arn;
-//     console.log(`Found flow id : ${rId}`);
-//     return rId;
-//   } else {
-//     console.log('Not Found Contact Flow, Please create contact flow');
-//     return undefined;
-//   }
-// }
-
-// function getLambdaId(primary, lambdaId, target) {
-//   const pl = primary;
-//   const tl = target;
-//   const lambda = lambdaId.split(':');
-//   let fName = '';
-//   let rId = '';
-
-//   console.log(`Searching for LambdaId : ${lambdaId}`);
-
-//   const primaryObj = pl && pl.LambdaFunctions ? pl.LambdaFunctions.find(obj => {
-//     const plName = obj.split(':');
-//     return plName[6] === lambda[6];
-//   }) : undefined;
-
-//   if (primaryObj) {
-//     fName = primaryObj.split(':')[6];
-//     console.log(`Found lambda name : ${fName}`);
-//   }
-
-//   console.log(`Searching for LambdaId name : ${fName}`);
-
-//   const targetObj = tl && tl.LambdaFunctions ? tl.LambdaFunctions.find(obj => {
-//     const tlName = obj.split(':');
-//     return tlName[6] === fName;
-//   }): undefined;
-
-//   if (targetObj) {
-//     rId = targetObj.split(':')[6];
-//     console.log(`Found lambda id : ${rId}`);
-//     return rId;
-//   } else {
-//     // console.log('create Lambda in targetInstance');
-//     console.log('Lambda Not Found Please Create Lambda');
-//     return undefined;
-//   }
-// }
-
-// function getQueueId(primary, queueId, target) {
-//   const pl = primary;
-//   const tl = target;
-//   let fName = '';
-//   let rId = '';
-
-//   console.log(`Searching for queueId : ${queueId}`);
-
-//   const primaryObj = pl && pl.QueueSummaryList ? pl.QueueSummaryList.find(obj => obj.Arn === queueId) : undefined;
-//   if (primaryObj) {
-//     fName = primaryObj.Name;
-//     console.log(`Found queue name : ${fName}`);
-//   }
-
-//   const targetObj = tl && tl.QueueSummaryList ? tl.QueueSummaryList.find(obj => obj.Name === fName) : undefined;
-//   if (targetObj) {
-//     rId = targetObj.Arn;
-//     console.log(`Found flow id : ${rId}`);
-//     return rId;
-//   } else {
-//     console.log('Queue Not Found Please Create queue');
-//     return undefined;
-//   }
-// }
-
-// function getHOPId(primary, hopId, target) {
-//   const pl = primary;
-//   const tl = target;
-//   let fName = '';
-//   let rId = '';
-
-//   console.log(`Searching for hopId : ${hopId}`);
-
-//   for (let i = 0; i < pl.HoursOfOperationSummaryList.length; i++) {
-//       const obj = pl.HoursOfOperationSummaryList[i];
-//       if (obj.Arn === hopId) {
-//           fName = obj.Name;
-//           console.log(`Found name : ${fName}`);
-//           break;
-//       }
-//   }
-
-//   console.log(`Searching for hopId for : ${fName}`);
-
-//   for (let i = 0; i < tl.HoursOfOperationSummaryList.length; i++) {
-//       const obj = tl.HoursOfOperationSummaryList[i];
-//       if (obj.Username === fName) {
-//           rId = obj.Arn;
-//           console.log(`Found id : ${rId}`);
-//           return rId;
-//       } else if (i === tl.HoursOfOperationSummaryList.length - 1) {
-//           console.log('HOP Not Found Please Create HOP');
-//           return undefined;
-//       }
-//   }
-// }
-
-
-// function getLexBotId(primary, botId, target) {
-//     const pl = primary;
-//     const tl = target;
-//     let fName = '';
-//     let rId = '';
-  
-//     console.log(`Searching for botId : ${botId}`);
-  
-//     const primaryObj = pl && pl.LexBots ? pl.LexBots.find(obj => obj.Name === botId) : undefined;
-//     if (primaryObj) {
-//       fName = primaryObj.Name;
-//       console.log(`Found bot name : ${fName}`);
-//     }
-  
-//     console.log(`Searching for bot name : ${fName}`);
-  
-//     const targetObj = tl && tl.LexBots ? tl.LexBots.find(obj => obj.Name === fName) : undefined;
-//     if (targetObj) {
-//       rId = targetObj.Name;
-//       console.log(`Found bot : ${rId}`);
-//       return rId;
-//     } else {
-//       console.log('create bot in targetInstance');
-//       console.log('Bot Not Found Please Create Bot');
-//       return undefined;
-//     }
 // }

@@ -58,7 +58,8 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
             for (const lambdaArn of item.LambdaFunctions) {
                 const targetLambdaName = lambdaArn.split(":")[6];
                 // console.log('targetLambdaName : ', targetLambdaName);
-                if (targetLambdaName === primaryLambdaName) {
+                const primaryLambdaNameWithoutPrefix = primaryLambdaName.replace(/^[Dd][Ee][Vv]-/, '');
+                if (targetLambdaName.toLowerCase() === `qa-${primaryLambdaNameWithoutPrefix}`.toLowerCase()) {
                     console.log('Found lambdaFunctionARN in targetLambda');
                     foundLambdaFunctionARNInTarget = true;
                     targetLambdaFunctionARN = lambdaArn;

@@ -66,7 +66,8 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
             const describeLexV2BotRes = await describeLexV2Bot(lexBot.LexV2Bot.AliasArn.split('/')[1], targetRegion);
             const targetLexV2BotName = describeLexV2BotRes.botName;
             // console.log('targetLexV2BotName : ', targetLexV2BotName);
-            if (targetLexV2BotName === primaryLexV2BotName) {
+            const primaryLexV2BotNameWithoutPrefix = primaryLexV2BotName.replace(/^[Dd][Ee][Vv]-/, '');
+            if (targetLexV2BotName.toLowerCase() === `qa-${primaryLexV2BotNameWithoutPrefix}`.toLowerCase()) {
               console.log('Found aliasArn in targetLexBot');
               foundAliasArnInTarget = true;
               targetAliasArn = lexBot.LexV2Bot.AliasArn;
