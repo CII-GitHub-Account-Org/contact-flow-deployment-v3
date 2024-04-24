@@ -1,8 +1,8 @@
 import { LambdaClient, ListFunctionsCommand } from "@aws-sdk/client-lambda";
 let regionToUse;
 
-export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, targetLambda, region) {
-    regionToUse = region;
+export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, targetLambda, sourceRegion, targetRegion) {
+
 
     const primaryLambdaName = lambdaFunctionARN.split(":")[6];
     console.log('primaryLambdaName : ', primaryLambdaName);

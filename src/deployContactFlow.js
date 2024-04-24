@@ -187,7 +187,7 @@ for (let i = 0; i < contentActions.length; i++) {
           console.log('Inside Lambda Handling');
           const lambdaFunctionARN = obj && obj.Parameters && obj.Parameters.LambdaFunctionARN ? obj.Parameters.LambdaFunctionARN : undefined;
           console.log('lambdaFunctionARN : ', lambdaFunctionARN);
-          const targetLambdaResources = await lambdaHandling(primaryLambda, lambdaFunctionARN, targetLambda, targetRegion);
+          const targetLambdaResources = await lambdaHandling(primaryLambda, lambdaFunctionARN, targetLambda, sourceRegion, targetRegion);
           console.log('targetLambdaResources : ', targetLambdaResources);
           if (targetLambdaResources && targetLambdaResources.ResourceStatus === 'exists') {
             // targetJson = targetJson.replace(new RegExp(LexV2BotAliasArn, 'g'), targetAliasArn);
