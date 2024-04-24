@@ -37,7 +37,7 @@ export default async function queueHandling(primaryQueues, queueArn, targetQueue
         "ResourceType": "Queue",
         "ResourceName": primaryQueueName,
         "ResourceArn": queueArn
-      };;
+      };
     } 
     
     if (!Array.isArray(targetQueues) || targetQueues.length === 0) {

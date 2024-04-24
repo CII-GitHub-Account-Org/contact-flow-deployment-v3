@@ -63,6 +63,7 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
                     console.log('Found lambdaFunctionARN in targetLambda');
                     foundLambdaFunctionARNInTarget = true;
                     targetLambdaFunctionARN = lambdaArn;
+                    console.log('targetLambdaFunctionARN : ', targetLambdaFunctionARN);
                     break outerLoop; // break the outer loop
                 }
             }
