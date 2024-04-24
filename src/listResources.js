@@ -47,6 +47,7 @@ export async function listResourcesWithPagination(params, resourceType) {
     }
   };
   
-  function sleep(ms) {
+  // Helper function to sleep for a given number of milliseconds
+  function sleep(ms) { 
     return new Promise(resolve => setTimeout(resolve, ms));
   }
