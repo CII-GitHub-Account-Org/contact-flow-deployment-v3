@@ -1,8 +1,7 @@
 import { LambdaClient, ListFunctionsCommand } from "@aws-sdk/client-lambda";
-let regionToUse;
+import writeDataToFile from './writeDataToFile.js';
 
 export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, targetLambda, sourceRegion, targetRegion) {
-
 
     const primaryLambdaName = lambdaFunctionARN.split(":")[6];
     console.log('primaryLambdaName : ', primaryLambdaName);
@@ -72,7 +71,7 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
 
     if (!foundLambdaFunctionARNInTarget) {
       const lambdaFunctionArns = await listLambdaFunctionArns(targetRegion);
-      console.log('lambdaFunctionArns : ', lambdaFunctionArns);
+      await writeDataToFile('lambdaFunctionArns.json', lambdaFunctionArns);
     }
 
     if (!foundLambdaFunctionARNInTarget) {

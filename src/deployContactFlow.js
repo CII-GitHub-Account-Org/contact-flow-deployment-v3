@@ -40,9 +40,9 @@ const targetContactFlows = await listResourcesFunc({
    MaxResults: 50
 }, retryAttempts, 'ContactFlows');
 
-// Writing primaryContactFlows and targetContactFlows to files
-await writeDataToFile('primaryContactFlows.json', primaryContactFlows);
-await writeDataToFile('targetContactFlows.json', targetContactFlows);
+// // Writing primaryContactFlows and targetContactFlows to files
+// await writeDataToFile('primaryContactFlows.json', primaryContactFlows);
+// await writeDataToFile('targetContactFlows.json', targetContactFlows);
 
 // Handling List Queues
 const primaryQueues = await listResourcesFunc({
@@ -54,9 +54,9 @@ const targetQueues = await listResourcesFunc({
   MaxResults: 50
 }, retryAttempts,'Queues');
 
-// Writing primaryQueues and targetQueues to files
-await writeDataToFile('primaryQueues.json', primaryQueues);
-await writeDataToFile('targetQueues.json', targetQueues);
+// // Writing primaryQueues and targetQueues to files
+// await writeDataToFile('primaryQueues.json', primaryQueues);
+// await writeDataToFile('targetQueues.json', targetQueues);
 
 
 // Handling List Hours of Operations
@@ -69,9 +69,9 @@ const targetHOP = await listResourcesWithPagination({
   MaxResults: 50
 }, 'HoursOfOperations');
 
-// Writing primaryHOP and targetHOP to files
-await writeDataToFile('primaryHOP.json', primaryHOP);
-await writeDataToFile('targetHOP.json', targetHOP);
+// // Writing primaryHOP and targetHOP to files
+// await writeDataToFile('primaryHOP.json', primaryHOP);
+// await writeDataToFile('targetHOP.json', targetHOP);
 
 // Handling List Lex Bots
 const primaryLexBot = await listResourcesWithPagination({
@@ -85,9 +85,9 @@ const targetLexBot = await listResourcesWithPagination({
   MaxResults: 25
 }, 'Bots');
 
-// Writing primaryLexBot and targetLexBot to files
-await writeDataToFile('primaryLexBot.json', primaryLexBot);
-await writeDataToFile('targetLexBot.json', targetLexBot);
+// // Writing primaryLexBot and targetLexBot to files
+// await writeDataToFile('primaryLexBot.json', primaryLexBot);
+// await writeDataToFile('targetLexBot.json', targetLexBot);
 
 // Handling List Lambda Functions
 const primaryLambda = await listResourcesWithPagination({
@@ -99,9 +99,9 @@ const targetLambda = await listResourcesWithPagination({
   MaxResults: 25
 }, 'LambdaFunctions');
 
-// Writing primaryLambda and targetLambda to files
-await writeDataToFile('primaryLambda.json', primaryLambda);
-await writeDataToFile('targetLambda.json', targetLambda);
+// // Writing primaryLambda and targetLambda to files
+// await writeDataToFile('primaryLambda.json', primaryLambda);
+// await writeDataToFile('targetLambda.json', targetLambda);
 
 // get primary flow Arn
 const primaryFlowArn = await getContactFlowArn(primaryContactFlows, flowName);
@@ -145,7 +145,7 @@ const flowContent = flowData.ContactFlow.Content;
 targetJson = flowContent;
 let contentActions = JSON.parse(targetJson).Actions;
 console.log("Content Actions Before Replacing : ", contentActions);
-await writeDataToFile('contentActions.json', contentActions);
+// await writeDataToFile('contentActions.json', contentActions);
 
 const missedResourcesInTarget = [];
 for (let i = 0; i < contentActions.length; i++) {
