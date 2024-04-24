@@ -93,17 +93,17 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
 }
 
 async function listLambdaFunctionArns(targetRegion) {
-    // Create a Lambda client
-    const lambdaClient = new LambdaClient({ region: targetRegion });
-    
-    // Create a command to list functions
-    const listFunctionsCommand = new ListFunctionsCommand({});
-    
-    // Send the command and get the response
+  const lambdaClient = new LambdaClient({ region: targetRegion });
+  let functionArns = [];
+  let nextMarker;
+
+  do {
+    const listFunctionsCommand = new ListFunctionsCommand({ Marker: nextMarker });
     const listFunctionsResponse = await lambdaClient.send(listFunctionsCommand);
 
-    // Extract the function ARNs from the response
-    const functionArns = listFunctionsResponse.Functions.map(func => func.FunctionArn);
+    functionArns = functionArns.concat(listFunctionsResponse.Functions.map(func => func.FunctionArn));
+    nextMarker = listFunctionsResponse.NextMarker;
+  } while (nextMarker);
 
-    return functionArns;
+  return functionArns;
 }
