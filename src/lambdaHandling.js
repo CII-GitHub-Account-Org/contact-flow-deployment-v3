@@ -91,17 +91,35 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
 
 }
 
+
+// Helper function to sleep for a given number of milliseconds
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function listLambdaFunctionArns(targetRegion) {
   const lambdaClient = new LambdaClient({ region: targetRegion });
   let functionArns = [];
   let nextMarker;
+  let retryAttempts = 3;
 
   do {
-    const listFunctionsCommand = new ListFunctionsCommand({ Marker: nextMarker });
-    const listFunctionsResponse = await lambdaClient.send(listFunctionsCommand);
+    try {
+      const listFunctionsCommand = new ListFunctionsCommand({ Marker: nextMarker });
+      const listFunctionsResponse = await lambdaClient.send(listFunctionsCommand);
 
-    functionArns = functionArns.concat(listFunctionsResponse.Functions.map(func => func.FunctionArn));
-    nextMarker = listFunctionsResponse.NextMarker;
+      functionArns = functionArns.concat(listFunctionsResponse.Functions.map(func => func.FunctionArn));
+      nextMarker = listFunctionsResponse.NextMarker;
+    } catch (error) {
+      console.log('error:', error);
+      if (error.code === 'TooManyRequestsException' && retryAttempts > 0) {
+        await sleep(2500);
+        --retryAttempts;
+        continue;
+      } else {
+        throw error;
+      }
+    }
   } while (nextMarker);
 
   return functionArns;
