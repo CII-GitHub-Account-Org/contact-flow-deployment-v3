@@ -68,19 +68,19 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
         }
     }
 
-    if (!foundLambdaFunctionARNInTarget) {
-      const lambdaFunctionArns = await listLambdaFunctionArns(targetRegion);
-      await writeDataToFile('lambdaFunctionArns.json', lambdaFunctionArns);
-      for (const lambdaArn of lambdaFunctionArns) {
-        const targetLambdaName = lambdaArn.split(":")[6];
-        if (targetLambdaName === primaryLambdaName) {
-          console.log('Found lambdaFunctionARN in listLambdaFunctionArns');
-          foundLambdaFunctionARNInTarget = true;
-          targetLambdaFunctionARN = lambdaArn;
-          break;
-        }
-      }
-    }
+    // if (!foundLambdaFunctionARNInTarget) {
+    //   const lambdaFunctionArns = await listLambdaFunctionArns(targetRegion);
+    //   await writeDataToFile('lambdaFunctionArns.json', lambdaFunctionArns);
+    //   for (const lambdaArn of lambdaFunctionArns) {
+    //     const targetLambdaName = lambdaArn.split(":")[6];
+    //     if (targetLambdaName === primaryLambdaName) {
+    //       console.log('Found lambdaFunctionARN in listLambdaFunctionArns');
+    //       foundLambdaFunctionARNInTarget = true;
+    //       targetLambdaFunctionARN = lambdaArn;
+    //       break;
+    //     }
+    //   }
+    // }
 
     if (!foundLambdaFunctionARNInTarget) {
       console.log('Not Found lambdaFunctionARN in targetLambda');

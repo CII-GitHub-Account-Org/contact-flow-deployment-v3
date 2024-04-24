@@ -77,69 +77,69 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
       }
     }
 
-    if (!foundAliasArnInTarget) {
-      const inputListLexV2Bots = { // ListBotsRequest
-        sortBy: { // BotSortBy
-          attribute: "BotName", // required
-          order: "Ascending", // required
-        },
-        maxResults: 10
-      };
-    const listLexV2BotsResponse = await listLexV2BotsFunc(targetRegion,inputListLexV2Bots, ListBotsCommand);
-      // Writing missedResourcesInTarget to files
-      // await writeDataToFile('listLexV2BotsResponse.json', listLexV2BotsResponse);
-      outerLoop: // label for the outer loop
-      for (const item of listLexV2BotsResponse) {
-        if (item && item.botSummaries) {
-          for (const lexBot of item.botSummaries) {
-              const botName = lexBot.botName;
-              // console.log('botName : ', botName);
-              if (botName === primaryLexV2BotName) {
-                console.log('Found botName in listLexV2BotsResponse');
-                const botId = lexBot.botId;
-                const inputListBotAliasesLexV2Bot = { // ListBotAliasesRequest
-                  botId: botId, // required
-                  maxResults: 10,
-                };
-                // const ListBotAliasesLexV2BotRes = await ListBotAliasesLexV2Bot(botId, targetRegion);
-                const listLexV2BotsResponse2 = await listLexV2BotsFunc(targetRegion,inputListBotAliasesLexV2Bot, ListBotAliasesCommand);
-                console.log('listLexV2BotsResponse2', listLexV2BotsResponse2);
-                let lexV2BotSummary = listLexV2BotsResponse2[0].botAliasSummaries[0];
-                for (const botAlias of listLexV2BotsResponse2 ) {
-                    if (botAlias && botAlias.botAliasSummaries) {
-                      for (const botSummary of botAlias.botAliasSummaries) {
-                        if (botSummary.creationDateTime > lexV2BotSummary.creationDateTime) {
-                          lexV2BotSummary = botSummary;
-                        }
-                      }
-                    }
-                }
-                console.log();
-                // Create an STS client
-                const stsClient = new STSClient({ region: targetRegion });
+    // if (!foundAliasArnInTarget) {
+    //   const inputListLexV2Bots = { // ListBotsRequest
+    //     sortBy: { // BotSortBy
+    //       attribute: "BotName", // required
+    //       order: "Ascending", // required
+    //     },
+    //     maxResults: 10
+    //   };
+    // const listLexV2BotsResponse = await listLexV2BotsFunc(targetRegion,inputListLexV2Bots, ListBotsCommand);
+    //   // Writing missedResourcesInTarget to files
+    //   // await writeDataToFile('listLexV2BotsResponse.json', listLexV2BotsResponse);
+    //   outerLoop: // label for the outer loop
+    //   for (const item of listLexV2BotsResponse) {
+    //     if (item && item.botSummaries) {
+    //       for (const lexBot of item.botSummaries) {
+    //           const botName = lexBot.botName;
+    //           // console.log('botName : ', botName);
+    //           if (botName === primaryLexV2BotName) {
+    //             console.log('Found botName in listLexV2BotsResponse');
+    //             const botId = lexBot.botId;
+    //             const inputListBotAliasesLexV2Bot = { // ListBotAliasesRequest
+    //               botId: botId, // required
+    //               maxResults: 10,
+    //             };
+    //             // const ListBotAliasesLexV2BotRes = await ListBotAliasesLexV2Bot(botId, targetRegion);
+    //             const listLexV2BotsResponse2 = await listLexV2BotsFunc(targetRegion,inputListBotAliasesLexV2Bot, ListBotAliasesCommand);
+    //             console.log('listLexV2BotsResponse2', listLexV2BotsResponse2);
+    //             let lexV2BotSummary = listLexV2BotsResponse2[0].botAliasSummaries[0];
+    //             for (const botAlias of listLexV2BotsResponse2 ) {
+    //                 if (botAlias && botAlias.botAliasSummaries) {
+    //                   for (const botSummary of botAlias.botAliasSummaries) {
+    //                     if (botSummary.creationDateTime > lexV2BotSummary.creationDateTime) {
+    //                       lexV2BotSummary = botSummary;
+    //                     }
+    //                   }
+    //                 }
+    //             }
+    //             console.log();
+    //             // Create an STS client
+    //             const stsClient = new STSClient({ region: targetRegion });
 
-                // Create a command to get caller identity
-                const stsCommand = new GetCallerIdentityCommand({});
+    //             // Create a command to get caller identity
+    //             const stsCommand = new GetCallerIdentityCommand({});
 
-                // Send the command and get the response
-                const stsResponse = await stsClient.send(stsCommand);
+    //             // Send the command and get the response
+    //             const stsResponse = await stsClient.send(stsCommand);
              
-                // Extract the account ID from the response
-                const accountId = stsResponse.Account;
+    //             // Extract the account ID from the response
+    //             const accountId = stsResponse.Account;
 
-                // Construct the ARN
-                const botAliasArnConstruct = `arn:aws:lex:${targetRegion}:${accountId}:bot/${botId}/${lexV2BotSummary.botAliasId}`;
-                console.log('botAliasArnConstruct', botAliasArnConstruct);
+    //             // Construct the ARN
+    //             const botAliasArnConstruct = `arn:aws:lex:${targetRegion}:${accountId}:bot/${botId}/${lexV2BotSummary.botAliasId}`;
+    //             console.log('botAliasArnConstruct', botAliasArnConstruct);
 
-                console.log('Found aliasArn in listLexV2BotsResponse');
-                foundAliasArnInTarget = true;
-                targetAliasArn = botAliasArnConstruct;
-                break outerLoop; // break the outer loop
-              }
-          }
-        }
-      }
-    }
+    //             console.log('Found aliasArn in listLexV2BotsResponse');
+    //             foundAliasArnInTarget = true;
+    //             targetAliasArn = botAliasArnConstruct;
+    //             break outerLoop; // break the outer loop
+    //           }
+    //       }
+    //     }
+    //   }
+    // }
 
     if (!foundAliasArnInTarget) {
       console.log('Not Found aliasArn in targetLexBot');
