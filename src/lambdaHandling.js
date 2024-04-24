@@ -68,10 +68,18 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
         }
     }
 
-
     if (!foundLambdaFunctionARNInTarget) {
       const lambdaFunctionArns = await listLambdaFunctionArns(targetRegion);
       await writeDataToFile('lambdaFunctionArns.json', lambdaFunctionArns);
+      for (const lambdaArn of lambdaFunctionArns) {
+        const targetLambdaName = lambdaArn.split(":")[6];
+        if (targetLambdaName === primaryLambdaName) {
+          console.log('Found lambdaFunctionARN in listLambdaFunctionArns');
+          foundLambdaFunctionARNInTarget = true;
+          targetLambdaFunctionARN = lambdaArn;
+          break;
+        }
+      }
     }
 
     if (!foundLambdaFunctionARNInTarget) {
@@ -87,10 +95,8 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
         "ResourceStatus": "exists",
         "ResourceArn": targetLambdaFunctionARN
       };
-    } 
-
+    }
 }
-
 
 // Helper function to sleep for a given number of milliseconds
 function sleep(ms) {
