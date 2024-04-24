@@ -1,4 +1,4 @@
-import { LambdaClient, ListFunctionsCommand } from "@aws-sdk/client-lambda";
+// import { LambdaClient, ListFunctionsCommand } from "@aws-sdk/client-lambda";
 let regionToUse;
 
 export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, targetLambda, region) {
