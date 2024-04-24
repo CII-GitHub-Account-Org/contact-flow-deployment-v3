@@ -128,7 +128,7 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
                 const accountId = stsResponse.Account;
 
                 // Construct the ARN
-                const botAliasArnConstruct = `arn:aws:lex:${targetRegion}:${accountId}:bot/${botId}:${lexV2BotSummary.botAliasId}`;
+                const botAliasArnConstruct = `arn:aws:lex:${targetRegion}:${accountId}:bot/${botId}/${lexV2BotSummary.botAliasId}`;
                 console.log('botAliasArnConstruct', botAliasArnConstruct);
 
                 console.log('Found aliasArn in listLexV2BotsResponse');

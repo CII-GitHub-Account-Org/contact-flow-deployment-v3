@@ -1,4 +1,4 @@
-// import { LambdaClient, ListFunctionsCommand } from "@aws-sdk/client-lambda";
+import { LambdaClient, ListFunctionsCommand } from "@aws-sdk/client-lambda";
 let regionToUse;
 
 export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, targetLambda, region) {
@@ -58,7 +58,7 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
         if (item && item.LambdaFunctions) {
             for (const lambdaArn of item.LambdaFunctions) {
                 const targetLambdaName = lambdaArn.split(":")[6];
-                console.log('targetLambdaName : ', targetLambdaName);
+                // console.log('targetLambdaName : ', targetLambdaName);
                 if (targetLambdaName === primaryLambdaName) {
                     console.log('Found lambdaFunctionARN in targetLambda');
                     foundLambdaFunctionARNInTarget = true;
@@ -67,6 +67,12 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
                 }
             }
         }
+    }
+
+
+    if (!foundLambdaFunctionARNInTarget) {
+      const lambdaFunctionArns = await listLambdaFunctionArns(targetRegion);
+      console.log('lambdaFunctionArns : ', lambdaFunctionArns);
     }
 
     if (!foundLambdaFunctionARNInTarget) {
@@ -84,4 +90,20 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
       };
     } 
 
+}
+
+async function listLambdaFunctionArns(targetRegion) {
+    // Create a Lambda client
+    const lambdaClient = new LambdaClient({ region: targetRegion });
+    
+    // Create a command to list functions
+    const listFunctionsCommand = new ListFunctionsCommand({});
+    
+    // Send the command and get the response
+    const listFunctionsResponse = await lambdaClient.send(listFunctionsCommand);
+
+    // Extract the function ARNs from the response
+    const functionArns = listFunctionsResponse.Functions.map(func => func.FunctionArn);
+
+    return functionArns;
 }
