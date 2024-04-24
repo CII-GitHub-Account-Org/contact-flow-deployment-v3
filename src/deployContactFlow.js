@@ -145,7 +145,7 @@ const flowContent = flowData.ContactFlow.Content;
 targetJson = flowContent;
 let contentActions = JSON.parse(targetJson).Actions;
 console.log("Content Actions Before Replacing : ", contentActions);
-// await writeDataToFile('contentActions.json', contentActions);
+await writeDataToFile('contentActions.json', contentActions);
 
 const missedResourcesInTarget = [];
 for (let i = 0; i < contentActions.length; i++) {
