@@ -1,7 +1,7 @@
 
 import { LexModelsV2Client, DescribeBotCommand, ListBotsCommand, ListBotAliasesCommand } from "@aws-sdk/client-lex-models-v2";
 import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
-import writeDataToFile from './writeDataToFile.js';
+// import writeDataToFile from './writeDataToFile.js';
 
 export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLexBot, sourceRegion, targetRegion) {
     const primaryLexV2BotId = aliasArn.split('/')[1];
@@ -123,7 +123,7 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
 
                 // Send the command and get the response
                 const stsResponse = await stsClient.send(stsCommand);
-                await writeDataToFile('stsResponse.json', stsResponse);
+             
                 // Extract the account ID from the response
                 const accountId = stsResponse.Account;
 
@@ -131,9 +131,9 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
                 const botAliasArnConstruct = `arn:aws:lex:${targetRegion}:${accountId}:bot/${botId}:${lexV2BotSummary.botAliasId}`;
                 console.log('botAliasArnConstruct', botAliasArnConstruct);
 
-                // const targetLexV2BotName = describeLexV2BotRes.botName;
-                // foundAliasArnInTarget = true;
-                // targetAliasArn = lexBot.LexV2Bot.AliasArn;
+                console.log('Found aliasArn in listLexV2BotsResponse');
+                foundAliasArnInTarget = true;
+                targetAliasArn = botAliasArnConstruct;
                 break outerLoop; // break the outer loop
               }
           }
@@ -215,16 +215,3 @@ async function listLexV2Bots (region,params, action) {
       return error;
     }
   };
-
-  async function ListBotAliasesLexV2Bot (botId, region) {
-    const client = new LexModelsV2Client({ region: region });
-    const inputListBotAliasesLexV2Bot = { // ListBotAliasesRequest
-      botId: botId, // required
-      maxResults: 10,
-    };
-    // console.log('inputListBotAliasesLexV2Bot', inputListBotAliasesLexV2Bot);
-    const commandListBotAliasesLexV2Bot = new ListBotAliasesCommand(inputListBotAliasesLexV2Bot);
-    const responseListBotAliasesLexV2Bot = await client.send(commandListBotAliasesLexV2Bot);
-    // console.log('responseListBotAliasesLexV2Bot', responseListBotAliasesLexV2Bot);
-    return responseListBotAliasesLexV2Bot;
-}
