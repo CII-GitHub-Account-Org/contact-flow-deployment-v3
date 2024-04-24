@@ -146,12 +146,11 @@ targetJson = flowContent;
 let contentActions = JSON.parse(targetJson).Actions;
 // console.log("Content Actions Before Replacing : ", contentActions);
 await writeDataToFile('contentActions.json', contentActions);
-await writeDataToFile('targetJson.json', targetJson);
+await writeDataToFile('targetJson.json', JSON.parse(targetJson));
 const missedResourcesInTarget = [];
 for (let i = 0; i < contentActions.length; i++) {
     let obj = contentActions[i];
     console.log(`Type value: ${obj.Type}`);
-
         if (obj.Type === 'UpdateContactTargetQueue') {
           console.log('Inside Queue Handling');
           console.log('obj : ', obj);
@@ -160,9 +159,7 @@ for (let i = 0; i < contentActions.length; i++) {
           const targetQueueResources = await queueHandling(primaryQueues, queueArn, targetQueues);
           console.log('targetQueueResources : ', targetQueueResources);
           if (targetQueueResources && targetQueueResources.ResourceStatus === 'exists') {
-            let targetJsonString = JSON.stringify(targetJson);
-            targetJsonString = targetJsonString.replace(new RegExp(queueArn, 'g'), targetQueueResources.ResourceArn);
-            targetJson = JSON.parse(targetJsonString);
+            targetJson = targetJson.replace(new RegExp(queueArn, 'g'), targetQueueResources.ResourceArn);
           } else if (targetQueueResources && targetQueueResources.ResourceStatus === 'notExists') {
             missedResourcesInTarget.push({
               "ResourceType": targetQueueResources.ResourceType,
@@ -178,9 +175,7 @@ for (let i = 0; i < contentActions.length; i++) {
           // const targetHopResources = await hopHandling(primaryHOP, hopArn, targetHOP);
           // console.log('targetHopResources : ', targetHopResources);
           // if (targetHopResources && targetHopResources.ResourceStatus === 'exists') {
-          //   let targetJsonString = JSON.stringify(targetJson);
-          //   targetJsonString = targetJsonString.replace(new RegExp(hopArn, 'g'), targetHopResources.ResourceArn);
-          //   targetJson = JSON.parse(targetJsonString);
+          //   targetJson = targetJson.replace(new RegExp(hopArn, 'g'), targetHopResources.ResourceArn);
           // } else if (targetHopResources && targetHopResources.ResourceStatus === 'notExists') {
           //   missedResourcesInTarget.push({
           //     "ResourceType": targetHopResources.ResourceType,
@@ -188,17 +183,14 @@ for (let i = 0; i < contentActions.length; i++) {
           //     "ResourceArn": targetHopResources.ResourceArn
           //   });
           // }
-        } 
-        else if (obj.Type === 'ConnectParticipantWithLexBot') {
+        } else if (obj.Type === 'ConnectParticipantWithLexBot') {
           console.log('Inside LexBot Handling');
           const lexV2BotAliasArn = obj && obj.Parameters && obj.Parameters.LexV2Bot && obj.Parameters.LexV2Bot.AliasArn ? obj.Parameters.LexV2Bot.AliasArn : undefined;
           console.log('lexV2BotAliasArn : ', lexV2BotAliasArn);
           const targetLexV2BotResources = await lexV2BotHandling(primaryLexBot, lexV2BotAliasArn, targetLexBot, sourceRegion, targetRegion);
           console.log('targetLexV2BotResources : ', targetLexV2BotResources);
           if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'exists') {
-            let targetJsonString = JSON.stringify(targetJson);
-            targetJsonString = targetJsonString.replace(new RegExp(lexV2BotAliasArn, 'g'), targetLexV2BotResources.ResourceArn);
-            targetJson = JSON.parse(targetJsonString);
+              targetJson = targetJson.replace(new RegExp(lexV2BotAliasArn, 'g'), targetLexV2BotResources.ResourceArn);
           } else if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'notExists') {
             missedResourcesInTarget.push({
               "ResourceType": targetLexV2BotResources.ResourceType,
@@ -213,9 +205,7 @@ for (let i = 0; i < contentActions.length; i++) {
           const targetLambdaResources = await lambdaHandling(primaryLambda, lambdaFunctionARN, targetLambda, sourceRegion, targetRegion);
           console.log('targetLambdaResources : ', targetLambdaResources);
           if (targetLambdaResources && targetLambdaResources.ResourceStatus === 'exists') {
-            let targetJsonString = JSON.stringify(targetJson);
-            targetJsonString = targetJsonString.replace(new RegExp(lambdaFunctionARN, 'g'), targetLambdaResources.ResourceArn);
-            targetJson = JSON.parse(targetJsonString);
+              targetJson = targetJson.replace(new RegExp(lambdaFunctionARN, 'g'), targetLambdaResources.ResourceArn);
           } else if (targetLambdaResources && targetLambdaResources.ResourceStatus === 'notExists') {
             missedResourcesInTarget.push({
               "ResourceType": targetLambdaResources.ResourceType,
@@ -227,15 +217,16 @@ for (let i = 0; i < contentActions.length; i++) {
           console.log(`No handling for the type : ${obj.Type}`);
         }
 }
-await writeDataToFile('targetJsonUpdated.json', targetJson);
+await writeDataToFile('targetJsonUpdated.json', JSON.parse(targetJson));
+contentActions = JSON.parse(targetJson).Actions;
+// console.log("contentActions After Replacing", contentActions);
+await writeDataToFile('contentActionsUpdated.json', contentActions);
 if (missedResourcesInTarget.length > 0) {
   // Writing missedResourcesInTarget to files
     console.log('missedResourcesInTarget : ', missedResourcesInTarget);
     await writeDataToFile('missedResourcesInTarget.json', missedResourcesInTarget);
     console.log('Note : Please create the missed resources in target instance');
 } else {
-// contentActions = JSON.parse(targetJson).Actions;
-// console.log("contentActions After Replacing", contentActions);
 // await createOrUpdateFlow(isExist, flowName, targetInstanceArn, contactFlowType, targetJson, targetFlowId)
 }
 }
