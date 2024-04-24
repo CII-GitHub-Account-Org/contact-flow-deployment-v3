@@ -155,7 +155,7 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
     } else {
       return {
         "ResourceStatus": "exists",
-        "TargetAliasArn": targetAliasArn
+        "ResourceArn": targetAliasArn
       };
     } 
   }
