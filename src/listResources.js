@@ -1,7 +1,6 @@
 import AWS from 'aws-sdk';
 const connect = new AWS.Connect();
 
-
 // Helper function to handle listing resources with pagination
 export async function listResourcesWithPagination(params, resourceType) {
     const resources = [];
