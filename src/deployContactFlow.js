@@ -118,16 +118,15 @@ console.log('primaryFlowId', primaryFlowId);
 const targetFlowArn = await getContactFlowArn(targetContactFlows, flowName);
 console.log('targetFlowArn', targetFlowArn);
 if (!targetFlowArn){
-  console.log('Target flow not found, Creating contact flow.');
+  console.log('Target flow not found, Need to create contact flow.');
   isExist = false;
 } else { 
   isExist = true;
+  // get target flow Id
+  const targetFlowId = targetFlowArn.split('/')[3];
+  console.log('targetFlowId : ', targetFlowId);
   console.log(`Target flow found, Updating contact flow : ${flowName}`);
  }
-
-// get target flow Id
-const targetFlowId = targetFlowArn.split('/')[3];
-console.log('targetFlowId : ', targetFlowId);
 
 // describe contact flow and get content
 async function describeContactFlow(instanceId, primaryFlowId, sourceRegion) {
