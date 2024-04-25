@@ -14,9 +14,9 @@ console.log('contactFlowType', contactFlowType);
 console.log('sourceRegion', sourceRegion);
 console.log('targetRegion', targetRegion);
 console.log('retryAttempts', retryAttempts);
-let isExist;
+let isExist; // To check if the flow exists in target instance
 let targetJson;
-import { listResourcesFunc } from './listResources.js';
+import { listResourcesFunc } from './listResources.js'; 
 import  writeDataToFile  from './writeDataToFile.js';
 import getContactFlowArn from './getContactFlowArn.js';
 import createOrUpdateFlow from './createOrUpdateFlow.js';
