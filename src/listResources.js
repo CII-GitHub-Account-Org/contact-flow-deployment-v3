@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 const connect = new AWS.Connect();
 
 // Helper function to handle listing resources with pagination
-export async function listResourcesWithPagination(params, resourceType) {
+async function listResourcesWithPagination(params, resourceType) {
     const resources = [];
     let response = await connect[`list${resourceType}`](params).promise();
     resources.push(response);
@@ -16,7 +16,8 @@ export async function listResourcesWithPagination(params, resourceType) {
   }
   
   // Helper function to handle throttling
- export async function listResourcesFunc(params, retryAttempts, resourceType) {
+ export async function listResourcesFunc(params, retryAttempts, resourceType, regionToUse) {
+  AWS.config.update({region:regionToUse}); // replace with your region
     try {
       let doRetry = false;
       do {
@@ -30,7 +31,7 @@ export async function listResourcesWithPagination(params, resourceType) {
           }
         } catch (error) {
           console.log('error:', error);
-          if (error.code === 'TooManyRequestsException' && (retryAttempts || 5) > 0) {
+          if (error.code === 'TooManyRequestsException' && (retryAttempts || 3) > 0) {
             await sleep(parseInt(2500, 10) || 1000);
             --retryAttempts;
             doRetry = true;
