@@ -153,7 +153,7 @@ for (let i = 0; i < contentActions.length; i++) {
     console.log(`Type value: ${obj.Type}`);
         if (obj.Type === 'UpdateContactTargetQueue') {
           console.log('Inside Queue Handling');
-          console.log('obj : ', obj);
+          // console.log('obj : ', obj);
           const queueArn = obj && obj.Parameters && obj.Parameters.QueueId ? obj.Parameters.QueueId : undefined;
           console.log('queueArn : ', queueArn);
           const targetQueueResources = await queueHandling(primaryQueues, queueArn, targetQueues);
@@ -228,7 +228,7 @@ if (missedResourcesInTarget.length > 0) {
     console.log('Note : Please create the missed resources in target instance');
 } else {
   console.log('No missed resources in target instance');
-// await createOrUpdateFlow(isExist, flowName, targetInstanceArn, contactFlowType, targetJson, targetFlowId)
+  await createOrUpdateFlow(isExist, flowName, targetInstanceArn, contactFlowType, targetJson, targetFlowId)
 }
 }
 

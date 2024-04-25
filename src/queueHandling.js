@@ -61,6 +61,7 @@ export default async function queueHandling(primaryQueues, queueArn, targetQueue
                     console.log('Found queueArn in targetQueues');
                     foundQueueArnInTarget = true;
                     targetQueueArn = Queues.Arn;
+                    console.log('targetQueueArn : ', targetQueueArn);
                     break outerLoop; // break the outer loop
                 }
             }
