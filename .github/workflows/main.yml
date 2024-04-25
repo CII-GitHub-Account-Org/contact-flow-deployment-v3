@@ -50,7 +50,8 @@ jobs:
           echo "QA_INSTANCEARN: ${{ env.QA_INSTANCEARN }}"
           echo "FLOWNAME: ${{ env.FLOWNAME }}"
           echo "CONTACTFLOWTYPE: ${{ env.CONTACTFLOWTYPE }}"
-          echo "REGION: ${{ env.REGION }}"
+          echo "SOURCE_REGION: ${{ env.DEV_REGION }}"
+          echo "TARGET_REGION: ${{ env.QA_REGION }}"
           echo "RETRY_ATTEMPTS: ${{ env.RETRY_ATTEMPTS }}"
 
       - name: Run script
