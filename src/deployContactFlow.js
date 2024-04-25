@@ -44,64 +44,63 @@ const targetContactFlows = await listResourcesFunc({
 await writeDataToFile('primaryContactFlows.json', primaryContactFlows);
 await writeDataToFile('targetContactFlows.json', targetContactFlows);
 
-// // Handling List Queues
-// const primaryQueues = await listResourcesFunc({
-//   InstanceId: instanceArn,
-//   MaxResults: 50
-// }, retryAttempts, 'Queues', sourceRegion);
-// const targetQueues = await listResourcesFunc({
-//   InstanceId: targetInstanceArn,
-//   MaxResults: 50
-// }, retryAttempts,'Queues', targetRegion);
+// Handling List Queues
+const primaryQueues = await listResourcesFunc({
+  InstanceId: instanceArn,
+  MaxResults: 50
+}, retryAttempts, 'Queues', sourceRegion);
+const targetQueues = await listResourcesFunc({
+  InstanceId: targetInstanceArn,
+  MaxResults: 50
+}, retryAttempts,'Queues', targetRegion);
 
-// // Writing primaryQueues and targetQueues to files
-// await writeDataToFile('primaryQueues.json', primaryQueues);
-// await writeDataToFile('targetQueues.json', targetQueues);
+// Writing primaryQueues and targetQueues to files
+await writeDataToFile('primaryQueues.json', primaryQueues);
+await writeDataToFile('targetQueues.json', targetQueues);
 
+// Handling List Hours of Operations
+const primaryHOP = await listResourcesFunc({
+  InstanceId: instanceArn,
+  MaxResults: 50
+}, retryAttempts, 'HoursOfOperations', sourceRegion);
+const targetHOP = await listResourcesFunc({
+  InstanceId: targetInstanceArn,
+  MaxResults: 50
+}, retryAttempts, 'HoursOfOperations', targetRegion);
 
-// // Handling List Hours of Operations
-// const primaryHOP = await listResourcesFunc({
-//   InstanceId: instanceArn,
-//   MaxResults: 50
-// }, retryAttempts, 'HoursOfOperations', sourceRegion);
-// const targetHOP = await listResourcesFunc({
-//   InstanceId: targetInstanceArn,
-//   MaxResults: 50
-// }, retryAttempts, 'HoursOfOperations', targetRegion);
+// Writing primaryHOP and targetHOP to files
+await writeDataToFile('primaryHOP.json', primaryHOP);
+await writeDataToFile('targetHOP.json', targetHOP);
 
-// // Writing primaryHOP and targetHOP to files
-// await writeDataToFile('primaryHOP.json', primaryHOP);
-// await writeDataToFile('targetHOP.json', targetHOP);
+// Handling List Lex Bots
+const primaryLexBot = await listResourcesFunc({
+  InstanceId: instanceArn,
+  LexVersion: "V2",
+  MaxResults: 25
+}, retryAttempts, 'Bots', sourceRegion);
+const targetLexBot = await listResourcesFunc({
+  InstanceId: targetInstanceArn,
+  LexVersion: "V2",
+  MaxResults: 25
+}, retryAttempts, 'Bots', targetRegion);
 
-// // Handling List Lex Bots
-// const primaryLexBot = await listResourcesFunc({
-//   InstanceId: instanceArn,
-//   LexVersion: "V2",
-//   MaxResults: 25
-// }, retryAttempts, 'Bots', sourceRegion);
-// const targetLexBot = await listResourcesFunc({
-//   InstanceId: targetInstanceArn,
-//   LexVersion: "V2",
-//   MaxResults: 25
-// }, retryAttempts, 'Bots', targetRegion);
+// Writing primaryLexBot and targetLexBot to files
+await writeDataToFile('primaryLexBot.json', primaryLexBot);
+await writeDataToFile('targetLexBot.json', targetLexBot);
 
-// // Writing primaryLexBot and targetLexBot to files
-// await writeDataToFile('primaryLexBot.json', primaryLexBot);
-// await writeDataToFile('targetLexBot.json', targetLexBot);
+// Handling List Lambda Functions
+const primaryLambda = await listResourcesFunc({
+  InstanceId: instanceArn,
+  MaxResults: 25
+},retryAttempts, 'LambdaFunctions', sourceRegion);
+const targetLambda = await listResourcesFunc({
+  InstanceId: targetInstanceArn,
+  MaxResults: 25
+},retryAttempts, 'LambdaFunctions', targetRegion);
 
-// // Handling List Lambda Functions
-// const primaryLambda = await listResourcesFunc({
-//   InstanceId: instanceArn,
-//   MaxResults: 25
-// },retryAttempts, 'LambdaFunctions', sourceRegion);
-// const targetLambda = await listResourcesFunc({
-//   InstanceId: targetInstanceArn,
-//   MaxResults: 25
-// },retryAttempts, 'LambdaFunctions', targetRegion);
-
-// // Writing primaryLambda and targetLambda to files
-// await writeDataToFile('primaryLambda.json', primaryLambda);
-// await writeDataToFile('targetLambda.json', targetLambda);
+// Writing primaryLambda and targetLambda to files
+await writeDataToFile('primaryLambda.json', primaryLambda);
+await writeDataToFile('targetLambda.json', targetLambda);
 
 // // get primary flow Arn
 // const primaryFlowArn = await getContactFlowArn(primaryContactFlows, flowName);

@@ -1,4 +1,4 @@
-import { ConnectClient, ListContactFlowsCommand } from "@aws-sdk/client-connect";
+import { ConnectClient, ListContactFlowsCommand, ListQueuesCommand, ListHoursOfOperationsCommand, ListLambdaFunctionsCommand, ListBotsCommand  } from "@aws-sdk/client-connect";
 
 
 import AWS from 'aws-sdk';
@@ -59,25 +59,35 @@ let connect = new AWS.Connect();
 //     return resources;
 //   }
   
-  
+const commandClasses = {
+  ContactFlows: ListContactFlowsCommand,
+  Queues: ListQueuesCommand,
+  HoursOfOperations: ListHoursOfOperationsCommand,
+  LambdaFunctions: ListLambdaFunctionsCommand,
+  Bots: ListBotsCommand
+};
 
 async function listResourcesWithPagination(params, resourceType, region) {
-  if (resourceType === 'ContactFlows') {
-    const client = new ConnectClient({ ...params, region });
-    const resources = [];
-    let command = new ListContactFlowsCommand(params);
+  const client = new ConnectClient({ ...params, region });
+  const resources = [];
+  const CommandClass = commandClasses[resourceType];
 
-    let response = await client.send(command);
-    resources.push(response);
-
-    while (response.NextToken) {
-      params.NextToken = response.NextToken;
-      command = new ListContactFlowsCommand(params);
-
-      response = await client.send(command);
-      resources.push(response);
-    }
-
-    return resources;
+  if (!CommandClass) {
+    throw new Error(`Unsupported resource type: ${resourceType}`);
   }
+
+  let command = new CommandClass(params);
+
+  let response = await client.send(command);
+  resources.push(response);
+
+  while (response.NextToken) {
+    params.NextToken = response.NextToken;
+    command = new CommandClass(params);
+
+    response = await client.send(command);
+    resources.push(response);
+  }
+
+  return resources;
 }
