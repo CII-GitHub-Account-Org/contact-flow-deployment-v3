@@ -18,11 +18,11 @@ let isExist;
 let targetJson;
 import { listResourcesFunc } from './listResources.js';
 import  writeDataToFile  from './writeDataToFile.js';
-// import getContactFlowArn from './getContactFlowArn.js';
-// import createOrUpdateFlow from './createOrUpdateFlow.js';
-// import lexV2BotHandling from './lexV2BotHandling.js';
-// import lambdaHandling from './lambdaHandling.js';
-// import queueHandling from './queueHandling.js';
+import getContactFlowArn from './getContactFlowArn.js';
+import createOrUpdateFlow from './createOrUpdateFlow.js';
+import lexV2BotHandling from './lexV2BotHandling.js';
+import lambdaHandling from './lambdaHandling.js';
+import queueHandling from './queueHandling.js';
 
 // Handling List Contact Flows
 const primaryContactFlows = await listResourcesFunc({
