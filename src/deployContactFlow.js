@@ -16,7 +16,7 @@ console.log('targetRegion', targetRegion);
 console.log('retryAttempts', retryAttempts);
 let isExist;
 let targetJson;
-import { listResourcesWithPagination, listResourcesFunc } from './listResources.js';
+import { listResourcesFunc } from './listResources.js';
 import  writeDataToFile  from './writeDataToFile.js';
 import getContactFlowArn from './getContactFlowArn.js';
 import createOrUpdateFlow from './createOrUpdateFlow.js';
