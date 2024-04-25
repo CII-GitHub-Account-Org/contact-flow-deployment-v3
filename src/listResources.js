@@ -1,7 +1,6 @@
 import AWS from 'aws-sdk';
 let connect = new AWS.Connect();
 
-
   // Helper function to handle throttling
   export async function listResourcesFunc(params, retryAttempts, resourceType, regionToUse) {
     AWS.config.update({regionToUse}); // replace with your region
@@ -39,11 +38,13 @@ let connect = new AWS.Connect();
 // Helper function to handle listing resources with pagination
 async function listResourcesWithPagination(params, resourceType) {
     const resources = [];
+    console.log('params:', params);
     let response = await connect[`list${resourceType}`](params).promise();
     resources.push(response);
     
     while (response.NextToken) {
       params.NextToken = response.NextToken;
+      console.log('params2:', params);
       response = await connect[`list${resourceType}`](params).promise();
       resources.push(response);
     }
