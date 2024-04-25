@@ -191,7 +191,7 @@ for (let i = 0; i < contentActions.length; i++) {
           console.log('targetLexV2BotResources : ', targetLexV2BotResources);
           if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'exists') {
               targetJson = targetJson.replace(new RegExp(lexV2BotAliasArn, 'g'), targetLexV2BotResources.ResourceArn);
-              // targetJson = targetJson.replace(new RegExp(lexV2BotAliasArn, 'g'), targetLexV2BotResources.ResourceName);
+              targetJson = targetJson.replace(new RegExp(targetLexV2BotResources.ResourceNameSource, 'g'), targetLexV2BotResources.ResourceNameTarget);
           } else if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'notExists') {
             missedResourcesInTarget.push({
               "ResourceType": targetLexV2BotResources.ResourceType,
