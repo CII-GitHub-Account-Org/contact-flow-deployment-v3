@@ -228,7 +228,7 @@ if (missedResourcesInTarget.length > 0) {
     console.log('Note : Please create the missed resources in target instance');
 } else {
   console.log('No missed resources in target instance');
-  await createOrUpdateFlow(isExist, flowName, targetInstanceArn, contactFlowType, targetJson, targetFlowId)
+  await createOrUpdateFlow(isExist, flowName, targetInstanceArn, contactFlowType, targetJson, targetFlowId, targetRegion)
 }
 }
 

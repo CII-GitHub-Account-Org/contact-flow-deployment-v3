@@ -1,7 +1,10 @@
+import AWS from 'aws-sdk';
+const connect = new AWS.Connect();
 
-
-
-export default async function createOrUpdateFlow(isExist, flowName, targetInstanceArn, contactFlowType, targetJson, targetFlowId) {
+export default async function createOrUpdateFlow(isExist, flowName, targetInstanceArn, contactFlowType, targetJson, targetFlowId, targetRegion) {
+    AWS.config.update({
+        region: targetRegion, // replace with your region
+    });
     console.log('isExist: ',isExist);
     if (!isExist) {
         console.log("Creating Contact Flow : ", flowName);
