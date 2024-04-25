@@ -52,11 +52,12 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
 
     let foundLambdaFunctionARNInTarget = false;
     let targetLambdaFunctionARN;
+    let targetLambdaName;
     outerLoop: // label for the outer loop
     for (const item of targetLambda) {
         if (item && item.LambdaFunctions) {
             for (const lambdaArn of item.LambdaFunctions) {
-                const targetLambdaName = lambdaArn.split(":")[6];
+                targetLambdaName = lambdaArn.split(":")[6];
                 // console.log('targetLambdaName : ', targetLambdaName);
                 const primaryLambdaNameWithoutPrefix = primaryLambdaName.replace(/^[Dd][Ee][Vv]-/, '');
                 if (targetLambdaName.toLowerCase() === `qa-${primaryLambdaNameWithoutPrefix}`.toLowerCase()) {
@@ -95,7 +96,8 @@ export default async function lambdaHandling(primaryLambda, lambdaFunctionARN, t
     } else {
       return {
         "ResourceStatus": "exists",
-        "ResourceArn": targetLambdaFunctionARN
+        "ResourceArn": targetLambdaFunctionARN,
+        "ResourceName": targetLambdaName,
       };
     }
 }

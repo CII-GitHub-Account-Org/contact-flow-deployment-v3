@@ -58,13 +58,14 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
 
     let foundAliasArnInTarget = false;
     let targetAliasArn;
+    let targetLexV2BotName;
     outerLoop: // label for the outer loop
     for (const item of targetLexBot) {
       if (item && item.LexBots) {
         for (const lexBot of item.LexBots) {
           if (lexBot && lexBot.LexV2Bot && lexBot.LexV2Bot.AliasArn) {
             const describeLexV2BotRes = await describeLexV2Bot(lexBot.LexV2Bot.AliasArn.split('/')[1], targetRegion);
-            const targetLexV2BotName = describeLexV2BotRes.botName;
+            targetLexV2BotName = describeLexV2BotRes.botName;
             // console.log('targetLexV2BotName : ', targetLexV2BotName);
             const primaryLexV2BotNameWithoutPrefix = primaryLexV2BotName.replace(/^[Dd][Ee][Vv]-/, '');
             if (targetLexV2BotName.toLowerCase() === `qa-${primaryLexV2BotNameWithoutPrefix}`.toLowerCase()) {
@@ -155,7 +156,9 @@ export default async function lexV2BotHandling(primaryLexBot, aliasArn, targetLe
     } else {
       return {
         "ResourceStatus": "exists",
-        "ResourceArn": targetAliasArn
+        "ResourceArn": targetAliasArn,
+        "ResourceNameSource": primaryLexV2BotName,
+        "ResourceNameTarget": targetLexV2BotName
       };
     } 
   }
