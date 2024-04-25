@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/yourusername/my-project#readme",
   "dependencies": {
-    "@aws-sdk/client-connect": "^3.549.0",
+    "@aws-sdk/client-connect": "^3.556.0",
     "@aws-sdk/client-lambda": "^3.556.0",
     "@aws-sdk/client-lex-models-v2": "^3.556.0",
     "@aws-sdk/client-sts": "^3.556.0",

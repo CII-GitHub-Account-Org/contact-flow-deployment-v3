@@ -30,7 +30,7 @@ const primaryContactFlows = await listResourcesFunc({
   ContactFlowTypes: [
     contactFlowType
   ],
-   MaxResults: 50
+  MaxResults: 50,
 }, retryAttempts, 'ContactFlows', sourceRegion);
 const targetContactFlows = await listResourcesFunc({
   InstanceId: targetInstanceArn,
