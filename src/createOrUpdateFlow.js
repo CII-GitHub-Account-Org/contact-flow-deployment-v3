@@ -15,7 +15,7 @@ export default async function createOrUpdateFlow(isExist, flowName, targetInstan
             Type: contactFlowType,
             Content: targetJson
         };
-        console.log("params: ", params);
+        // console.log("params: ", params);
         try {
             const data = await connect.createContactFlow(params).promise();
             console.log(data);
@@ -38,7 +38,7 @@ export default async function createOrUpdateFlow(isExist, flowName, targetInstan
             ContactFlowId: targetFlowId,
             Content: targetJson
         };
-        console.log("params: ", params);
+        // console.log("params: ", params);
         try {
             const data = await connect.updateContactFlowContent(params).promise();
             console.log(data);
