@@ -7,6 +7,7 @@ export default async function createOrUpdateFlow(isExist, flowName, targetInstan
     });
     console.log('isExist: ',isExist);
     if (!isExist) {
+        try {
         console.log("Creating Contact Flow : ", flowName);
         const params = {
             InstanceId: targetInstanceArn,
@@ -22,6 +23,14 @@ export default async function createOrUpdateFlow(isExist, flowName, targetInstan
         } catch (error) {
             console.error(error);
         }
+    } catch (error) {
+        console.error(`Error: ${error.code}`);
+        console.error(`Message: ${error.message}`);
+        console.error(`Request ID: ${error.requestId}`);
+        console.error(`Status Code: ${error.statusCode}`);
+        console.error(`Retryable: ${error.retryable}`);
+        console.error(`Retry Delay: ${error.retryDelay}`);
+      }
     } else {
         console.log("Updating Contact Flow : ", flowName);
         const params = {
