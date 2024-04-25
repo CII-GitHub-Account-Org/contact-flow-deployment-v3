@@ -13,7 +13,7 @@ let connect = new AWS.Connect();
         do {
           doRetry = false;
           try {
-            const listResources = await listResourcesWithPagination(params, resourceType);
+            const listResources = await listResourcesWithPagination(params, resourceType, regionToUse);
             if (listResources) {
               return listResources;
             } else {
@@ -61,9 +61,9 @@ let connect = new AWS.Connect();
   
   
 
-async function listResourcesWithPagination(params, resourceType) {
+async function listResourcesWithPagination(params, resourceType, region) {
   if (resourceType === 'ContactFlows') {
-    const client = new ConnectClient(params);
+    const client = new ConnectClient({ ...params, region });
     const resources = [];
     let command = new ListContactFlowsCommand(params);
 
@@ -80,5 +80,4 @@ async function listResourcesWithPagination(params, resourceType) {
 
     return resources;
   }
-
 }
