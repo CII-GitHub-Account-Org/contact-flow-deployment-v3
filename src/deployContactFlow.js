@@ -155,8 +155,26 @@ let contentActions = JSON.parse(targetJson).Actions;
 // console.log("Content Actions Before Replacing : ", contentActions);
 await writeDataToFile('contentActions.json', contentActions);
 await writeDataToFile('targetJson.json', JSON.parse(targetJson));
-const missedResourcesInTarget = await getMissedResources(targetJson, contentActions, flowName, primaryQueues, targetQueues, 
+let missedResourcesInTarget = [];
+const responseResources = await getMissedResources(targetJson, contentActions, flowName, primaryQueues, targetQueues, 
   primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
+targetJson = responseResources.targetJson
+missedResourcesInTarget = missedResourcesInTarget.concat(responseResources.missedResourcesInTarget);
+let priority = 1;
+let arrayToCreateOrUpdateFlow = [
+  { "isExist": isExist, 
+    "flowName": flowName, 
+    "targetInstanceArn": targetInstanceArn, 
+    "contactFlowType": contactFlowType, 
+    "targetJson": targetJson, 
+    "targetFlowId": targetFlowId, 
+    "targetRegion": targetRegion,
+    "priority": priority
+  }
+];
+await writeDataToFile('missedResourcesInTarget.json', missedResourcesInTarget);
+await writeDataToFile('arrayToCreateOrUpdateFlow.json', arrayToCreateOrUpdateFlow);
+
 // const missedResourcesInTarget = [];
 
 // for (let i = 0; i < contentActions.length; i++) {
@@ -256,6 +274,7 @@ const missedResourcesInTarget = await getMissedResources(targetJson, contentActi
 //           console.log(`No handling for the type : ${obj.Type}`);
 //         }
 // }
+
 
 await writeDataToFile('targetJsonUpdated.json', JSON.parse(targetJson));
 contentActions = JSON.parse(targetJson).Actions;

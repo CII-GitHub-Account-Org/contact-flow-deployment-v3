@@ -84,5 +84,8 @@ export default async function getMissedResources(targetJson, contentActions, flo
             }
     }
 
-    return missedResourcesInTarget;
+    return {
+        missedResourcesInTarget: missedResourcesInTarget,
+        targetJson: targetJson
+    };
 }
