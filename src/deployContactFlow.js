@@ -23,6 +23,8 @@ import lexV2BotHandling from './lexV2BotHandling.js';
 import lambdaHandling from './lambdaHandling.js';
 import queueHandling from './queueHandling.js';
 import hopHandling from './hopHandling.js';
+import getContactFlowArn from './getContactFlowArn.js';
+
 
 // // Handling List Contact Flows
 // const primaryContactFlows = await listResourcesFunc({
