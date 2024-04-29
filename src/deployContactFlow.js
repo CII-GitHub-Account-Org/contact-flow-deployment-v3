@@ -155,7 +155,7 @@ let contentActions = JSON.parse(targetJson).Actions;
 // console.log("Content Actions Before Replacing : ", contentActions);
 await writeDataToFile('contentActions.json', contentActions);
 await writeDataToFile('targetJson.json', JSON.parse(targetJson));
-const missedResourcesInTarget = await getMissedResources(targetJson, contentActions, primaryQueues, targetQueues, 
+const missedResourcesInTarget = await getMissedResources(targetJson, contentActions, flowName, primaryQueues, targetQueues, 
   primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
 // const missedResourcesInTarget = [];
 

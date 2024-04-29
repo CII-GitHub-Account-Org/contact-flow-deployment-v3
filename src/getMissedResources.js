@@ -3,7 +3,7 @@ import lambdaHandling from './lambdaHandling.js';
 import queueHandling from './queueHandling.js';
 import hopHandling from './hopHandling.js';
 
-export default async function getMissedResources(targetJson, contentActions, primaryQueues, targetQueues, 
+export default async function getMissedResources(targetJson, contentActions, flowName, primaryQueues, targetQueues, 
     primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion) {
     
     const missedResourcesInTarget = [];
@@ -21,9 +21,10 @@ export default async function getMissedResources(targetJson, contentActions, pri
                 targetJson = targetJson.replace(new RegExp(queueArn, 'g'), targetQueueResources.ResourceArn);
               } else if (targetQueueResources && targetQueueResources.ResourceStatus === 'notExists') {
                 missedResourcesInTarget.push({
-                  "ResourceType": targetQueueResources.ResourceType,
-                  "ResourceName": targetQueueResources.ResourceName,
-                  "ResourceArn": targetQueueResources.ResourceArn
+                    "flowName": flowName,
+                    "ResourceType": targetQueueResources.ResourceType,
+                    "ResourceName": targetQueueResources.ResourceName,
+                    "ResourceArn": targetQueueResources.ResourceArn
                 });
               }
             } else if (obj.Type === 'CheckHoursOfOperation') {
@@ -37,9 +38,10 @@ export default async function getMissedResources(targetJson, contentActions, pri
                 targetJson = targetJson.replace(new RegExp(hopArn, 'g'), targetHopResources.ResourceArn);
               } else if (targetHopResources && targetHopResources.ResourceStatus === 'notExists') {
                 missedResourcesInTarget.push({
-                  "ResourceType": targetHopResources.ResourceType,
-                  "ResourceName": targetHopResources.ResourceName,
-                  "ResourceArn": targetHopResources.ResourceArn
+                    "flowName": flowName,
+                    "ResourceType": targetHopResources.ResourceType,
+                    "ResourceName": targetHopResources.ResourceName,
+                    "ResourceArn": targetHopResources.ResourceArn
                 });
               }
             } else if (obj.Type === 'ConnectParticipantWithLexBot') {
@@ -53,9 +55,10 @@ export default async function getMissedResources(targetJson, contentActions, pri
                   targetJson = targetJson.replace(new RegExp(targetLexV2BotResources.ResourceNameSource, 'g'), targetLexV2BotResources.ResourceNameTarget);
               } else if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'notExists') {
                 missedResourcesInTarget.push({
-                  "ResourceType": targetLexV2BotResources.ResourceType,
-                  "ResourceName": targetLexV2BotResources.ResourceName,
-                  "ResourceArn": targetLexV2BotResources.ResourceArn
+                    "flowName": flowName,
+                    "ResourceType": targetLexV2BotResources.ResourceType,
+                    "ResourceName": targetLexV2BotResources.ResourceName,
+                    "ResourceArn": targetLexV2BotResources.ResourceArn
                 });
               }
             } else if (obj.Type === 'InvokeLambdaFunction') {
@@ -70,9 +73,10 @@ export default async function getMissedResources(targetJson, contentActions, pri
                   targetJson = targetJson.replace(new RegExp(primaryLambdaName, 'g'), targetLambdaResources.ResourceName);
               } else if (targetLambdaResources && targetLambdaResources.ResourceStatus === 'notExists') {
                 missedResourcesInTarget.push({
-                  "ResourceType": targetLambdaResources.ResourceType,
-                  "ResourceName": targetLambdaResources.ResourceName,
-                  "ResourceArn": targetLambdaResources.ResourceArn
+                    "flowName": flowName,
+                    "ResourceType": targetLambdaResources.ResourceType,
+                    "ResourceName": targetLambdaResources.ResourceName,
+                    "ResourceArn": targetLambdaResources.ResourceArn
                 });
               }
             } else {
