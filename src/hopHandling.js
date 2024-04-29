@@ -3,7 +3,6 @@
 export default async function hopHandling(primaryHOP, hopArn, targetHOP) {
   // arn:aws:connect:us-east-1:***:instance/4bbee21d-72b8-442b-af39-dce4128ca77e/operating-hours/66d9dac1-bc4c-434e-b2b2-d0809e41eb85
     let primaryHopName;
-     console.log('primaryHopName : ', primaryHopName);
 
     if (!Array.isArray(primaryHOP) || primaryHOP.length === 0) {
       console.log('primaryHOP is empty or not an array');
@@ -23,6 +22,7 @@ export default async function hopHandling(primaryHOP, hopArn, targetHOP) {
                 if (hop.Arn === hopArn) {
                     console.log('Found hopArn in primaryHOP');
                     primaryHopName = hop.Name;
+                    console.log('primaryHopName : ', primaryHopName);
                     foundhopArnInPrimary = true;
                     break outerLoop; // break the outer loop
                 }
@@ -34,7 +34,7 @@ export default async function hopHandling(primaryHOP, hopArn, targetHOP) {
       console.log('Not Found hopArn in primaryHOP');
       return {
         "ResourceStatus": "notExists",
-        "ResourceType": "hop",
+        "ResourceType": "HOP",
         "ResourceName": primaryHopName,
         "ResourceArn": hopArn
       };;
@@ -44,7 +44,7 @@ export default async function hopHandling(primaryHOP, hopArn, targetHOP) {
       console.log('targetHOP is empty or not an array');
       return {
         "ResourceStatus": "notExists",
-        "ResourceType": "hop",
+        "ResourceType": "HOP",
         "ResourceName": primaryHopName,
         "ResourceArn": hopArn
       };
@@ -54,9 +54,10 @@ export default async function hopHandling(primaryHOP, hopArn, targetHOP) {
     let targetHopArn;
     outerLoop: // label for the outer loop
     for (const item of targetHOP) {
-        if (item && item.hopSummaryList) {
+        if (item && item.HoursOfOperationSummaryList) {
             for (const hop of item.HoursOfOperationSummaryList) {
                 const targetHopName = hop.Name;
+                // console.log('targetHopName : ', targetHopName);
                 if (targetHopName === primaryHopName) {
                     console.log('Found hopArn in targetHOP');
                     foundHopArnInTarget = true;
