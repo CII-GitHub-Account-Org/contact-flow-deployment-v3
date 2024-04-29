@@ -23,6 +23,7 @@ import createOrUpdateFlow from './createOrUpdateFlow.js';
 import lexV2BotHandling from './lexV2BotHandling.js';
 import lambdaHandling from './lambdaHandling.js';
 import queueHandling from './queueHandling.js';
+import hopHandling from './hopHandling.js';
 
 // Handling List Contact Flows
 const primaryContactFlows = await listResourcesFunc({
@@ -153,7 +154,6 @@ for (let i = 0; i < contentActions.length; i++) {
     console.log(`Type value: ${obj.Type}`);
         if (obj.Type === 'UpdateContactTargetQueue') {
           console.log('Inside Queue Handling');
-          // console.log('obj : ', obj);
           const queueArn = obj && obj.Parameters && obj.Parameters.QueueId ? obj.Parameters.QueueId : undefined;
           console.log('queueArn : ', queueArn);
           const targetQueueResources = await queueHandling(primaryQueues, queueArn, targetQueues);
@@ -170,19 +170,32 @@ for (let i = 0; i < contentActions.length; i++) {
         } else if (obj.Type === 'CheckHoursOfOperation') {
           console.log('Inside HOP Handling');
           console.log('obj : ', obj);
-          // const hopArn = obj && obj.Parameters && obj.Parameters.HoursOfOperationId ? obj.Parameters.HoursOfOperationId : undefined;
-          // console.log('hopArn : ', hopArn);
-          // const targetHopResources = await hopHandling(primaryHOP, hopArn, targetHOP);
-          // console.log('targetHopResources : ', targetHopResources);
-          // if (targetHopResources && targetHopResources.ResourceStatus === 'exists') {
-          //   targetJson = targetJson.replace(new RegExp(hopArn, 'g'), targetHopResources.ResourceArn);
-          // } else if (targetHopResources && targetHopResources.ResourceStatus === 'notExists') {
-          //   missedResourcesInTarget.push({
-          //     "ResourceType": targetHopResources.ResourceType,
-          //     "ResourceName": targetHopResources.ResourceName,
-          //     "ResourceArn": targetHopResources.ResourceArn
-          //   });
+                 // console.log('obj : ', obj);
+          // obj :  {
+          //   Parameters: {
+          //     HoursOfOperationId: 'arn:aws:connect:us-east-1:***:instance/4bbee21d-72b8-442b-af39-dce4128ca77e/operating-hours/66d9dac1-bc4c-434e-b2b2-d0809e41eb85'
+          //   },
+          //   Identifier: 'Test For HOP',
+          //   Type: 'CheckHoursOfOperation',
+          //   Transitions: {
+          //     NextAction: '11a9b95b-a27d-46aa-a828-b7bf4b9e65c9',
+          //     Conditions: [ [Object], [Object] ],
+          //     Errors: [ [Object] ]
+          //   }
           // }
+          const hopArn = obj && obj.Parameters && obj.Parameters.HoursOfOperationId ? obj.Parameters.HoursOfOperationId : undefined;
+          console.log('hopArn : ', hopArn);
+          const targetHopResources = await hopHandling(primaryHOP, hopArn, targetHOP);
+          console.log('targetHopResources : ', targetHopResources);
+          if (targetHopResources && targetHopResources.ResourceStatus === 'exists') {
+            targetJson = targetJson.replace(new RegExp(hopArn, 'g'), targetHopResources.ResourceArn);
+          } else if (targetHopResources && targetHopResources.ResourceStatus === 'notExists') {
+            missedResourcesInTarget.push({
+              "ResourceType": targetHopResources.ResourceType,
+              "ResourceName": targetHopResources.ResourceName,
+              "ResourceArn": targetHopResources.ResourceArn
+            });
+          }
         } else if (obj.Type === 'ConnectParticipantWithLexBot') {
           console.log('Inside LexBot Handling');
           const lexV2BotAliasArn = obj && obj.Parameters && obj.Parameters.LexV2Bot && obj.Parameters.LexV2Bot.AliasArn ? obj.Parameters.LexV2Bot.AliasArn : undefined;
