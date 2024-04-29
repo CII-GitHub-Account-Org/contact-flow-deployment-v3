@@ -24,19 +24,30 @@ import lambdaHandling from './lambdaHandling.js';
 import queueHandling from './queueHandling.js';
 import hopHandling from './hopHandling.js';
 
+// // Handling List Contact Flows
+// const primaryContactFlows = await listResourcesFunc({
+//   InstanceId: instanceArn,
+//   ContactFlowTypes: [
+//     contactFlowType
+//   ],
+//   MaxResults: 50,
+// }, retryAttempts, 'ContactFlows', sourceRegion);
+// const targetContactFlows = await listResourcesFunc({
+//   InstanceId: targetInstanceArn,
+//   ContactFlowTypes: [
+//     contactFlowType
+//   ],
+//    MaxResults: 50
+// }, retryAttempts, 'ContactFlows', targetRegion);
+
+
 // Handling List Contact Flows
 const primaryContactFlows = await listResourcesFunc({
   InstanceId: instanceArn,
-  ContactFlowTypes: [
-    contactFlowType
-  ],
   MaxResults: 50,
 }, retryAttempts, 'ContactFlows', sourceRegion);
 const targetContactFlows = await listResourcesFunc({
   InstanceId: targetInstanceArn,
-  ContactFlowTypes: [
-    contactFlowType
-  ],
    MaxResults: 50
 }, retryAttempts, 'ContactFlows', targetRegion);
 
