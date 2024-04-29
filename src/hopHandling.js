@@ -72,7 +72,7 @@ export default async function hopHandling(primaryHOP, hopArn, targetHOP) {
       console.log('Not Found hopArn in targetHOP ');
       return {
         "ResourceStatus": "notExists",
-        "ResourceType": "hop",
+        "ResourceType": "HOP",
         "ResourceName": primaryHopName,
         "ResourceArn": hopArn
       };

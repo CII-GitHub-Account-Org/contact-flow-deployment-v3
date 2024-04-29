@@ -169,20 +169,7 @@ for (let i = 0; i < contentActions.length; i++) {
           }
         } else if (obj.Type === 'CheckHoursOfOperation') {
           console.log('Inside HOP Handling');
-          console.log('obj : ', obj);
-                 // console.log('obj : ', obj);
-          // obj :  {
-          //   Parameters: {
-          //     HoursOfOperationId: 'arn:aws:connect:us-east-1:***:instance/4bbee21d-72b8-442b-af39-dce4128ca77e/operating-hours/66d9dac1-bc4c-434e-b2b2-d0809e41eb85'
-          //   },
-          //   Identifier: 'Test For HOP',
-          //   Type: 'CheckHoursOfOperation',
-          //   Transitions: {
-          //     NextAction: '11a9b95b-a27d-46aa-a828-b7bf4b9e65c9',
-          //     Conditions: [ [Object], [Object] ],
-          //     Errors: [ [Object] ]
-          //   }
-          // }
+          // console.log('obj : ', obj);
           const hopArn = obj && obj.Parameters && obj.Parameters.HoursOfOperationId ? obj.Parameters.HoursOfOperationId : undefined;
           console.log('hopArn : ', hopArn);
           const targetHopResources = await hopHandling(primaryHOP, hopArn, targetHOP);
@@ -229,6 +216,32 @@ for (let i = 0; i < contentActions.length; i++) {
               "ResourceArn": targetLambdaResources.ResourceArn
             });
           }
+        } else if (obj.Type === 'UpdateContactEventHooks') {
+          console.log('Inside Event Hooks Handling');
+          if (obj.Parameters.EventHooks.AgentWhisper) {
+            console.log('Inside Agent Whisper Handling');
+            console.log('obj : ', obj);
+            // let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.AgentWhisper, TARGETCFS);
+            // if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.AgentWhisper, 'g'), arn)};
+          } 
+        else if (obj.Parameters.EventHooks.CustomerQueue) {
+          console.log('Inside Customer Queue Handling');
+          console.log('obj : ', obj);
+            // let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerQueue, TARGETCFS);
+            // if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerQueue, 'g'), arn)};
+          } 
+        else if (obj.Parameters.EventHooks.CustomerRemaining) {
+          console.log('Inside Customer Remaining Handling');
+          console.log('obj : ', obj);
+            // let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerRemaining, TARGETCFS);
+            // if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerRemaining, 'g'), arn)};
+          }
+        
+        } else if (obj.Type === 'TransferToFlow') {
+          console.log('Inside Transfer To Flow Handling');
+          console.log('obj : ', obj);
+          // let arn = getFlowId(PRIMARYCFS, obj.Parameters.ContactFlowId, TARGETCFS);
+          // if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.ContactFlowId, 'g'), arn)};
         } else {
           console.log(`No handling for the type : ${obj.Type}`);
         }
@@ -242,60 +255,9 @@ if (missedResourcesInTarget.length > 0) {
     console.log('missedResourcesInTarget : ', missedResourcesInTarget);
     await writeDataToFile('missedResourcesInTarget.json', missedResourcesInTarget);
     console.log('Note : Please create the missed resources in target instance');
-} else {
-  console.log('No missed resources in target instance');
-  await createOrUpdateFlow(isExist, flowName, targetInstanceArn, contactFlowType, targetJson, targetFlowId, targetRegion)
-}
-}
-
-
-
-
-// for (let i = 0; i < contentActions.length; i++) {
-//   let obj = contentActions[i];
-//   console.log(`Type value: ${obj.Type}`);
-
-//   if (obj.Type === 'MessageParticipant') {
-//     if (obj.Parameters.PromptId !== null) {
-//       console.log('inside prompt');
-//       let arn = getPromptId(PRIMARYPROMPTS, obj.Parameters.PromptId, TARGETPROMPTS);
-//       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.PromptId, 'g'), arn)};
-//     }
-//   } else if (obj.Type === 'ConnectParticipantWithLexBot') {
-//     console.log('inside lexbot');
-//     console.log('LEXBOT HANLDING YET TO DO');
-//     // let arn = getlexbotId(PRIMARYBOT, obj.Parameters.LexBot.Name, TARGETBOT);
-//     // handle lex bot
-//   } else if (obj.Type === 'UpdateContactTargetQueue') {
-//     console.log('inside queue');
-//     let arn = getQueueId(PRIMARYQUEUES, obj.Parameters.QueueId, TARGETQUEUES);
-//     if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.QueueId, 'g'), arn)};
-//   } 
-//   else if (obj.Type === 'UpdateContactEventHooks') {
-//     if (obj.Parameters.EventHooks.AgentWhisper) {
-//       let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.AgentWhisper, TARGETCFS);
-//       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.AgentWhisper, 'g'), arn)};
-//     } 
-//   else if (obj.Parameters.EventHooks.CustomerQueue) {
-//       let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerQueue, TARGETCFS);
-//       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerQueue, 'g'), arn)};
-//     } 
-//   else if (obj.Parameters.EventHooks.CustomerRemaining) {
-//       let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerRemaining, TARGETCFS);
-//       if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerRemaining, 'g'), arn)};
-//     }
-//   } 
-//   else if (obj.Type === 'InvokeLambdaFunction') {
-//     let lambdaId = getLambdaId(PRIMARYLAMBDA, obj.Parameters.LambdaFunctionARN, TARGETLAMBDA);
-//   } 
-//   else if (obj.Type === 'TransferToFlow') {
-//     let arn = getFlowId(PRIMARYCFS, obj.Parameters.ContactFlowId, TARGETCFS);
-//     if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.ContactFlowId, 'g'), arn)};
-//   } 
-//   else if (obj.Type === 'CheckHoursOfOperation') {
-//     let arn = getHOPId(PRIMARYHOP, obj.Parameters.HoursOfOperationId, TARGETHOP);
-//     if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.HoursOfOperationId, 'g'), arn)};
-//   } else {
-//     console.log(`No handling for ${JSON.stringify(obj.Parameters)} of type : ${obj.Type}`);
-//   }
+} 
+// else {
+//   console.log('No missed resources in target instance');
+//   await createOrUpdateFlow(isExist, flowName, targetInstanceArn, contactFlowType, targetJson, targetFlowId, targetRegion)
 // }
+}
