@@ -25,21 +25,32 @@ import lambdaHandling from './lambdaHandling.js';
 import queueHandling from './queueHandling.js';
 import hopHandling from './hopHandling.js';
 
+// // Handling List Contact Flows
+// const primaryContactFlows = await listResourcesFunc({
+//   InstanceId: instanceArn,
+//   ContactFlowTypes: [
+//     contactFlowType
+//   ],
+//   MaxResults: 50,
+// }, retryAttempts, 'ContactFlows', sourceRegion);
+// const targetContactFlows = await listResourcesFunc({
+//   InstanceId: targetInstanceArn,
+//   ContactFlowTypes: [
+//     contactFlowType
+//   ],
+//    MaxResults: 50
+// }, retryAttempts, 'ContactFlows', targetRegion);
+
 // Handling List Contact Flows
 const primaryContactFlows = await listResourcesFunc({
   InstanceId: instanceArn,
-  ContactFlowTypes: [
-    contactFlowType
-  ],
   MaxResults: 50,
 }, retryAttempts, 'ContactFlows', sourceRegion);
 const targetContactFlows = await listResourcesFunc({
   InstanceId: targetInstanceArn,
-  ContactFlowTypes: [
-    contactFlowType
-  ],
    MaxResults: 50
 }, retryAttempts, 'ContactFlows', targetRegion);
+
 
 // Writing primaryContactFlows and targetContactFlows to files
 await writeDataToFile('primaryContactFlows.json', primaryContactFlows);
@@ -227,6 +238,19 @@ for (let i = 0; i < contentActions.length; i++) {
         else if (obj.Parameters.EventHooks.CustomerQueue) {
           console.log('Inside Customer Queue Handling');
           console.log('obj : ', obj);
+          // obj :  {
+          //   Parameters: {
+          //     EventHooks: {
+          //       CustomerQueue: 'arn:aws:connect:us-east-1:***:instance/4bbee21d-72b8-442b-af39-dce4128ca77e/contact-flow/4aaf1c69-6bf9-4312-9db8-c1b585cc2664'
+          //     }
+          //   },
+          //   Identifier: '4d3295c8-7f19-4646-9bb0-1fbb25802a5c',
+          //   Type: 'UpdateContactEventHooks',
+          //   Transitions: {
+          //     NextAction: '2687fd55-d81d-4372-8b6b-0a4bafa0bd08',
+          //     Errors: [ [Object] ]
+          //   }
+          // }
             // let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerQueue, TARGETCFS);
             // if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerQueue, 'g'), arn)};
           } 
