@@ -21,6 +21,7 @@ import  writeDataToFile  from './writeDataToFile.js';
 import createOrUpdateFlow from './createOrUpdateFlow.js';
 import getContactFlowArn from './getContactFlowArn.js';
 import getMissedResources from './getMissedResources.js';
+import subContactFlowHandling from './subContactFlowHandling.js';
 
 // // Handling List Contact Flows
 // const primaryContactFlows = await listResourcesFunc({
@@ -189,6 +190,34 @@ for (let i = 0; i < contentActions.length; i++) {
         else if (obj.Parameters.EventHooks.CustomerQueue) {
           console.log('Inside Customer Queue Handling');
           console.log('obj : ', obj);
+          // obj :  {
+          //   Parameters: {
+          //     EventHooks: {
+          //       CustomerQueue: 'arn:aws:connect:us-east-1:***:instance/4bbee21d-72b8-442b-af39-dce4128ca77e/contact-flow/4aaf1c69-6bf9-4312-9db8-c1b585cc2664'
+          //     }
+          //   },
+          //   Identifier: '4d3295c8-7f19-4646-9bb0-1fbb25802a5c',
+          //   Type: 'UpdateContactEventHooks',
+          //   Transitions: {
+          //     NextAction: '2687fd55-d81d-4372-8b6b-0a4bafa0bd08',
+          //     Errors: [ [Object] ]
+          //   }
+          // }
+        
+          const subCustomerQueueFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
+          console.log('subCustomerQueueFlowArn : ', subCustomerQueueFlowArn);
+          const subContactFlowHandlingRes = await subContactFlowHandling(primaryContactFlows, subCustomerQueueFlowArn, targetContactFlows);
+          console.log('subContactFlowHandlingRes : ', subContactFlowHandlingRes);
+          // if (targetQueueResources && targetQueueResources.ResourceStatus === 'exists') {
+          //   targetJson = targetJson.replace(new RegExp(queueArn, 'g'), targetQueueResources.ResourceArn);
+          // } else if (targetQueueResources && targetQueueResources.ResourceStatus === 'notExists') {
+          //   missedResourcesInTarget.push({
+          //       "flowName": flowName,
+          //       "ResourceType": targetQueueResources.ResourceType,
+          //       "ResourceName": targetQueueResources.ResourceName,
+          //       "ResourceArn": targetQueueResources.ResourceArn
+          //   });
+          // }
             // let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerQueue, TARGETCFS);
             // if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerQueue, 'g'), arn)};
           } 
