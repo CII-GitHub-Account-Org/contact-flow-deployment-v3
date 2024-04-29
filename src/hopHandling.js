@@ -2,7 +2,7 @@
 
 export default async function hopHandling(primaryHOP, hopArn, targetHOP) {
   // arn:aws:connect:us-east-1:***:instance/4bbee21d-72b8-442b-af39-dce4128ca77e/operating-hours/66d9dac1-bc4c-434e-b2b2-d0809e41eb85
-    let primaryHopName = hopArn.split('/')[2];
+    let primaryHopName;
      console.log('primaryHopName : ', primaryHopName);
 
     if (!Array.isArray(primaryHOP) || primaryHOP.length === 0) {
@@ -10,7 +10,7 @@ export default async function hopHandling(primaryHOP, hopArn, targetHOP) {
       return {
         "ResourceStatus": "notExists",
         "ResourceType": "HOP",
-        "ResourceName": primaryHopName,
+        "ResourceName": null,
         "ResourceArn": hopArn
       };
     }
@@ -22,6 +22,7 @@ export default async function hopHandling(primaryHOP, hopArn, targetHOP) {
             for (const hop of item.HoursOfOperationSummaryList) {
                 if (hop.Arn === hopArn) {
                     console.log('Found hopArn in primaryHOP');
+                    primaryHopName = hop.Name;
                     foundhopArnInPrimary = true;
                     break outerLoop; // break the outer loop
                 }
