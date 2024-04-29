@@ -1,7 +1,7 @@
 import getContactFlowArn from './getContactFlowArn.js';
 
 
-export default async function getFlowData(primaryFlowArn, targetContactFlows, instanceArn, flowName, sourceRegion, targetRegion) {
+export default async function getFlowData(primaryFlowArn, targetContactFlows, instanceArn, flowName, sourceRegion, targetRegion, isExist) {
     // get primary flow Id
     const primaryFlowId = primaryFlowArn.split('/')[3];
     console.log('primaryFlowId', primaryFlowId);

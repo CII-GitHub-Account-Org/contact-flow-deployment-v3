@@ -122,7 +122,7 @@ await writeDataToFile('targetLambda.json', targetLambda);
     } else {
 
 
-  const flowData = await getFlowData(primaryFlowArn, targetContactFlows, instanceArn, flowName, sourceRegion, targetRegion);
+  const flowData = await getFlowData(primaryFlowArn, targetContactFlows, instanceArn, flowName, sourceRegion, targetRegion, isExist);
   const flowContent = flowData.ContactFlow.Content;
   targetJson = flowContent;
   let contentActions = JSON.parse(targetJson).Actions;
