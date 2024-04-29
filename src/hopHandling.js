@@ -1,88 +1,88 @@
 
 
-// export default async function hopHandling(primaryHOP, queueArn, targetHOP) {
+export default async function hopHandling(primaryHOP, hopArn, targetHOP) {
 
-//     let primaryQueueName;
-//     // console.log('primaryQueueName : ', primaryQueueName);
+    let primaryHopName;
+     console.log('primaryHopName : ', primaryHopName);
 
-//     if (!Array.isArray(primaryQueues) || primaryQueues.length === 0) {
-//       console.log('primaryQueues is empty or not an array');
-//       return {
-//         "ResourceStatus": "notExists",
-//         "ResourceType": "Queue",
-//         "ResourceName": null,
-//         "ResourceArn": queueArn
-//       };
-//     }
+    if (!Array.isArray(primaryHOP) || primaryHOP.length === 0) {
+      console.log('primaryHOP is empty or not an array');
+      return {
+        "ResourceStatus": "notExists",
+        "ResourceType": "hop",
+        "ResourceName": null,
+        "ResourceArn": hopArn
+      };
+    }
 
-//     let foundQueueArnInPrimary = false;
-//     outerLoop: // label for the outer loop
-//     for (const item of primaryQueues) {
-//         if (item && item.QueueSummaryList) {
-//             for (const Queues of item.QueueSummaryList) {
-//                 if (Queues.Arn === queueArn) {
-//                     console.log('Found queueArn in primaryQueues');
-//                     foundQueueArnInPrimary = true;
-//                     primaryQueueName = Queues.Name;
-//                     break outerLoop; // break the outer loop
-//                 }
-//             }
-//         }
-//     }
+    let foundhopArnInPrimary = false;
+    outerLoop: // label for the outer loop
+    for (const item of primaryHOP) {
+        if (item && item.hopSummaryList) {
+            for (const hop of item.hopSummaryList) {
+                if (hop.Arn === hopArn) {
+                    console.log('Found hopArn in primaryHOP');
+                    foundhopArnInPrimary = true;
+                    primaryHopName = hop.Name;
+                    break outerLoop; // break the outer loop
+                }
+            }
+        }
+    }
 
-//     if (!foundQueueArnInPrimary) {
-//       console.log('Not Found queueArn in primaryQueues');
-//       return {
-//         "ResourceStatus": "notExists",
-//         "ResourceType": "Queue",
-//         "ResourceName": primaryQueueName,
-//         "ResourceArn": queueArn
-//       };;
-//     } 
+    if (!foundhopArnInPrimary) {
+      console.log('Not Found hopArn in primaryHOP');
+      return {
+        "ResourceStatus": "notExists",
+        "ResourceType": "hop",
+        "ResourceName": primaryHopName,
+        "ResourceArn": hopArn
+      };;
+    } 
     
-//     if (!Array.isArray(targetQueues) || targetQueues.length === 0) {
-//       console.log('targetQueues is empty or not an array');
-//       return {
-//         "ResourceStatus": "notExists",
-//         "ResourceType": "Queue",
-//         "ResourceName": primaryQueueName,
-//         "ResourceArn": queueArn
-//       };
-//     }
+    if (!Array.isArray(hopQueues) || hopQueues.length === 0) {
+      console.log('hopQueues is empty or not an array');
+      return {
+        "ResourceStatus": "notExists",
+        "ResourceType": "hop",
+        "ResourceName": primaryHopName,
+        "ResourceArn": hopArn
+      };
+    }
 
-//     let foundQueueArnInTarget = false;
-//     let targetQueueArn;
-//     outerLoop: // label for the outer loop
-//     for (const item of targetQueues) {
-//         if (item && item.QueueSummaryList) {
-//             for (const Queues of item.QueueSummaryList) {
-//                 const targetQueueName = Queues.Name;
-//                 if (targetQueueName === primaryQueueName) {
-//                     console.log('Found queueArn in targetQueues');
-//                     foundQueueArnInTarget = true;
-//                     targetQueueArn = Queues.Arn;
-//                     break outerLoop; // break the outer loop
-//                 }
-//             }
-//         }
-//     }
+    let foundhopArnInTarget = false;
+    let targethopArn;
+    outerLoop: // label for the outer loop
+    for (const item of targetHOP) {
+        if (item && item.hopSummaryList) {
+            for (const hop of item.hopSummaryList) {
+                const targethopName = hop.Name;
+                if (targethopName === primaryHopName) {
+                    console.log('Found hopArn in targetHOP');
+                    foundhopArnInTarget = true;
+                    targethopArn = hop.Arn;
+                    break outerLoop; // break the outer loop
+                }
+            }
+        }
+    }
 
-//     if (!foundQueueArnInTarget) {
-//       console.log('Not Found queueArn in targetQueues');
-//       return {
-//         "ResourceStatus": "notExists",
-//         "ResourceType": "Queue",
-//         "ResourceName": primaryQueueName,
-//         "ResourceArn": queueArn
-//       };
-//     } else {
-//       return {
-//         "ResourceStatus": "exists",
-//         "ResourceArn": targetQueueArn
-//       };
-//     } 
+    if (!foundhopArnInTarget) {
+      console.log('Not Found hopArn in targetHOP ');
+      return {
+        "ResourceStatus": "notExists",
+        "ResourceType": "hop",
+        "ResourceName": primaryHopName,
+        "ResourceArn": hopArn
+      };
+    } else {
+      return {
+        "ResourceStatus": "exists",
+        "ResourceArn": targethopArn
+      };
+    } 
 
-// }
+}
 
 
 
@@ -99,3 +99,4 @@
 //       Errors: [ [Object] ]
 //     }
 //   }
+
