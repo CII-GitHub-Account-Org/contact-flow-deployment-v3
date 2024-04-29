@@ -1,5 +1,9 @@
+import lexV2BotHandling from './lexV2BotHandling.js';
+import lambdaHandling from './lambdaHandling.js';
+import queueHandling from './queueHandling.js';
+import hopHandling from './hopHandling.js';
 
-export default async function getMissedResources(contentActions, primaryQueues, targetQueues, 
+export default async function getMissedResources(targetJson, contentActions, primaryQueues, targetQueues, 
     primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion) {
     
     const missedResourcesInTarget = [];

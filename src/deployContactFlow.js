@@ -19,10 +19,6 @@ let targetJson; // To store the target contact flow json
 import { listResourcesFunc } from './listResources.js'; 
 import  writeDataToFile  from './writeDataToFile.js';
 import createOrUpdateFlow from './createOrUpdateFlow.js';
-import lexV2BotHandling from './lexV2BotHandling.js';
-import lambdaHandling from './lambdaHandling.js';
-import queueHandling from './queueHandling.js';
-import hopHandling from './hopHandling.js';
 import getContactFlowArn from './getContactFlowArn.js';
 import getMissedResources from './getMissedResources.js';
 
@@ -159,7 +155,7 @@ let contentActions = JSON.parse(targetJson).Actions;
 // console.log("Content Actions Before Replacing : ", contentActions);
 await writeDataToFile('contentActions.json', contentActions);
 await writeDataToFile('targetJson.json', JSON.parse(targetJson));
-const missedResourcesInTarget = await getMissedResources(contentActions, primaryQueues, targetQueues, 
+const missedResourcesInTarget = await getMissedResources(targetJson, contentActions, primaryQueues, targetQueues, 
   primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
 // const missedResourcesInTarget = [];
 
