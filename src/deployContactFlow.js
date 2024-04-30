@@ -206,8 +206,9 @@ for (let i = 0; i < contentActions.length; i++) {
         
           const subCustomerQueueFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
           console.log('subCustomerQueueFlowArn : ', subCustomerQueueFlowArn);
-          const subContactFlowHandlingRes = await subContactFlowHandling(primaryContactFlows, subCustomerQueueFlowArn, targetContactFlows);
+          const subContactFlowHandlingRes = await subContactFlowHandling(primaryContactFlows, subCustomerQueueFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
           console.log('subContactFlowHandlingRes : ', subContactFlowHandlingRes);
+          await writeDataToFile('subContactFlowHandlingRes.json', subContactFlowHandlingRes);
           // if (targetQueueResources && targetQueueResources.ResourceStatus === 'exists') {
           //   targetJson = targetJson.replace(new RegExp(queueArn, 'g'), targetQueueResources.ResourceArn);
           // } else if (targetQueueResources && targetQueueResources.ResourceStatus === 'notExists') {

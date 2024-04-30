@@ -1,6 +1,6 @@
 
 
-export default async function subContactFlowHandling(primaryContactFlows, subContactFlowArn, targetContactFlows) {  
+export default async function subContactFlowHandling(primaryContactFlows, subContactFlowArn, targetContactFlows, instanceId, sourceRegion, targetRegion) {  
 
 let primarySubContactFlowName;
 let primarySubContactFlowType;
@@ -59,11 +59,31 @@ if (Array.isArray(targetContactFlows) || targetContactFlows.length > 0) {
   }
 
 }
+
+const flowData = await describeContactFlow(instanceArn, primaryFlowId, sourceRegion);
+const flowContent = flowData.ContactFlow.Content;
+const targetJsonSubContactFlow = flowContent;
+let contentActionsSubContactFlow = JSON.parse(targetJsonSubContactFlow).Actions;
   return {
     "isExists": foundSubContactFlowInTarget,
     "primarySubContactFlowName": primarySubContactFlowName,
     "primarySubContactFlowType": primarySubContactFlowType,
+    "primarySubContactFlowId": primarySubContactFlowId,
     "targetSubContactFlowId": targetSubContactFlowId,
+    "targetJsonSubContactFlow": targetJsonSubContactFlow,
+    "contentActionsSubContactFlow": contentActionsSubContactFlow
   };
 
 }
+
+    // describe contact flow and get content
+    async function describeContactFlow(instanceId, primaryFlowId, sourceRegion) {
+        AWS.config.update({ sourceRegion });
+        connect = new AWS.Connect();
+        const params = {
+            InstanceId: instanceId,
+            ContactFlowId: primaryFlowId
+        };
+        let data = await connect.describeContactFlow(params).promise();
+        return data;
+        }
