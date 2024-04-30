@@ -235,11 +235,12 @@ for (let i = 0; i < contentActions.length; i++) {
           const subTransferToFlowFlowArn = obj && obj.Parameters && obj.Parameters.ContactFlowId ? obj.Parameters.ContactFlowId : undefined;
           console.log('subTransferToFlowFlowArn : ', subTransferToFlowFlowArn);
           const subTransferToFlowHandlingRes = await subContactFlowHandling(primaryContactFlows, subTransferToFlowFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
-          console.log('subTransferToFlowHandlingRes : ', subTransferToFlowHandlingRes);
+          // console.log('subTransferToFlowHandlingRes : ', subTransferToFlowHandlingRes);
           await writeDataToFile('subTransferToFlowHandlingRes.json', subTransferToFlowHandlingRes);
           const getMissedResourcesResTransferToFlow = await getMissedResources(subTransferToFlowHandlingRes.targetJsonSubContactFlow, subTransferToFlowHandlingRes.contentActionsSubContactFlow, subTransferToFlowHandlingRes.primarySubContactFlowName, primaryQueues, targetQueues, 
             primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
             console.log('getMissedResourcesResTransferToFlow : ', getMissedResourcesResTransferToFlow);
+            await writeDataToFile('getMissedResourcesResTransferToFlow.json', getMissedResourcesResTransferToFlow);
             missedResourcesInTarget = missedResourcesInTarget.concat(getMissedResourcesResTransferToFlow.missedResourcesInTarget);
            priority = priority + 1;
             arrayToCreateOrUpdateFlow.push({
