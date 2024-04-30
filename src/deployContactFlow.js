@@ -173,71 +173,27 @@ let arrayToCreateOrUpdateFlow = [
     "priority": priority
   }
 ];
-await writeDataToFile('missedResourcesInTarget.json', missedResourcesInTarget);
-await writeDataToFile('arrayToCreateOrUpdateFlow.json', arrayToCreateOrUpdateFlow);
-
-//  let subContactFlowsArray = [];
-//  for (let i = 0; i < contentActions.length; i++) {
-//   let obj = contentActions[i];
-//   console.log(`Type value: ${obj.Type}`);
-//       if (obj.Type === 'UpdateContactEventHooks') {
-//       if (obj.Parameters.EventHooks.AgentWhisper) {
-//         console.log('obj : ', obj);
-//         //  const subAgentWhisperFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
-//         //  const subAgentWhisperFlowContenActions = await subContactFlowHandling(primaryContactFlows, subAgentWhisperFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
-//         //  subContactFlowsArray.push({
-//         //   "contactFlowArn": subAgentWhisperFlowArn,
-//         //   "contentActions": subAgentWhisperFlowContenActions.contentActionsSubContactFlow
-//         //  });
-//       } 
-//       else if (obj.Parameters.EventHooks.CustomerQueue) {
-//         const subCustQueueFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
-//         const subCustQueueFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustQueueFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
-//         subContactFlowsArray.push({
-//          "contactFlowArn": subCustQueueFlowArn,
-//          "contentActions": subCustQueueFlowContenActions.contentActionsSubContactFlow
-//         });
-//       } 
-//       else if (obj.Parameters.EventHooks.CustomerRemaining) {
-//         console.log('obj : ', obj);
-//         // const subCustRemFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
-//         // const subCustRemFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustRemFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
-//         // subContactFlowsArray.push({
-//         //  "contactFlowArn": subCustRemFlowArn,
-//         //  "contentActions": subCustRemFlowContenActions.contentActionsSubContactFlow
-//         // });
-//         }
-      
-//       } else if (obj.Type === 'TransferToFlow') {
-//         const subCustomFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
-//         const subCustomFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustomFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
-//         subContactFlowsArray.push({
-//          "contactFlowArn": subCustomFlowArn,
-//          "contentActions": subCustomFlowContenActions.contentActionsSubContactFlow
-//         });
-//       } else {
-//         console.log(`No handling for the type : ${obj.Type}`);
-//       }
-// }
 
 let subContactFlowsArray = [];
 let count = 0;
-
 async function handleContentActions(contentActions) {
   let queue = [...contentActions];
   while (queue.length > 0) {
     let obj = queue.shift();
     console.log(`Type value: ${obj.Type}`);
     if (obj.Type === 'UpdateContactEventHooks') {
-      
       if (obj.Parameters.EventHooks.AgentWhisper) {
         console.log('obj : ', obj);
          const subAgentWhisperFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.AgentWhisper ? obj.Parameters.EventHooks.AgentWhisper : undefined;
          const subAgentWhisperFlowContenActions = await subContactFlowHandling(primaryContactFlows, subAgentWhisperFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
          subContactFlowsArray.push({
           "contactFlowArn": subAgentWhisperFlowArn,
+          "contactFlowName": subAgentWhisperFlowContenActions.primarySubContactFlowName,
+          "contactFlowType": subAgentWhisperFlowContenActions.primarySubContactFlowType,
           "targetJson": subAgentWhisperFlowContenActions.targetJsonSubContactFlow,
           "contentActions": subAgentWhisperFlowContenActions.contentActionsSubContactFlow,
+          "isExists": subAgentWhisperFlowContenActions.isExists,
+          "targetContactFlowId": subAgentWhisperFlowContenActions.targetSubContactFlowId,
           "priority": count++
          });
          if (subAgentWhisperFlowContenActions.contentActionsSubContactFlow.length > 0) {
@@ -250,8 +206,12 @@ async function handleContentActions(contentActions) {
         const subCustQueueFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustQueueFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
         subContactFlowsArray.push({
           "contactFlowArn": subCustQueueFlowArn,
+          "contactFlowName": subCustQueueFlowContenActions.primarySubContactFlowName,
+          "contactFlowType": subCustQueueFlowContenActions.primarySubContactFlowType,
           "targetJson": subCustQueueFlowContenActions.targetJsonSubContactFlow,
           "contentActions": subCustQueueFlowContenActions.contentActionsSubContactFlow,
+          "isExists": subCustQueueFlowContenActions.isExists,
+          "targetContactFlowId": subCustQueueFlowContenActions.targetSubContactFlowId, 
           "priority": count++
         });
         if (subCustQueueFlowContenActions.contentActionsSubContactFlow.length > 0) {
@@ -264,8 +224,12 @@ async function handleContentActions(contentActions) {
         const subCustRemFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustRemFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
         subContactFlowsArray.push({
          "contactFlowArn": subCustRemFlowArn,
+         "contactFlowName": subCustRemFlowContenActions.primarySubContactFlowName,
+         "contactFlowType": subCustRemFlowContenActions.primarySubContactFlowType,
           "targetJson": subCustRemFlowContenActions.targetJsonSubContactFlow,
          "contentActions": subCustRemFlowContenActions.contentActionsSubContactFlow,
+         "isExists": subCustRemFlowContenActions.isExists,
+         "targetContactFlowId": subCustRemFlowContenActions.targetSubContactFlowId,
          "priority": count++
         });
         if (subCustRemFlowContenActions.contentActionsSubContactFlow.length > 0) {
@@ -278,8 +242,12 @@ async function handleContentActions(contentActions) {
     const subCustomFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustomFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
     subContactFlowsArray.push({
       "contactFlowArn": subCustomFlowArn,
+      "contactFlowName": subCustomFlowContenActions.primarySubContactFlowName,
+      "contactFlowType": subCustomFlowContenActions.primarySubContactFlowType,
       "targetJson": subCustomFlowContenActions.targetJsonSubContactFlow,
       "contentActions": subCustomFlowContenActions.contentActionsSubContactFlow,
+      "isExists": subCustomFlowContenActions.isExists,
+      "targetContactFlowId": subCustomFlowContenActions.targetSubContactFlowId,
       "priority": count++
     });
     if (subCustomFlowContenActions.contentActionsSubContactFlow.length > 0) {
@@ -293,90 +261,107 @@ async function handleContentActions(contentActions) {
 }
 
 await handleContentActions(contentActions);
-
 await writeDataToFile('subContactFlowsArray.json', subContactFlowsArray);
 
-for (let i = 0; i < contentActions.length; i++) {
-    let obj = contentActions[i];
-    console.log(`Type value: ${obj.Type}`);
-        if (obj.Type === 'UpdateContactEventHooks') {
-          console.log('Inside Event Hooks Handling');
-          if (obj.Parameters.EventHooks.AgentWhisper) {
-            console.log('Inside Agent Whisper Handling');
-            console.log('obj : ', obj);
-            // let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.AgentWhisper, TARGETCFS);
-            // if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.AgentWhisper, 'g'), arn)};
-          } 
-        else if (obj.Parameters.EventHooks.CustomerQueue) {
-          console.log('Inside Customer Queue Handling');
-          console.log('obj : ', obj);
-          const subCustomerQueueFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
-          console.log('subCustomerQueueFlowArn : ', subCustomerQueueFlowArn);
-          const subContactFlowHandlingRes = await subContactFlowHandling(primaryContactFlows, subCustomerQueueFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
-          // console.log('subContactFlowHandlingRes : ', subContactFlowHandlingRes);
-          await writeDataToFile('subContactFlowHandlingRes.json', subContactFlowHandlingRes);
-          const getMissedResourcesResCustomerQueue = await getMissedResources(subContactFlowHandlingRes.targetJsonSubContactFlow, subContactFlowHandlingRes.contentActionsSubContactFlow, subContactFlowHandlingRes.primarySubContactFlowName, primaryQueues, targetQueues, 
-            primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
-            // console.log('getMissedResourcesResCustomerQueue : ', getMissedResourcesResCustomerQueue);
-            missedResourcesInTarget = missedResourcesInTarget.concat(getMissedResourcesResCustomerQueue.missedResourcesInTarget);
-           priority = priority + 1;
-            arrayToCreateOrUpdateFlow.push({
-            "isExist": subContactFlowHandlingRes.isExists,
-            "flowName": subContactFlowHandlingRes.primarySubContactFlowName,
-            "targetInstanceArn": targetInstanceArn,
-            "contactFlowType": subContactFlowHandlingRes.primarySubContactFlowType,
-            "targetJson": getMissedResourcesResCustomerQueue.targetJson,
-            "targetFlowId": subContactFlowHandlingRes.targetSubContactFlowId,
-            "targetRegion": targetRegion,
-            "priority": priority
-          }); 
-        } 
-        else if (obj.Parameters.EventHooks.CustomerRemaining) {
-          console.log('Inside Customer Remaining Handling');
-          console.log('obj : ', obj);
-            // let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerRemaining, TARGETCFS);
-            // if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerRemaining, 'g'), arn)};
-          }
-        
-        } else if (obj.Type === 'TransferToFlow') {
-          console.log('Inside Transfer To Flow Handling');
-          console.log('obj : ', obj);
-          // obj :  {
-          //   Parameters: {
-          //     ContactFlowId: 'arn:aws:connect:us-east-1:***:instance/4bbee21d-72b8-442b-af39-dce4128ca77e/contact-flow/b749f800-b086-4a4a-b86e-46757697729d'
-          //   },
-          //   Identifier: '51765364-1767-47e1-a3af-2ceb205d097e',
-          //   Type: 'TransferToFlow',
-          //   Transitions: {
-          //     NextAction: '11a9b95b-a27d-46aa-a828-b7bf4b9e65c9',
-          //     Errors: [ [Object] ]
-          //   }
-          // }
-          const subTransferToFlowFlowArn = obj && obj.Parameters && obj.Parameters.ContactFlowId ? obj.Parameters.ContactFlowId : undefined;
-          console.log('subTransferToFlowFlowArn : ', subTransferToFlowFlowArn);
-          const subTransferToFlowHandlingRes = await subContactFlowHandling(primaryContactFlows, subTransferToFlowFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
-          // console.log('subTransferToFlowHandlingRes : ', subTransferToFlowHandlingRes);
-          await writeDataToFile('subTransferToFlowHandlingRes.json', subTransferToFlowHandlingRes);
-          const getMissedResourcesResTransferToFlow = await getMissedResources(subTransferToFlowHandlingRes.targetJsonSubContactFlow, subTransferToFlowHandlingRes.contentActionsSubContactFlow, subTransferToFlowHandlingRes.primarySubContactFlowName, primaryQueues, targetQueues, 
-            primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
-            // console.log('getMissedResourcesResTransferToFlow : ', getMissedResourcesResTransferToFlow);
-            await writeDataToFile('getMissedResourcesResTransferToFlow.json', getMissedResourcesResTransferToFlow);
-            missedResourcesInTarget = missedResourcesInTarget.concat(getMissedResourcesResTransferToFlow.missedResourcesInTarget);
-           priority = priority + 1;
-            arrayToCreateOrUpdateFlow.push({
-            "isExist": subTransferToFlowHandlingRes.isExists,
-            "flowName": subTransferToFlowHandlingRes.primarySubContactFlowName,
-            "targetInstanceArn": targetInstanceArn,
-            "contactFlowType": subTransferToFlowHandlingRes.primarySubContactFlowType,
-            "targetJson": getMissedResourcesResTransferToFlow.targetJson,
-            "targetFlowId": subTransferToFlowHandlingRes.targetSubContactFlowId,
-            "targetRegion": targetRegion,
-            "priority": priority
-          }); 
-        } else {
-          console.log(`No handling for the type : ${obj.Type}`);
-        }
+for (let i=0; i<subContactFlowsArray.length; i++) {
+  let obj = subContactFlowsArray[i];
+  const getMissedResourcesResponse = await getMissedResources(obj.targetJson, obj.contentActions, obj.contactFlowName, primaryQueues, targetQueues, 
+    primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
+    // console.log('getMissedResourcesResponse : ', getMissedResourcesResponse);
+    missedResourcesInTarget = missedResourcesInTarget.concat(getMissedResourcesResponse.missedResourcesInTarget);
+    arrayToCreateOrUpdateFlow.push({
+      "isExist": obj.isExists,
+      "flowName": obj.contactFlowName,
+      "targetInstanceArn": targetInstanceArn,
+      "contactFlowType": obj.contactFlowType,
+      "targetJson": getMissedResourcesResCustomerQueue.targetJson,
+      "targetFlowId": obj.targetContactFlowId,
+      "targetRegion": targetRegion,
+      "priority": priority++
+    }); 
 }
+
+// for (let i = 0; i < contentActions.length; i++) {
+//     let obj = contentActions[i];
+//     console.log(`Type value: ${obj.Type}`);
+//         if (obj.Type === 'UpdateContactEventHooks') {
+//           console.log('Inside Event Hooks Handling');
+//           if (obj.Parameters.EventHooks.AgentWhisper) {
+//             console.log('Inside Agent Whisper Handling');
+//             console.log('obj : ', obj);
+//             // let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.AgentWhisper, TARGETCFS);
+//             // if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.AgentWhisper, 'g'), arn)};
+//           } 
+//         else if (obj.Parameters.EventHooks.CustomerQueue) {
+//           console.log('Inside Customer Queue Handling');
+//           console.log('obj : ', obj);
+//           const subCustomerQueueFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
+//           console.log('subCustomerQueueFlowArn : ', subCustomerQueueFlowArn);
+//           const subContactFlowHandlingRes = await subContactFlowHandling(primaryContactFlows, subCustomerQueueFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+//           // console.log('subContactFlowHandlingRes : ', subContactFlowHandlingRes);
+//           await writeDataToFile('subContactFlowHandlingRes.json', subContactFlowHandlingRes);
+//           const getMissedResourcesResCustomerQueue = await getMissedResources(subContactFlowHandlingRes.targetJsonSubContactFlow, subContactFlowHandlingRes.contentActionsSubContactFlow, subContactFlowHandlingRes.primarySubContactFlowName, primaryQueues, targetQueues, 
+//             primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
+//             // console.log('getMissedResourcesResCustomerQueue : ', getMissedResourcesResCustomerQueue);
+//             missedResourcesInTarget = missedResourcesInTarget.concat(getMissedResourcesResCustomerQueue.missedResourcesInTarget);
+           
+//             arrayToCreateOrUpdateFlow.push({
+//             "isExist": subContactFlowHandlingRes.isExists,
+//             "flowName": subContactFlowHandlingRes.primarySubContactFlowName,
+//             "targetInstanceArn": targetInstanceArn,
+//             "contactFlowType": subContactFlowHandlingRes.primarySubContactFlowType,
+//             "targetJson": getMissedResourcesResCustomerQueue.targetJson,
+//             "targetFlowId": subContactFlowHandlingRes.targetSubContactFlowId,
+//             "targetRegion": targetRegion,
+//             "priority": priority++
+//           }); 
+//         } 
+//         else if (obj.Parameters.EventHooks.CustomerRemaining) {
+//           console.log('Inside Customer Remaining Handling');
+//           console.log('obj : ', obj);
+//             // let arn = getFlowId(PRIMARYCFS, obj.Parameters.EventHooks.CustomerRemaining, TARGETCFS);
+//             // if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.EventHooks.CustomerRemaining, 'g'), arn)};
+//           }
+        
+//         } else if (obj.Type === 'TransferToFlow') {
+//           console.log('Inside Transfer To Flow Handling');
+//           console.log('obj : ', obj);
+//           // obj :  {
+//           //   Parameters: {
+//           //     ContactFlowId: 'arn:aws:connect:us-east-1:***:instance/4bbee21d-72b8-442b-af39-dce4128ca77e/contact-flow/b749f800-b086-4a4a-b86e-46757697729d'
+//           //   },
+//           //   Identifier: '51765364-1767-47e1-a3af-2ceb205d097e',
+//           //   Type: 'TransferToFlow',
+//           //   Transitions: {
+//           //     NextAction: '11a9b95b-a27d-46aa-a828-b7bf4b9e65c9',
+//           //     Errors: [ [Object] ]
+//           //   }
+//           // }
+//           const subTransferToFlowFlowArn = obj && obj.Parameters && obj.Parameters.ContactFlowId ? obj.Parameters.ContactFlowId : undefined;
+//           console.log('subTransferToFlowFlowArn : ', subTransferToFlowFlowArn);
+//           const subTransferToFlowHandlingRes = await subContactFlowHandling(primaryContactFlows, subTransferToFlowFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+//           // console.log('subTransferToFlowHandlingRes : ', subTransferToFlowHandlingRes);
+//           await writeDataToFile('subTransferToFlowHandlingRes.json', subTransferToFlowHandlingRes);
+//           const getMissedResourcesResTransferToFlow = await getMissedResources(subTransferToFlowHandlingRes.targetJsonSubContactFlow, subTransferToFlowHandlingRes.contentActionsSubContactFlow, subTransferToFlowHandlingRes.primarySubContactFlowName, primaryQueues, targetQueues, 
+//             primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
+//             // console.log('getMissedResourcesResTransferToFlow : ', getMissedResourcesResTransferToFlow);
+//             await writeDataToFile('getMissedResourcesResTransferToFlow.json', getMissedResourcesResTransferToFlow);
+//             missedResourcesInTarget = missedResourcesInTarget.concat(getMissedResourcesResTransferToFlow.missedResourcesInTarget);
+//            priority = priority + 1;
+//             arrayToCreateOrUpdateFlow.push({
+//             "isExist": subTransferToFlowHandlingRes.isExists,
+//             "flowName": subTransferToFlowHandlingRes.primarySubContactFlowName,
+//             "targetInstanceArn": targetInstanceArn,
+//             "contactFlowType": subTransferToFlowHandlingRes.primarySubContactFlowType,
+//             "targetJson": getMissedResourcesResTransferToFlow.targetJson,
+//             "targetFlowId": subTransferToFlowHandlingRes.targetSubContactFlowId,
+//             "targetRegion": targetRegion,
+//             "priority": priority
+//           }); 
+//         } else {
+//           console.log(`No handling for the type : ${obj.Type}`);
+//         }
+// }
 
 await writeDataToFile('missedResourcesInTargetUpdated.json', missedResourcesInTarget);
 await writeDataToFile('arrayToCreateOrUpdateFlowUpdated.json', arrayToCreateOrUpdateFlow);
@@ -386,8 +371,8 @@ contentActions = JSON.parse(targetJson).Actions;
 await writeDataToFile('contentActionsUpdated.json', contentActions);
 if (missedResourcesInTarget.length > 0) {
   // Writing missedResourcesInTarget to files
-    console.log('missedResourcesInTarget : ', missedResourcesInTarget);
-    await writeDataToFile('missedResourcesInTarget.json', missedResourcesInTarget);
+    // console.log('missedResourcesInTarget : ', missedResourcesInTarget);
+    // await writeDataToFile('missedResourcesInTarget.json', missedResourcesInTarget);
     console.log('Note : Please create the missed resources in target instance');
 } 
 // else {
