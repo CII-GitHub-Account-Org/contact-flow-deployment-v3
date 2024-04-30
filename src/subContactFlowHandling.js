@@ -1,4 +1,5 @@
-
+import AWS from 'aws-sdk';
+let connect = new AWS.Connect();
 
 export default async function subContactFlowHandling(primaryContactFlows, subContactFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion) {  
 
