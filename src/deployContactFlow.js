@@ -221,8 +221,37 @@ for (let i = 0; i < contentActions.length; i++) {
         } else if (obj.Type === 'TransferToFlow') {
           console.log('Inside Transfer To Flow Handling');
           console.log('obj : ', obj);
-          // let arn = getFlowId(PRIMARYCFS, obj.Parameters.ContactFlowId, TARGETCFS);
-          // if (arn) {TARGETJSON = TARGETJSON.replace(new RegExp(obj.Parameters.ContactFlowId, 'g'), arn)};
+          // obj :  {
+          //   Parameters: {
+          //     ContactFlowId: 'arn:aws:connect:us-east-1:***:instance/4bbee21d-72b8-442b-af39-dce4128ca77e/contact-flow/b749f800-b086-4a4a-b86e-46757697729d'
+          //   },
+          //   Identifier: '51765364-1767-47e1-a3af-2ceb205d097e',
+          //   Type: 'TransferToFlow',
+          //   Transitions: {
+          //     NextAction: '11a9b95b-a27d-46aa-a828-b7bf4b9e65c9',
+          //     Errors: [ [Object] ]
+          //   }
+          // }
+          const subTransferToFlowFlowArn = obj && obj.Parameters && obj.Parameters.ContactFlowId ? obj.Parameters.ContactFlowId : undefined;
+          console.log('subTransferToFlowFlowArn : ', subTransferToFlowFlowArn);
+          const subTransferToFlowHandlingRes = await subContactFlowHandling(primaryContactFlows, subTransferToFlowFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+          console.log('subTransferToFlowHandlingRes : ', subTransferToFlowHandlingRes);
+          await writeDataToFile('subTransferToFlowHandlingRes.json', subTransferToFlowHandlingRes);
+          const getMissedResourcesResTransferToFlow = await getMissedResources(subTransferToFlowHandlingRes.targetJsonSubContactFlow, subTransferToFlowHandlingRes.contentActionsSubContactFlow, subTransferToFlowHandlingRes.primarySubContactFlowName, primaryQueues, targetQueues, 
+            primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
+            console.log('getMissedResourcesResTransferToFlow : ', getMissedResourcesResTransferToFlow);
+            missedResourcesInTarget = missedResourcesInTarget.concat(getMissedResourcesResTransferToFlow.missedResourcesInTarget);
+           priority = priority + 1;
+            arrayToCreateOrUpdateFlow.push({
+            "isExist": subTransferToFlowHandlingRes.isExists,
+            "flowName": subTransferToFlowHandlingRes.primarySubContactFlowName,
+            "targetInstanceArn": targetInstanceArn,
+            "contactFlowType": subTransferToFlowHandlingRes.primarySubContactFlowType,
+            "targetJson": getMissedResourcesResTransferToFlow.targetJson,
+            "targetFlowId": subTransferToFlowHandlingRes.targetSubContactFlowId,
+            "targetRegion": targetRegion,
+            "priority": priority
+          }); 
         } else {
           console.log(`No handling for the type : ${obj.Type}`);
         }
