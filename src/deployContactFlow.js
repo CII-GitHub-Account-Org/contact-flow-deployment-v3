@@ -232,17 +232,17 @@ async function handleContentActions(contentActions) {
       
       if (obj.Parameters.EventHooks.AgentWhisper) {
         console.log('obj : ', obj);
-        //  const subAgentWhisperFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
-        //  const subAgentWhisperFlowContenActions = await subContactFlowHandling(primaryContactFlows, subAgentWhisperFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
-        //  subContactFlowsArray.push({
-        //   "contactFlowArn": subAgentWhisperFlowArn,
-        //   "targetJson": subAgentWhisperFlowContenActions.targetJsonSubContactFlow,
-        //   "contentActions": subAgentWhisperFlowContenActions.contentActionsSubContactFlow,
-        //   "priority": count++
-        //  });
-        //  if (subAgentWhisperFlowContenActions.contentActionsSubContactFlow.length > 0) {
-        //   queue.push(...subAgentWhisperFlowContenActions.contentActionsSubContactFlow);
-        // }
+         const subAgentWhisperFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.AgentWhisper ? obj.Parameters.EventHooks.CustomerQueue : undefined;
+         const subAgentWhisperFlowContenActions = await subContactFlowHandling(primaryContactFlows, subAgentWhisperFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+         subContactFlowsArray.push({
+          "contactFlowArn": subAgentWhisperFlowArn,
+          "targetJson": subAgentWhisperFlowContenActions.targetJsonSubContactFlow,
+          "contentActions": subAgentWhisperFlowContenActions.contentActionsSubContactFlow,
+          "priority": count++
+         });
+         if (subAgentWhisperFlowContenActions.contentActionsSubContactFlow.length > 0) {
+          queue.push(...subAgentWhisperFlowContenActions.contentActionsSubContactFlow);
+        }
       } 
       else if (obj.Parameters.EventHooks.CustomerQueue) {
         console.log('obj : ', obj);
@@ -260,7 +260,7 @@ async function handleContentActions(contentActions) {
       } 
       else if (obj.Parameters.EventHooks.CustomerRemaining) {
         console.log('obj : ', obj);
-        const subCustRemFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
+        const subCustRemFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerRemaining ? obj.Parameters.EventHooks.CustomerQueue : undefined;
         const subCustRemFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustRemFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
         subContactFlowsArray.push({
          "contactFlowArn": subCustRemFlowArn,
