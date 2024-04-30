@@ -274,7 +274,7 @@ for (let i=0; i<subContactFlowsArray.length; i++) {
       "flowName": obj.contactFlowName,
       "targetInstanceArn": targetInstanceArn,
       "contactFlowType": obj.contactFlowType,
-      "targetJson": getMissedResourcesResCustomerQueue.targetJson,
+      "targetJson": getMissedResourcesResponse.targetJson,
       "targetFlowId": obj.targetContactFlowId,
       "targetRegion": targetRegion,
       "priority": priority++
