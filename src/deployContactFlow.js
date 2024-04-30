@@ -176,6 +176,126 @@ let arrayToCreateOrUpdateFlow = [
 await writeDataToFile('missedResourcesInTarget.json', missedResourcesInTarget);
 await writeDataToFile('arrayToCreateOrUpdateFlow.json', arrayToCreateOrUpdateFlow);
 
+//  let subContactFlowsArray = [];
+//  for (let i = 0; i < contentActions.length; i++) {
+//   let obj = contentActions[i];
+//   console.log(`Type value: ${obj.Type}`);
+//       if (obj.Type === 'UpdateContactEventHooks') {
+//       if (obj.Parameters.EventHooks.AgentWhisper) {
+//         console.log('obj : ', obj);
+//         //  const subAgentWhisperFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
+//         //  const subAgentWhisperFlowContenActions = await subContactFlowHandling(primaryContactFlows, subAgentWhisperFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+//         //  subContactFlowsArray.push({
+//         //   "contactFlowArn": subAgentWhisperFlowArn,
+//         //   "contentActions": subAgentWhisperFlowContenActions.contentActionsSubContactFlow
+//         //  });
+//       } 
+//       else if (obj.Parameters.EventHooks.CustomerQueue) {
+//         const subCustQueueFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
+//         const subCustQueueFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustQueueFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+//         subContactFlowsArray.push({
+//          "contactFlowArn": subCustQueueFlowArn,
+//          "contentActions": subCustQueueFlowContenActions.contentActionsSubContactFlow
+//         });
+//       } 
+//       else if (obj.Parameters.EventHooks.CustomerRemaining) {
+//         console.log('obj : ', obj);
+//         // const subCustRemFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
+//         // const subCustRemFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustRemFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+//         // subContactFlowsArray.push({
+//         //  "contactFlowArn": subCustRemFlowArn,
+//         //  "contentActions": subCustRemFlowContenActions.contentActionsSubContactFlow
+//         // });
+//         }
+      
+//       } else if (obj.Type === 'TransferToFlow') {
+//         const subCustomFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
+//         const subCustomFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustomFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+//         subContactFlowsArray.push({
+//          "contactFlowArn": subCustomFlowArn,
+//          "contentActions": subCustomFlowContenActions.contentActionsSubContactFlow
+//         });
+//       } else {
+//         console.log(`No handling for the type : ${obj.Type}`);
+//       }
+// }
+
+let subContactFlowsArray = [];
+let count = 0;
+
+async function handleContentActions(contentActions) {
+  let queue = [...contentActions];
+  while (queue.length > 0) {
+    let obj = queue.shift();
+    console.log(`Type value: ${obj.Type}`);
+    if (obj.Type === 'UpdateContactEventHooks') {
+      
+      if (obj.Parameters.EventHooks.AgentWhisper) {
+        console.log('obj : ', obj);
+        //  const subAgentWhisperFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
+        //  const subAgentWhisperFlowContenActions = await subContactFlowHandling(primaryContactFlows, subAgentWhisperFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+        //  subContactFlowsArray.push({
+        //   "contactFlowArn": subAgentWhisperFlowArn,
+        //   "targetJson": subAgentWhisperFlowContenActions.targetJsonSubContactFlow,
+        //   "contentActions": subAgentWhisperFlowContenActions.contentActionsSubContactFlow,
+        //   "priority": count++
+        //  });
+        //  if (subAgentWhisperFlowContenActions.contentActionsSubContactFlow.length > 0) {
+        //   queue.push(...subAgentWhisperFlowContenActions.contentActionsSubContactFlow);
+        // }
+      } 
+      else if (obj.Parameters.EventHooks.CustomerQueue) {
+        console.log('obj : ', obj);
+        const subCustQueueFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
+        const subCustQueueFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustQueueFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+        subContactFlowsArray.push({
+          "contactFlowArn": subCustQueueFlowArn,
+          "targetJson": subCustQueueFlowContenActions.targetJsonSubContactFlow,
+          "contentActions": subCustQueueFlowContenActions.contentActionsSubContactFlow,
+          "priority": count++
+        });
+        if (subCustQueueFlowContenActions.contentActionsSubContactFlow.length > 0) {
+          queue.push(...subCustQueueFlowContenActions.contentActionsSubContactFlow);
+        }
+      } 
+      else if (obj.Parameters.EventHooks.CustomerRemaining) {
+        console.log('obj : ', obj);
+        const subCustRemFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
+        const subCustRemFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustRemFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+        subContactFlowsArray.push({
+         "contactFlowArn": subCustRemFlowArn,
+          "targetJson": subCustRemFlowContenActions.targetJsonSubContactFlow,
+         "contentActions": subCustRemFlowContenActions.contentActionsSubContactFlow,
+         "priority": count++
+        });
+        if (subCustRemFlowContenActions.contentActionsSubContactFlow.length > 0) {
+          queue.push(...subCustRemFlowContenActions.contentActionsSubContactFlow);
+        }
+    }
+  } else if (obj.Type === 'TransferToFlow') {
+    console.log('obj : ', obj);
+    const subCustomFlowArn = obj && obj.Parameters && obj.Parameters.ContactFlowId ? obj.Parameters.ContactFlowId : undefined;
+    const subCustomFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustomFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+    subContactFlowsArray.push({
+      "contactFlowArn": subCustomFlowArn,
+      "targetJson": subCustomFlowContenActions.targetJsonSubContactFlow,
+      "contentActions": subCustomFlowContenActions.contentActionsSubContactFlow,
+      "priority": count++
+    });
+    if (subCustomFlowContenActions.contentActionsSubContactFlow.length > 0) {
+      queue.push(...subCustomFlowContenActions.contentActionsSubContactFlow);
+    }
+
+  } else {
+    console.log(`No handling for the type : ${obj.Type}`);
+  }
+}
+}
+
+await handleContentActions(contentActions);
+
+await writeDataToFile('subContactFlowsArray.json', subContactFlowsArray);
+
 for (let i = 0; i < contentActions.length; i++) {
     let obj = contentActions[i];
     console.log(`Type value: ${obj.Type}`);
@@ -193,11 +313,11 @@ for (let i = 0; i < contentActions.length; i++) {
           const subCustomerQueueFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
           console.log('subCustomerQueueFlowArn : ', subCustomerQueueFlowArn);
           const subContactFlowHandlingRes = await subContactFlowHandling(primaryContactFlows, subCustomerQueueFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
-          console.log('subContactFlowHandlingRes : ', subContactFlowHandlingRes);
+          // console.log('subContactFlowHandlingRes : ', subContactFlowHandlingRes);
           await writeDataToFile('subContactFlowHandlingRes.json', subContactFlowHandlingRes);
           const getMissedResourcesResCustomerQueue = await getMissedResources(subContactFlowHandlingRes.targetJsonSubContactFlow, subContactFlowHandlingRes.contentActionsSubContactFlow, subContactFlowHandlingRes.primarySubContactFlowName, primaryQueues, targetQueues, 
             primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
-            console.log('getMissedResourcesResCustomerQueue : ', getMissedResourcesResCustomerQueue);
+            // console.log('getMissedResourcesResCustomerQueue : ', getMissedResourcesResCustomerQueue);
             missedResourcesInTarget = missedResourcesInTarget.concat(getMissedResourcesResCustomerQueue.missedResourcesInTarget);
            priority = priority + 1;
             arrayToCreateOrUpdateFlow.push({
@@ -239,7 +359,7 @@ for (let i = 0; i < contentActions.length; i++) {
           await writeDataToFile('subTransferToFlowHandlingRes.json', subTransferToFlowHandlingRes);
           const getMissedResourcesResTransferToFlow = await getMissedResources(subTransferToFlowHandlingRes.targetJsonSubContactFlow, subTransferToFlowHandlingRes.contentActionsSubContactFlow, subTransferToFlowHandlingRes.primarySubContactFlowName, primaryQueues, targetQueues, 
             primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
-            console.log('getMissedResourcesResTransferToFlow : ', getMissedResourcesResTransferToFlow);
+            // console.log('getMissedResourcesResTransferToFlow : ', getMissedResourcesResTransferToFlow);
             await writeDataToFile('getMissedResourcesResTransferToFlow.json', getMissedResourcesResTransferToFlow);
             missedResourcesInTarget = missedResourcesInTarget.concat(getMissedResourcesResTransferToFlow.missedResourcesInTarget);
            priority = priority + 1;
