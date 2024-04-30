@@ -1,6 +1,6 @@
 
 
-export default async function subContactFlowHandling(primaryContactFlows, subContactFlowArn, targetContactFlows, instanceId, sourceRegion, targetRegion) {  
+export default async function subContactFlowHandling(primaryContactFlows, subContactFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion) {  
 
 let primarySubContactFlowName;
 let primarySubContactFlowType;
