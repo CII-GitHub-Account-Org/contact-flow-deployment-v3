@@ -5,7 +5,7 @@ const targetInstanceArn = process.env.TRAGET_INSTANCEARN;
 const flowName = process.env.FLOWNAME;
 const contactFlowType = process.env.CONTACTFLOWTYPE;
 const sourceRegion = process.env.DEV_REGION;
-const targetRegion = process.env.QA_REGION;
+const targetRegion = process.env.QA_REGION; // Target region
 const retryAttempts = process.env.RETRY_ATTEMPTS; // Number of retry attempts
 console.log('instanceArn', instanceArn);
 console.log('targetInstanceArn', targetInstanceArn);
