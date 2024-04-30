@@ -60,7 +60,7 @@ if (Array.isArray(targetContactFlows) || targetContactFlows.length > 0) {
 
 }
 
-const flowData = await describeContactFlow(instanceArn, primaryFlowId, sourceRegion);
+const flowData = await describeContactFlow(instanceArn, primarySubContactFlowId, sourceRegion);
 const flowContent = flowData.ContactFlow.Content;
 const targetJsonSubContactFlow = flowContent;
 let contentActionsSubContactFlow = JSON.parse(targetJsonSubContactFlow).Actions;
