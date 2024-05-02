@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 const connect = new AWS.Connect();
-import writeDataToFile from './writeDataToFile';
+import  writeDataToFile  from './writeDataToFile.js';
 let replaceArnArray = [];
 
 export default async function createOrUpdateFlow(arrayToCreateOrUpdateFlow) {
