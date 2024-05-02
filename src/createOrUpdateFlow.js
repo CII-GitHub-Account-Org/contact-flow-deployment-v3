@@ -51,7 +51,7 @@ async function handleCreateOrUpdateFlow(flow) {
             console.log('NEW FLOW HAS BEEN CREATED');
             replaceArnArray.push ({
                 "flowName": flow.flowName,
-                "sourceFlowArn": flow.contactFlowArn,
+                "sourceFlowArn": flow.flowArn,
                 "targetFlowArn": data.ContactFlowArn
             });
         } catch (error) {

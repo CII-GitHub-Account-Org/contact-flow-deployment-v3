@@ -165,6 +165,7 @@ let priority = 0;
 let arrayToCreateOrUpdateFlow = [
   { "isExist": isExist, 
     "flowName": flowName, 
+    "flowArn": primaryFlowArn,
     "targetInstanceArn": targetInstanceArn, 
     "contactFlowType": contactFlowType, 
     "targetJson": targetJson, 
