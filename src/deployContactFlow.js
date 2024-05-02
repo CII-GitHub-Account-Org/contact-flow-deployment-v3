@@ -281,6 +281,7 @@ for (let i=0; i<subContactFlowsArray.length; i++) {
     arrayToCreateOrUpdateFlow.push({
       "isExist": obj.isExists,
       "flowName": obj.contactFlowName,
+      "flowArn": obj.contactFlowArn,
       "targetInstanceArn": targetInstanceArn,
       "contactFlowType": obj.contactFlowType,
       "targetJson": getMissedResourcesResponse.targetJson,
