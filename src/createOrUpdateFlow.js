@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 const connect = new AWS.Connect();
+import writeDataToFile from './writeDataToFile';
 let replaceArnArray = [];
 
 export default async function createOrUpdateFlow(arrayToCreateOrUpdateFlow) {
@@ -28,6 +29,10 @@ async function handleCreateOrUpdateFlow(flow) {
             if (flow.targetJson.includes(item.sourceFlowArn)){
             flow.targetJson = flow.targetJson.replace(new RegExp(item.sourceFlowArn, 'g'), item.targetFlowArn);
             }
+        }
+        if (flow.flowName === 'copilot-test-contact-flow-2'){
+            await writeDataToFile('replaceArnArray.json', replaceArnArray);
+            await writeDataToFile('copilot-test-contact-flow-2.json', flow.targetJson);
         }
         const params = {
             InstanceId: flow.targetInstanceArn,
