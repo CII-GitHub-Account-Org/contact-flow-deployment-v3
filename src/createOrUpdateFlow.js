@@ -6,11 +6,8 @@ export default async function createOrUpdateFlow(arrayToCreateOrUpdateFlow) {
     //Sort the array based on Priority with descending order
     arrayToCreateOrUpdateFlow.sort((a, b) => b.Priority - a.Priority);
 
-
-        // Process only the first item of the array
-        if (arrayToCreateOrUpdateFlow.length > 0) {
-            await handleCreateOrUpdateFlow(arrayToCreateOrUpdateFlow[0]);
-        }
+    // Process only the last item of the array
+    await handleCreateOrUpdateFlow(arrayToCreateOrUpdateFlow[0]);
 
 //     // Iterate over the array and call createOrUpdateFlow for each item
 //     for (const flow of arrayToCreateOrUpdateFlow) {
@@ -32,7 +29,7 @@ async function handleCreateOrUpdateFlow(flow) {
             Type: flow.contactFlowType,
             Content: flow.targetJson
         };
-        // console.log("params: ", params);
+        console.log("params: ", params);
         try {
             const data = await connect.createContactFlow(params).promise();
             console.log(data);
@@ -55,7 +52,7 @@ async function handleCreateOrUpdateFlow(flow) {
             ContactFlowId: flow.targetFlowId,
             Content: flow.targetJson
         };
-        // console.log("params: ", params);
+        console.log("params: ", params);
         try {
             const data = await connect.updateContactFlowContent(params).promise();
             console.log(data);
