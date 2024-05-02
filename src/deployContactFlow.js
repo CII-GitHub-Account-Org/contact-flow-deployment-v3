@@ -263,22 +263,34 @@ async function handleContentActions(contentActions) {
 await handleContentActions(contentActions);
 await writeDataToFile('subContactFlowsArray.json', subContactFlowsArray);
 
-for (let i=0; i<subContactFlowsArray.length; i++) {
+let processedArns = new Set();
+
+for (let i = 0; i < subContactFlowsArray.length; i++) {
   let obj = subContactFlowsArray[i];
+
+  // Skip this iteration if we've already processed this contactFlowArn
+  if (processedArns.has(obj.contactFlowArn)) {
+    continue;
+  }
+
   const getMissedResourcesResponse = await getMissedResources(obj.targetJson, obj.contentActions, obj.contactFlowName, primaryQueues, targetQueues, 
     primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
-    // console.log('getMissedResourcesResponse : ', getMissedResourcesResponse);
-    missedResourcesInTarget = missedResourcesInTarget.concat(getMissedResourcesResponse.missedResourcesInTarget);
-    arrayToCreateOrUpdateFlow.push({
-      "isExist": obj.isExists,
-      "flowName": obj.contactFlowName,
-      "targetInstanceArn": targetInstanceArn,
-      "contactFlowType": obj.contactFlowType,
-      "targetJson": getMissedResourcesResponse.targetJson,
-      "targetFlowId": obj.targetContactFlowId,
-      "targetRegion": targetRegion,
-      "priority": priority++
-    }); 
+
+  missedResourcesInTarget = missedResourcesInTarget.concat(getMissedResourcesResponse.missedResourcesInTarget);
+
+  arrayToCreateOrUpdateFlow.push({
+    "isExist": obj.isExists,
+    "flowName": obj.contactFlowName,
+    "targetInstanceArn": targetInstanceArn,
+    "contactFlowType": obj.contactFlowType,
+    "targetJson": getMissedResourcesResponse.targetJson,
+    "targetFlowId": obj.targetContactFlowId,
+    "targetRegion": targetRegion,
+    "priority": priority++
+  });
+
+  // Add the contactFlowArn to the set of processed ARNs
+  processedArns.add(obj.contactFlowArn);
 }
 
 // for (let i = 0; i < contentActions.length; i++) {
