@@ -1,19 +1,26 @@
 import AWS from 'aws-sdk';
 const connect = new AWS.Connect();
 
-export default async function createOrUpdateFlow(isExist, flowName, targetInstanceArn, contactFlowType, targetJson, targetFlowId, targetRegion) {
+export default async function createOrUpdateFlow(arrayToCreateOrUpdateFlow) {
+      // Iterate over the array and call createOrUpdateFlow for each item
+    for (const flow of arrayToCreateOrUpdateFlow) {
+        await handleCreateOrUpdateFlow(flow);
+  }
+}
+
+async function handleCreateOrUpdateFlow(flow) {
     AWS.config.update({
-        region: targetRegion, // replace with your region
+        region: flow.targetRegion, // replace with your region
     });
-    console.log('isExist: ',isExist);
-    if (!isExist) {
+    console.log('isExist: ',flow.isExist);
+    if (!flow.isExist) {
         try {
-        console.log("Creating Contact Flow : ", flowName);
+        console.log("Creating Contact Flow : ", flow.flowName);
         const params = {
-            InstanceId: targetInstanceArn,
-            Name: flowName,
-            Type: contactFlowType,
-            Content: targetJson
+            InstanceId: flow.targetInstanceArn,
+            Name: flow.flowName,
+            Type: flow.contactFlowType,
+            Content: flow.targetJson
         };
         // console.log("params: ", params);
         try {
@@ -32,11 +39,11 @@ export default async function createOrUpdateFlow(isExist, flowName, targetInstan
         console.error(`Retry Delay: ${error.retryDelay}`);
       }
     } else {
-        console.log("Updating Contact Flow : ", flowName);
+        console.log("Updating Contact Flow : ", flow.flowName);
         const params = {
-            InstanceId: targetInstanceArn,
-            ContactFlowId: targetFlowId,
-            Content: targetJson
+            InstanceId: flow.targetInstanceArn,
+            ContactFlowId: flow.targetFlowId,
+            Content: flow.targetJson
         };
         // console.log("params: ", params);
         try {
