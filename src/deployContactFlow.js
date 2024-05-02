@@ -176,6 +176,7 @@ let arrayToCreateOrUpdateFlow = [
 
 let subContactFlowsArray = [];
 let count = 0;
+let processedArns = new Set();
 async function handleContentActions(contentActions) {
   let queue = [...contentActions];
   while (queue.length > 0) {
@@ -186,6 +187,8 @@ async function handleContentActions(contentActions) {
         console.log('obj : ', obj);
          const subAgentWhisperFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.AgentWhisper ? obj.Parameters.EventHooks.AgentWhisper : undefined;
          const subAgentWhisperFlowContenActions = await subContactFlowHandling(primaryContactFlows, subAgentWhisperFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+         // Check if the contactFlowArn has already been processed
+      if (!processedArns.has(subAgentWhisperFlowArn)) {
          subContactFlowsArray.push({
           "contactFlowArn": subAgentWhisperFlowArn,
           "contactFlowName": subAgentWhisperFlowContenActions.primarySubContactFlowName,
@@ -196,6 +199,9 @@ async function handleContentActions(contentActions) {
           "targetContactFlowId": subAgentWhisperFlowContenActions.targetSubContactFlowId,
           "priority": count++
          });
+        // Add the contactFlowArn to the set of processed ARNs
+        processedArns.add(subAgentWhisperFlowArn);
+      }
          if (subAgentWhisperFlowContenActions.contentActionsSubContactFlow.length > 0) {
           queue.push(...subAgentWhisperFlowContenActions.contentActionsSubContactFlow);
         }
@@ -204,6 +210,8 @@ async function handleContentActions(contentActions) {
         console.log('obj : ', obj);
         const subCustQueueFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerQueue ? obj.Parameters.EventHooks.CustomerQueue : undefined;
         const subCustQueueFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustQueueFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+      // Check if the contactFlowArn has already been processed
+      if (!processedArns.has(subCustQueueFlowArn)) {
         subContactFlowsArray.push({
           "contactFlowArn": subCustQueueFlowArn,
           "contactFlowName": subCustQueueFlowContenActions.primarySubContactFlowName,
@@ -214,6 +222,9 @@ async function handleContentActions(contentActions) {
           "targetContactFlowId": subCustQueueFlowContenActions.targetSubContactFlowId, 
           "priority": count++
         });
+        // Add the contactFlowArn to the set of processed ARNs
+            processedArns.add(subCustQueueFlowArn);
+          }
         if (subCustQueueFlowContenActions.contentActionsSubContactFlow.length > 0) {
           queue.push(...subCustQueueFlowContenActions.contentActionsSubContactFlow);
         }
@@ -222,6 +233,8 @@ async function handleContentActions(contentActions) {
         console.log('obj : ', obj);
         const subCustRemFlowArn = obj && obj.Parameters && obj.Parameters.EventHooks && obj.Parameters.EventHooks.CustomerRemaining ? obj.Parameters.EventHooks.CustomerRemaining : undefined;
         const subCustRemFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustRemFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+        // Check if the contactFlowArn has already been processed
+      if (!processedArns.has(subCustRemFlowArn)) {
         subContactFlowsArray.push({
          "contactFlowArn": subCustRemFlowArn,
          "contactFlowName": subCustRemFlowContenActions.primarySubContactFlowName,
@@ -232,6 +245,9 @@ async function handleContentActions(contentActions) {
          "targetContactFlowId": subCustRemFlowContenActions.targetSubContactFlowId,
          "priority": count++
         });
+            // Add the contactFlowArn to the set of processed ARNs
+            processedArns.add(subCustRemFlowArn);
+          } 
         if (subCustRemFlowContenActions.contentActionsSubContactFlow.length > 0) {
           queue.push(...subCustRemFlowContenActions.contentActionsSubContactFlow);
         }
@@ -240,6 +256,8 @@ async function handleContentActions(contentActions) {
     console.log('obj : ', obj);
     const subCustomFlowArn = obj && obj.Parameters && obj.Parameters.ContactFlowId ? obj.Parameters.ContactFlowId : undefined;
     const subCustomFlowContenActions = await subContactFlowHandling(primaryContactFlows, subCustomFlowArn, targetContactFlows, instanceArn, sourceRegion, targetRegion);
+   // Check if the contactFlowArn has already been processed
+   if (!processedArns.has(subCustomFlowArn)) {
     subContactFlowsArray.push({
       "contactFlowArn": subCustomFlowArn,
       "contactFlowName": subCustomFlowContenActions.primarySubContactFlowName,
@@ -250,6 +268,9 @@ async function handleContentActions(contentActions) {
       "targetContactFlowId": subCustomFlowContenActions.targetSubContactFlowId,
       "priority": count++
     });
+      // Add the contactFlowArn to the set of processed ARNs
+      processedArns.add(subCustomFlowArn);
+      }
     if (subCustomFlowContenActions.contentActionsSubContactFlow.length > 0) {
       queue.push(...subCustomFlowContenActions.contentActionsSubContactFlow);
     }
@@ -263,34 +284,22 @@ async function handleContentActions(contentActions) {
 await handleContentActions(contentActions);
 await writeDataToFile('subContactFlowsArray.json', subContactFlowsArray);
 
-let processedArns = new Set();
-
-for (let i = 0; i < subContactFlowsArray.length; i++) {
+for (let i=0; i<subContactFlowsArray.length; i++) {
   let obj = subContactFlowsArray[i];
-
-  // Skip this iteration if we've already processed this contactFlowArn
-  if (processedArns.has(obj.contactFlowArn)) {
-    continue;
-  }
-
   const getMissedResourcesResponse = await getMissedResources(obj.targetJson, obj.contentActions, obj.contactFlowName, primaryQueues, targetQueues, 
     primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
-
-  missedResourcesInTarget = missedResourcesInTarget.concat(getMissedResourcesResponse.missedResourcesInTarget);
-
-  arrayToCreateOrUpdateFlow.push({
-    "isExist": obj.isExists,
-    "flowName": obj.contactFlowName,
-    "targetInstanceArn": targetInstanceArn,
-    "contactFlowType": obj.contactFlowType,
-    "targetJson": getMissedResourcesResponse.targetJson,
-    "targetFlowId": obj.targetContactFlowId,
-    "targetRegion": targetRegion,
-    "priority": priority++
-  });
-
-  // Add the contactFlowArn to the set of processed ARNs
-  processedArns.add(obj.contactFlowArn);
+    // console.log('getMissedResourcesResponse : ', getMissedResourcesResponse);
+    missedResourcesInTarget = missedResourcesInTarget.concat(getMissedResourcesResponse.missedResourcesInTarget);
+    arrayToCreateOrUpdateFlow.push({
+      "isExist": obj.isExists,
+      "flowName": obj.contactFlowName,
+      "targetInstanceArn": targetInstanceArn,
+      "contactFlowType": obj.contactFlowType,
+      "targetJson": getMissedResourcesResponse.targetJson,
+      "targetFlowId": obj.targetContactFlowId,
+      "targetRegion": targetRegion,
+      "priority": priority++
+    }); 
 }
 
 // for (let i = 0; i < contentActions.length; i++) {
