@@ -72,6 +72,7 @@ let contentActionsSubContactFlow = JSON.parse(targetJsonSubContactFlow).Actions;
     "primarySubContactFlowId": primarySubContactFlowId,
     "primarySubContactFlowArn": subContactFlowArn,
     "targetSubContactFlowId": targetSubContactFlowId,
+    "targetSubContactFlowArn": targetSubContactFlowArn,
     "targetJsonSubContactFlow": targetJsonSubContactFlow,
     "contentActionsSubContactFlow": contentActionsSubContactFlow
   };

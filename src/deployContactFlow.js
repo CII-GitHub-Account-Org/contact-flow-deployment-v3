@@ -175,6 +175,7 @@ let arrayToCreateOrUpdateFlow = [
   }
 ];
 
+let replaceArnArrayForUpdate = []
 let subContactFlowsArray = [];
 let count = 0;
 async function handleContentActions(contentActions) {
@@ -197,6 +198,13 @@ async function handleContentActions(contentActions) {
           "targetContactFlowId": subAgentWhisperFlowContenActions.targetSubContactFlowId,
           "priority": count++
          });
+         if (subAgentWhisperFlowContenActions.isExists) {
+          replaceArnArrayForUpdate.push({
+            "flowName": subAgentWhisperFlowContenActions.primarySubContactFlowName,
+            "sourceFlowArn": subAgentWhisperFlowContenActions.targetSubContactFlowArn,
+            "targetFlowArn": subAgentWhisperFlowContenActions.primarySubContactFlowName
+          });
+         }
          if (subAgentWhisperFlowContenActions.contentActionsSubContactFlow.length > 0) {
           queue.push(...subAgentWhisperFlowContenActions.contentActionsSubContactFlow);
         }
@@ -215,6 +223,13 @@ async function handleContentActions(contentActions) {
           "targetContactFlowId": subCustQueueFlowContenActions.targetSubContactFlowId, 
           "priority": count++
         });
+        if (subCustQueueFlowContenActions.isExists) {
+          replaceArnArrayForUpdate.push({
+            "flowName": subCustQueueFlowContenActions.primarySubContactFlowName,
+            "sourceFlowArn": subCustQueueFlowContenActions.targetSubContactFlowArn,
+            "targetFlowArn": subCustQueueFlowContenActions.primarySubContactFlowName
+          });
+        }
         if (subCustQueueFlowContenActions.contentActionsSubContactFlow.length > 0) {
           queue.push(...subCustQueueFlowContenActions.contentActionsSubContactFlow);
         }
@@ -233,6 +248,13 @@ async function handleContentActions(contentActions) {
          "targetContactFlowId": subCustRemFlowContenActions.targetSubContactFlowId,
          "priority": count++
         });
+        if (subCustRemFlowContenActions.isExists) {
+          replaceArnArrayForUpdate.push({
+            "flowName": subCustRemFlowContenActions.primarySubContactFlowName,
+            "sourceFlowArn": subCustRemFlowContenActions.targetSubContactFlowArn,
+            "targetFlowArn": subCustRemFlowContenActions.primarySubContactFlowName
+          });
+        }
         if (subCustRemFlowContenActions.contentActionsSubContactFlow.length > 0) {
           queue.push(...subCustRemFlowContenActions.contentActionsSubContactFlow);
         }
@@ -251,6 +273,13 @@ async function handleContentActions(contentActions) {
       "targetContactFlowId": subCustomFlowContenActions.targetSubContactFlowId,
       "priority": count++
     });
+    if (subCustomFlowContenActions.isExists) {
+      replaceArnArrayForUpdate.push({
+        "flowName": subCustomFlowContenActions.primarySubContactFlowName,
+        "sourceFlowArn": subCustomFlowContenActions.targetSubContactFlowArn,
+        "targetFlowArn": subCustomFlowContenActions.primarySubContactFlowName
+      });
+    }
     if (subCustomFlowContenActions.contentActionsSubContactFlow.length > 0) {
       queue.push(...subCustomFlowContenActions.contentActionsSubContactFlow);
     }
@@ -392,6 +421,6 @@ if (missedResourcesInTarget.length > 0) {
 else {
   
   console.log('No missed resources in target instance');
-  await createOrUpdateFlow(arrayToCreateOrUpdateFlow)
+  await createOrUpdateFlow(arrayToCreateOrUpdateFlow, replaceArnArrayForUpdate)
 }
 }

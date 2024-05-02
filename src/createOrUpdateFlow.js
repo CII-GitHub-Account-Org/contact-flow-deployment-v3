@@ -3,7 +3,7 @@ const connect = new AWS.Connect();
 import  writeDataToFile  from './writeDataToFile.js';
 let replaceArnArray = [];
 
-export default async function createOrUpdateFlow(arrayToCreateOrUpdateFlow) {
+export default async function createOrUpdateFlow(arrayToCreateOrUpdateFlow, replaceArnArrayForUpdate) {
 
     //Sort the array based on Priority with descending order
     arrayToCreateOrUpdateFlow.sort((a, b) => b.priority - a.priority);
@@ -13,11 +13,11 @@ export default async function createOrUpdateFlow(arrayToCreateOrUpdateFlow) {
 
     // Iterate over the array and call createOrUpdateFlow for each item
     for (const flow of arrayToCreateOrUpdateFlow) {
-        await handleCreateOrUpdateFlow(flow);
+        await handleCreateOrUpdateFlow(flow, replaceArnArrayForUpdate);
   }
 }
 
-async function handleCreateOrUpdateFlow(flow) {
+async function handleCreateOrUpdateFlow(flow, replaceArnArrayForUpdate) {
     AWS.config.update({
         region: flow.targetRegion, // replace with your region
     });
@@ -29,10 +29,6 @@ async function handleCreateOrUpdateFlow(flow) {
             if (flow.targetJson.includes(item.sourceFlowArn)){
             flow.targetJson = flow.targetJson.replace(new RegExp(item.sourceFlowArn, 'g'), item.targetFlowArn);
             }
-        }
-        if (flow.flowName === 'copilot-test-contact-flow-2'){
-            await writeDataToFile('replaceArnArray.json', replaceArnArray);
-            await writeDataToFile('copilot-test-contact-flow-2.json', flow.targetJson);
         }
         const params = {
             InstanceId: flow.targetInstanceArn,
@@ -67,7 +63,7 @@ async function handleCreateOrUpdateFlow(flow) {
       }
     } else {
         console.log("Updating Contact Flow : ", flow.flowName);
-        for (const item of replaceArnArray) {
+        for (const item of replaceArnArrayForUpdate) {
             if (flow.targetJson.includes(item.sourceFlowArn)){
             flow.targetJson = flow.targetJson.replace(new RegExp(item.sourceFlowArn, 'g'), item.targetFlowArn);
             }
