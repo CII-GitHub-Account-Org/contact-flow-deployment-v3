@@ -33,7 +33,7 @@ if (!Array.isArray(primaryContactFlows) || primaryContactFlows.length === 0) {
 if (!foundSubContactFlowInPrimary) {
   console.log('Not Found subContactFlowArn in primaryContactFlows');
   return undefined;
-} 
+}
 
 
 let foundSubContactFlowInTarget = false;

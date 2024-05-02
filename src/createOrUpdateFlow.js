@@ -2,10 +2,20 @@ import AWS from 'aws-sdk';
 const connect = new AWS.Connect();
 
 export default async function createOrUpdateFlow(arrayToCreateOrUpdateFlow) {
-      // Iterate over the array and call createOrUpdateFlow for each item
-    for (const flow of arrayToCreateOrUpdateFlow) {
-        await handleCreateOrUpdateFlow(flow);
-  }
+
+    //Sort the array based on Priority with descending order
+    arrayToCreateOrUpdateFlow.sort((a, b) => b.Priority - a.Priority);
+
+
+        // Process only the first item of the array
+        if (arrayToCreateOrUpdateFlow.length > 0) {
+            await handleCreateOrUpdateFlow(arrayToCreateOrUpdateFlow[0]);
+        }
+
+//     // Iterate over the array and call createOrUpdateFlow for each item
+//     for (const flow of arrayToCreateOrUpdateFlow) {
+//         await handleCreateOrUpdateFlow(flow);
+//   }
 }
 
 async function handleCreateOrUpdateFlow(flow) {
