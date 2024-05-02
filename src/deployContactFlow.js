@@ -161,7 +161,7 @@ const responseResources = await getMissedResources(targetJson, contentActions, f
   primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
 targetJson = responseResources.targetJson
 missedResourcesInTarget = missedResourcesInTarget.concat(responseResources.missedResourcesInTarget);
-let priority = 1;
+let priority = 0;
 let arrayToCreateOrUpdateFlow = [
   { "isExist": isExist, 
     "flowName": flowName, 
@@ -170,7 +170,7 @@ let arrayToCreateOrUpdateFlow = [
     "targetJson": targetJson, 
     "targetFlowId": targetFlowId, 
     "targetRegion": targetRegion,
-    "priority": priority
+    "priority": priority++
   }
 ];
 
@@ -262,9 +262,6 @@ async function handleContentActions(contentActions) {
 
 await handleContentActions(contentActions);
 await writeDataToFile('subContactFlowsArray.json', subContactFlowsArray);
-
-// Sort the array in descending order of priority
-subContactFlowsArray.sort((a, b) => b.priority - a.priority);
 
 // Create a Set to store processed contactFlowArn values
 const processedArns = new Set();
