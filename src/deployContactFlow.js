@@ -263,8 +263,20 @@ async function handleContentActions(contentActions) {
 await handleContentActions(contentActions);
 await writeDataToFile('subContactFlowsArray.json', subContactFlowsArray);
 
+// Sort the array in descending order of priority
+subContactFlowsArray.sort((a, b) => b.priority - a.priority);
+
+// Create a Set to store processed contactFlowArn values
+const processedArns = new Set();
+
 for (let i=0; i<subContactFlowsArray.length; i++) {
   let obj = subContactFlowsArray[i];
+
+  // If this contactFlowArn has already been processed, skip to the next iteration
+  if (processedArns.has(obj.contactFlowArn)) {
+    continue;
+  }
+
   const getMissedResourcesResponse = await getMissedResources(obj.targetJson, obj.contentActions, obj.contactFlowName, primaryQueues, targetQueues, 
     primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
     // console.log('getMissedResourcesResponse : ', getMissedResourcesResponse);
@@ -278,7 +290,10 @@ for (let i=0; i<subContactFlowsArray.length; i++) {
       "targetFlowId": obj.targetContactFlowId,
       "targetRegion": targetRegion,
       "priority": priority++
-    }); 
+    });
+
+  // Add the contactFlowArn to the Set of processed Arns
+  processedArns.add(obj.contactFlowArn);
 }
 
 // for (let i = 0; i < contentActions.length; i++) {
