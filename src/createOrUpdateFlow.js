@@ -1,6 +1,5 @@
 import AWS from 'aws-sdk';
 const connect = new AWS.Connect();
-import  writeDataToFile  from './writeDataToFile.js';
 let replaceArnArray = [];
 
 export default async function createOrUpdateFlow(arrayToCreateOrUpdateFlow, replaceArnArrayForUpdate) {
@@ -23,7 +22,6 @@ async function handleCreateOrUpdateFlow(flow, replaceArnArrayForUpdate) {
     });
     console.log('isExist: ',flow.isExist);
     if (!flow.isExist) {
-        try {
         console.log("Creating Contact Flow : ", flow.flowName);
         for (const item of replaceArnArray) {
             if (flow.targetJson.includes(item.sourceFlowArn)){
@@ -53,14 +51,6 @@ async function handleCreateOrUpdateFlow(flow, replaceArnArrayForUpdate) {
         } catch (error) {
             console.error(error);
         }
-    } catch (error) {
-        console.error(`Error: ${error.code}`);
-        console.error(`Message: ${error.message}`);
-        console.error(`Request ID: ${error.requestId}`);
-        console.error(`Status Code: ${error.statusCode}`);
-        console.error(`Retryable: ${error.retryable}`);
-        console.error(`Retry Delay: ${error.retryDelay}`);
-      }
     } else {
         console.log("Updating Contact Flow : ", flow.flowName);
         for (const item of replaceArnArrayForUpdate) {
