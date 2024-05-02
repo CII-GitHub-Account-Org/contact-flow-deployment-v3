@@ -4,9 +4,9 @@ const connect = new AWS.Connect();
 export default async function createOrUpdateFlow(arrayToCreateOrUpdateFlow) {
 
     //Sort the array based on Priority with descending order
-    arrayToCreateOrUpdateFlow.sort((a, b) => b.Priority - a.Priority);
+    arrayToCreateOrUpdateFlow.sort((a, b) => b.priority - a.priority);
 
-    // Process only the last item of the array
+    // Process only the first item of the array
     await handleCreateOrUpdateFlow(arrayToCreateOrUpdateFlow[0]);
 
 //     // Iterate over the array and call createOrUpdateFlow for each item
