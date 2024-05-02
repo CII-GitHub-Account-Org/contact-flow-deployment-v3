@@ -44,7 +44,16 @@ async function handleCreateOrUpdateFlow(flow) {
         try {
             const data = await connect.createContactFlow(params).promise();
             console.log(data);
+            //  data will be like below{
+            //     ContactFlowId: '070c0a0b-cb0d-4de1-aa6b-3701844663f6',
+            //     ContactFlowArn: 'arn:aws:connect:us-east-1:***:instance/561af6e6-7907-4131-9f18-71b466e8763e/contact-flow/070c0a0b-cb0d-4de1-aa6b-3701844663f6'
+            //   }
             console.log('NEW FLOW HAS BEEN CREATED');
+            replaceArnArray.push [{
+                "flowName": flow.flowName,
+                "sourceFlowArn": flow.contactFlowArn,
+                "targetFlowArn": data.ContactFlowArn
+            }];
         } catch (error) {
             console.error(error);
         }
@@ -72,15 +81,6 @@ async function handleCreateOrUpdateFlow(flow) {
         try {
             const data = await connect.updateContactFlowContent(params).promise();
             console.log(data);
-            // {
-            //     ContactFlowId: '070c0a0b-cb0d-4de1-aa6b-3701844663f6',
-            //     ContactFlowArn: 'arn:aws:connect:us-east-1:***:instance/561af6e6-7907-4131-9f18-71b466e8763e/contact-flow/070c0a0b-cb0d-4de1-aa6b-3701844663f6'
-            //   }
-            replaceArnArray.push [{
-                "flowName": flow.flowName,
-                "sourceFlowArn": flow.contactFlowArn,
-                "targetFlowArn": data.ContactFlowArn
-            }];
             console.log('FLOW HAS BEEN UPDATED');
         } catch (error) {
             console.error(error);
