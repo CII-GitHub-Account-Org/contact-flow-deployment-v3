@@ -201,8 +201,8 @@ async function handleContentActions(contentActions) {
          if (subAgentWhisperFlowContenActions.isExists) {
           replaceArnArrayForUpdate.push({
             "flowName": subAgentWhisperFlowContenActions.primarySubContactFlowName,
-            "sourceFlowArn": subAgentWhisperFlowContenActions.targetSubContactFlowArn,
-            "targetFlowArn": subAgentWhisperFlowContenActions.primarySubContactFlowName
+            "sourceFlowArn": subAgentWhisperFlowContenActions.primarySubContactFlowArn,
+            "targetFlowArn": subAgentWhisperFlowContenActions.targetSubContactFlowArn
           });
          }
          if (subAgentWhisperFlowContenActions.contentActionsSubContactFlow.length > 0) {
@@ -226,8 +226,8 @@ async function handleContentActions(contentActions) {
         if (subCustQueueFlowContenActions.isExists) {
           replaceArnArrayForUpdate.push({
             "flowName": subCustQueueFlowContenActions.primarySubContactFlowName,
-            "sourceFlowArn": subCustQueueFlowContenActions.targetSubContactFlowArn,
-            "targetFlowArn": subCustQueueFlowContenActions.primarySubContactFlowName
+            "sourceFlowArn": subCustQueueFlowContenActions.primarySubContactFlowArn,
+            "targetFlowArn": subCustQueueFlowContenActions.targetSubContactFlowArn
           });
         }
         if (subCustQueueFlowContenActions.contentActionsSubContactFlow.length > 0) {
@@ -251,8 +251,8 @@ async function handleContentActions(contentActions) {
         if (subCustRemFlowContenActions.isExists) {
           replaceArnArrayForUpdate.push({
             "flowName": subCustRemFlowContenActions.primarySubContactFlowName,
-            "sourceFlowArn": subCustRemFlowContenActions.targetSubContactFlowArn,
-            "targetFlowArn": subCustRemFlowContenActions.primarySubContactFlowName
+            "sourceFlowArn": subCustRemFlowContenActions.primarySubContactFlowArn,
+            "targetFlowArn": subCustRemFlowContenActions.targetSubContactFlowArn
           });
         }
         if (subCustRemFlowContenActions.contentActionsSubContactFlow.length > 0) {
@@ -276,8 +276,8 @@ async function handleContentActions(contentActions) {
     if (subCustomFlowContenActions.isExists) {
       replaceArnArrayForUpdate.push({
         "flowName": subCustomFlowContenActions.primarySubContactFlowName,
-        "sourceFlowArn": subCustomFlowContenActions.targetSubContactFlowArn,
-        "targetFlowArn": subCustomFlowContenActions.primarySubContactFlowName
+        "sourceFlowArn": subCustomFlowContenActions.primarySubContactFlowArn,
+        "targetFlowArn": subCustomFlowContenActions.targetSubContactFlowArn
       });
     }
     if (subCustomFlowContenActions.contentActionsSubContactFlow.length > 0) {
