@@ -4,7 +4,7 @@ import queueHandling from './queueHandling.js';
 import hopHandling from './hopHandling.js';
 
 export default async function getMissedResources(targetJson, contentActions, flowName, primaryQueues, targetQueues, 
-    primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion) {
+    primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion, instanceArn) {
     
     const missedResourcesInTarget = [];
 
@@ -22,6 +22,7 @@ export default async function getMissedResources(targetJson, contentActions, flo
               } else if (targetQueueResources && targetQueueResources.ResourceStatus === 'notExists') {
                 missedResourcesInTarget.push({
                     "flowName": flowName,
+                    "instanceArn": instanceArn,
                     "ResourceType": targetQueueResources.ResourceType,
                     "ResourceName": targetQueueResources.ResourceName,
                     "ResourceArn": targetQueueResources.ResourceArn
@@ -39,6 +40,7 @@ export default async function getMissedResources(targetJson, contentActions, flo
               } else if (targetHopResources && targetHopResources.ResourceStatus === 'notExists') {
                 missedResourcesInTarget.push({
                     "flowName": flowName,
+                    "instanceArn": instanceArn,
                     "ResourceType": targetHopResources.ResourceType,
                     "ResourceName": targetHopResources.ResourceName,
                     "ResourceArn": targetHopResources.ResourceArn
@@ -56,6 +58,7 @@ export default async function getMissedResources(targetJson, contentActions, flo
               } else if (targetLexV2BotResources && targetLexV2BotResources.ResourceStatus === 'notExists') {
                 missedResourcesInTarget.push({
                     "flowName": flowName,
+                    "instanceArn": instanceArn,
                     "ResourceType": targetLexV2BotResources.ResourceType,
                     "ResourceName": targetLexV2BotResources.ResourceName,
                     "ResourceArn": targetLexV2BotResources.ResourceArn
@@ -74,6 +77,7 @@ export default async function getMissedResources(targetJson, contentActions, flo
               } else if (targetLambdaResources && targetLambdaResources.ResourceStatus === 'notExists') {
                 missedResourcesInTarget.push({
                     "flowName": flowName,
+                    "instanceArn": instanceArn,
                     "ResourceType": targetLambdaResources.ResourceType,
                     "ResourceName": targetLambdaResources.ResourceName,
                     "ResourceArn": targetLambdaResources.ResourceArn

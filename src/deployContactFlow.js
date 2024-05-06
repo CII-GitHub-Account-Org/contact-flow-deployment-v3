@@ -158,7 +158,7 @@ await writeDataToFile('contentActions.json', contentActions);
 await writeDataToFile('targetJson.json', JSON.parse(targetJson));
 let missedResourcesInTarget = [];
 const responseResources = await getMissedResources(targetJson, contentActions, flowName, primaryQueues, targetQueues, 
-  primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
+  primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion, instanceArn);
 targetJson = responseResources.targetJson
 missedResourcesInTarget = missedResourcesInTarget.concat(responseResources.missedResourcesInTarget);
 let priority = 0;
@@ -305,7 +305,7 @@ for (let i=0; i<subContactFlowsArray.length; i++) {
   }
 
   const getMissedResourcesResponse = await getMissedResources(obj.targetJson, obj.contentActions, obj.contactFlowName, primaryQueues, targetQueues, 
-    primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion);
+    primaryHOP, targetHOP, primaryLexBot, targetLexBot, primaryLambda, targetLambda, sourceRegion, targetRegion, instanceArn);
     // console.log('getMissedResourcesResponse : ', getMissedResourcesResponse);
     missedResourcesInTarget = missedResourcesInTarget.concat(getMissedResourcesResponse.missedResourcesInTarget);
     arrayToCreateOrUpdateFlow.push({
