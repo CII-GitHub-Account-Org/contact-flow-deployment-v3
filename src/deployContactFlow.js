@@ -414,7 +414,7 @@ contentActions = JSON.parse(targetJson).Actions;
 await writeDataToFile('contentActionsUpdated.json', contentActions);
 if (missedResourcesInTarget.length > 0) {
   // Writing missedResourcesInTarget to files
-    // console.log('missedResourcesInTarget : ', missedResourcesInTarget);
+    console.log('missedResourcesInTarget : ', missedResourcesInTarget);
     // await writeDataToFile('missedResourcesInTarget.json', missedResourcesInTarget);
     console.log('Note : Please create the missed resources in target instance');
 } 
