@@ -22,7 +22,7 @@ let connect = new AWS.Connect();
           } catch (error) {
             console.log('error:', error);
             if (error.code === 'TooManyRequestsException' && (retryAttempts || 3) > 0) {
-              await sleep(parseInt(2500, 10) || 1000);
+              await sleep(parseInt(4000, 10) || 1000);
               --retryAttempts;
               doRetry = true;
               console.log('doRetry:', doRetry);
