@@ -71,7 +71,7 @@ jobs:
         run: ls -l ${{ github.workspace }}/src
 
       - name: Upload output
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: output
           path: ${{ github.workspace }}/src/*.json
