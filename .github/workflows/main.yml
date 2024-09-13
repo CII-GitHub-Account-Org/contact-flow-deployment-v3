@@ -3,7 +3,7 @@ name: Deploy contactflow
 on:
   push:
     branches:
-      - main
+      - main # Set the branch name to trigger the workflow
 
 jobs:
   deploy_dev_to_qa:
